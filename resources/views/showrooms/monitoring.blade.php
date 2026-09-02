@@ -101,7 +101,7 @@
                                                                 {{ $car->merk }} {{ $car->type }}
                                                             </div>
                                                             <div class="text-[10px] text-slate-400">
-                                                                Tahun {{ $car->tahun ?? '-' }} | CIF: <span class="font-mono">{{ $car->cif_konsumen }}</span>
+                                                                Tahun {{ $car->tahun ?? '-' }} | CIF: <span class="font-mono">{{ $car->no_cif }}</span>
                                                             </div>
                                                         </div>
                                                         <span class="bg-red-100 text-red-800 font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">

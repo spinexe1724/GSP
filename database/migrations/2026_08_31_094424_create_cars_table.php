@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             
             // Kolom penghubung relasi ke showrooms.cno
-            $table->string('cif_konsumen')->index(); 
+            $table->string('no_cif')->index(); 
             
             // Kolom data spesifik mobil dari Excel
             $table->string('nopol')->nullable()->index();

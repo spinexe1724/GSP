@@ -16,7 +16,7 @@ use HasFactory;
 
     public function cars()
     {
-        return $this->hasMany(Car::class, 'cif_konsumen', 'cno');
+        return $this->hasMany(Car::class, 'no_cif', 'cno');
     }
 }
 

@@ -25,7 +25,7 @@ class CarController extends Controller
                 $q->where('merk', 'like', "%{$search}%")
                   ->orWhere('type', 'like', "%{$search}%")
                   ->orWhere('nopol', 'like', "%{$search}%")
-                  ->orWhere('cif_konsumen', 'like', "%{$search}%")
+                  ->orWhere('no_cif', 'like', "%{$search}%")
                   ->orWhereHas('showroom', function ($showroomQuery) use ($search) {
                       $showroomQuery->where('nmdealer', 'like', "%{$search}%")
                                     ->orWhere('kota', 'like', "%{$search}%");
@@ -87,8 +87,8 @@ class CarController extends Controller
             }
         }
 
-        // 2. Validasi kolom cif_konsumen (beserta kemungkinan aliasnya)
-        $cifKey = $headerMap['cif_konsumen'] 
+        // 2. Validasi kolom no_cif (beserta kemungkinan aliasnya)
+        $cifKey = $headerMap['no_cif'] 
             ?? $headerMap['cifkonsumen'] 
             ?? $headerMap['cif_dealer'] 
             ?? $headerMap['cif'] 
@@ -96,7 +96,7 @@ class CarController extends Controller
 
         if (!$cifKey) {
             $foundCols = implode(', ', array_slice(array_keys($headerMap), 0, 8));
-            return redirect()->back()->with('error', "Kolom 'cif_konsumen' tidak ditemukan di baris pertama Excel. Kolom terbaca: {$foundCols}...");
+            return redirect()->back()->with('error', "Kolom 'no_cif' tidak ditemukan di baris pertama Excel. Kolom terbaca: {$foundCols}...");
         }
 
         $importedCount = 0;
@@ -128,7 +128,7 @@ class CarController extends Controller
             try {
                 Car::updateOrCreate(
                     [
-                        'cif_konsumen' => $cifKonsumen,
+                        'no_cif' => $cifKonsumen,
                         'nopol'        => !empty($nopol) ? $nopol : '-',
                     ],
                     [

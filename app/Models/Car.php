@@ -18,6 +18,6 @@ class Car extends Model
      */
     public function showroom()
     {
-        return $this->belongsTo(Showroom::class, 'cif_konsumen', 'cno');
+        return $this->belongsTo(Showroom::class, 'no_cif', 'cno');
     }
 }
