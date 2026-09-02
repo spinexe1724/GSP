@@ -1,52 +1,44 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ShowroomController; // <-- BARIS INI WAJIB ADA
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ShowroomController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Support\Facades\Route;
 
+// --- Rute GUEST (Belum Login) ---
 Route::middleware('guest')->group(function () {
-    // --- Rute Registrasi (Sudah dibuat sebelumnya) ---
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    // --- Rute Login ---
-    // Menampilkan halaman form login
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
-
-    // Proses autentikasi saat user menekan tombol login
+    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
 
-// Rute Logout (Hanya bisa diakses jika sudah login)
-Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
-
-Route::get('/', [CarController::class, 'index'])->name('cars.index');
-Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
-
-Route::get('/upload', function () {
-    return view('upload');
+// --- Rute PUBLIC (Bisa diakses siapa saja) ---
+Route::get('/', function () {
+    return redirect()->route('login');
 });
-Route::post('/upload', [CarController::class, 'upload'])->name('cars.import');
-
-Route::get('/upload-showroom', [ShowroomController::class, 'index'])->name('showrooms.upload');
-Route::post('/upload-showroom', [ShowroomController::class, 'upload'])->name('showrooms.import');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+// --- Rute AUTH (Harus Login) ---
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    
+    // Logout
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Profile (Urutan dibedakan agar tidak bentrok)
+    Route::get('/showroom/profile', [ShowroomController::class, 'myProfile'])->name('showroom.profile');
+  
 });
-
-
+ Route::get('/upload-showroom', [ShowroomController::class, 'index'])->name('showrooms.upload');
+    Route::post('/upload-showroom', [ShowroomController::class, 'upload'])->name('showrooms.import');
+   Route::get('/upload-cars', [CarController::class, 'createUpload'])->name('cars.upload');
+    Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
+    Route::get('/showrooms/monitoring', [ShowroomController::class, 'monitoring'])->name('showrooms.monitoring');
+    Route::post('/cars/upload-zip-photos', [CarController::class, 'uploadZipPhotos'])->name('cars.photos.zip');
 require __DIR__.'/auth.php';

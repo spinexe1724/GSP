@@ -2,18 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Car extends Model
 {
-  public function getImageUrlAttribute() {
-    if ($this->image_path) {
-        return asset('storage/' . $this->image_path);
+    use HasFactory;
+
+    protected $guarded = ['id'];
+
+    /**
+     * Relasi: Mobil dimiliki oleh Showroom
+     * Foreign Key di Car: cif_dealer
+     * Owner Key di Showroom: cno
+     */
+    public function showroom()
+    {
+        return $this->belongsTo(Showroom::class, 'cif_konsumen', 'cno');
     }
-    // Jika belum ada foto, tampilkan gambar default berdasarkan brand
-    return asset('images/default-car.png');
-}
-protected $fillable = [
-    'vin', 'showroom_id', 'brand', 'model', 'price', 'image_path', 'is_active'
-];
 }

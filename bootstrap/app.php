@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         // Here is the new line!
+        $middleware->trustProxies(at: '*');
         $middleware->validateCsrfTokens(except: [
             '/upload',
         ]);
