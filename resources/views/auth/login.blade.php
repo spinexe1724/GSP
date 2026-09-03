@@ -30,11 +30,8 @@
             <div class="w-full max-w-[400px] bg-white/20 backdrop-blur-2xl p-10 rounded-[40px] shadow-2xl border border-white/10 mt-8 md:mt-0 relative overflow-hidden">
                 
                 <div class="mb-10 text-center md:text-left">
-                    <div class="w-12 h-12 bg-red-700 rounded-2xl flex items-center justify-center shadow-lg mb-6 mx-auto md:mx-0">
-                        <span class="text-white font-black text-2xl uppercase">G</span>
-                    </div>
                     <h2 class="text-3xl font-black text-white tracking-tight">Login.</h2>
-                    <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Gratama Dealer Access</p>
+                    <p class="text-white/60 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Gratama Showroom Partner</p>
                 </div>
 
                 <form action="" method="POST" class="space-y-4">

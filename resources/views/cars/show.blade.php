@@ -8,7 +8,7 @@
 
         {{-- Navigasi Balik --}}
         <div class="flex items-center justify-between">
-            <a href="{{ route('cars.index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#800000] transition-colors">
+            <a href="{{ route('portal.index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#800000] transition-colors">
                 ← Kembali ke Katalog
             </a>
             <span class="text-xs font-mono bg-slate-100 text-slate-600 px-3 py-1 rounded-xl">

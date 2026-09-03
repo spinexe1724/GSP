@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShowroomController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\PortalController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
@@ -17,9 +18,10 @@ Route::middleware('guest')->group(function () {
 });
 
 // --- Rute PUBLIC (Bisa diakses siapa saja) ---
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+//Route::get('/', function ()     return view('portal.index'); // Sesuaikan dengan nama file blade kamu}); //
+
+Route::get('/', [PortalController::class, 'index'])->name('portal.index');
+
 // --- Rute AUTH (Harus Login) ---
 Route::middleware('auth')->group(function () {
     
