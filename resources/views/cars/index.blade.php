@@ -1,244 +1,144 @@
 @extends('layouts.app')
 
-@section('title', 'Mobilin - Find the Best Used Car')
+@section('title', 'Katalog Unit Mobil')
 
 @section('content')
-<div class="relative min-h-screen bg-white">
-    
+<div class="pt-24 pb-20 bg-[#F8F9FA] min-h-screen font-['Plus_Jakarta_Sans']">
+    <div class="max-w-7xl mx-auto px-6 space-y-8">
 
-    
-    {{-- 1. HERO SECTION --}}
-    <div class="relative h-[600px] w-full overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2000" 
-             class="absolute inset-0 w-full h-full object-cover" alt="Hero Background">
-        
-        <div class="absolute inset-0 bg-black/30"></div>
-
-        <div class="relative z-10 container mx-auto px-6 pt-32 text-white">
-            <div class="max-w-2xl">
-                <h1 class="text-5xl md:text-7xl font-bold leading-tight">
-                    Find the Best Used Car, <br>
-                    Just a Tap Away.
-                </h1>
-                <p class="mt-6 text-lg opacity-90 max-w-sm">
-                    Find the Car That Fits You. One Ride at a Time, Driving Your Future Today.
-                </p>
+        {{-- Header & Pencarian --}}
+        <div class="bg-white p-6 md:p-8 rounded-[28px] border border-slate-100 shadow-sm space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 tracking-tight">Katalog Unit Mobil</h1>
+                    <p class="text-xs text-slate-500 mt-1">Daftar unit mobil dari jaringan showroom rekanan terdaftar.</p>
+                </div>
+                <div class="text-xs font-bold text-slate-500 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
+                    Total: <span class="text-[#800000]">{{ $cars->total() }} Unit</span>
+                </div>
             </div>
-        </div>
-    </div>
 
-    {{-- 2. FLOATING SEARCH BOX --}}
-    <div class="container mx-auto px-6 -mt-32 relative z-20">
-        <div class="bg-white rounded-[40px] shadow-2xl p-8 md:p-12">
-            <h2 class="text-2xl font-bold text-gray-800 mb-8">Find the Best Cars</h2>
-            
-            <form action="#" method="GET">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-gray-700">Select Brand</label>
-                        <input type="text" placeholder="Enter Brand" 
-                               class="w-full bg-gray-100 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-gray-700">Price</label>
-                        <select class="w-full bg-gray-100 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 appearance-none">
-                            <option>Price</option>
-                            <option>Under 200jt</option>
-                            <option>200jt - 500jt</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-gray-700">Condition</label>
-                        <select class="w-full bg-gray-100 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 appearance-none">
-                            <option>Select Condition</option>
-                            <option>New</option>
-                            <option>Used</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-gray-700">Dealer Location</label>
-                        <select class="w-full bg-gray-100 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 appearance-none">
-                            <option>Select Dealer Location</option>
-                            <option>Jakarta</option>
-                            <option>Surabaya</option>
-                        </select>
-                    </div>
+            {{-- Form Filter & Search --}}
+            <form action="{{ route('cars.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div class="md:col-span-2">
+                    <input type="text" 
+                           name="search" 
+                           value="{{ request('search') }}" 
+                           placeholder="Cari merk, tipe, nopol, atau showroom..." 
+                           class="w-full px-4 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#800000] bg-slate-50">
                 </div>
 
-                <div class="mt-10 flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-sm font-bold text-gray-800 mr-2">Type:</span>
-                        @foreach(['SUV', 'Sedan', 'Hatchback', 'Coupe', 'Minivan', 'City Car', 'Truck', 'D-Cab'] as $type)
-                            <button type="button" class="px-4 py-1.5 rounded-full border border-gray-200 text-xs font-medium hover:bg-black hover:text-white transition">
-                                {{ $type }}
-                            </a>
+                <div>
+                    <select name="merk" onchange="this.form.submit()" class="w-full px-3 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none bg-slate-50 text-slate-700">
+                        <option value="">Semua Merk</option>
+                        @foreach($brands as $brand)
+                            <option value="{{ $brand }}" {{ request('merk') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                         @endforeach
-                    </div>
-                    
-                    <button type="submit" class="bg-[#244191] hover:bg-blue-900 text-white px-10 py-3 rounded-xl font-bold transition shadow-lg">
-                        Search Properties
+                    </select>
+                </div>
+
+                <div class="flex gap-2">
+                    <select name="transmisi" onchange="this.form.submit()" class="w-full px-3 py-2.5 text-xs border border-slate-200 rounded-xl focus:outline-none bg-slate-50 text-slate-700">
+                        <option value="">Semua Transmisi</option>
+                        <option value="Manual" {{ request('transmisi') == 'Manual' ? 'selected' : '' }}>Manual</option>
+                        <option value="Automatic" {{ request('transmisi') == 'Automatic' ? 'selected' : '' }}>Automatic</option>
+                    </select>
+                    <button type="submit" class="bg-[#800000] hover:bg-red-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl uppercase tracking-wider transition-all">
+                        Cari
                     </button>
                 </div>
             </form>
         </div>
-    </div>
-<br>
-    {{-- 3. TYPE CARS SECTION --}}
-    <div class="container mx-auto px-10 mb-24">
-        <div class="flex justify-between items-end mb-8">
-            <div>
-                <h2 class="text-2xl font-black text-gray-900">Type Cars</h2>
-                <p class="text-gray-500 text-sm mt-1">Pilih kategori mobil yang sesuai dengan kebutuhan Anda</p>
-            </div>
-            
-            {{-- Navigation Arrows --}}
-<div class="flex gap-3 relative z-30"> {{-- Tambahkan z-30 agar tidak tertutup elemen lain --}}
-    <button onclick="scrollSlider('type-slider', 'left')" 
-            class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition shadow-md bg-white text-gray-800">
-        <span class="material-icons text-2xl">chevron_left</span>
-    </button>
-    
-    <button onclick="scrollSlider('type-slider', 'right')" 
-            class="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:text-white transition shadow-md bg-white text-gray-800">
-        <span class="material-icons text-2xl">chevron_right</span>
-    </button>
-</div>
-        </div>
 
-        {{-- Slider Container --}}
-        <div id="type-slider" class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide pb-4">
-            @php
-                $types = [
-                    ['name' => 'SUV', 'image' => 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=500'],
-                    ['name' => 'Sedan', 'image' => 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=500'],
-                    ['name' => 'Hatchback', 'image' => 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=500'],
-                    ['name' => 'Coupe', 'image' => 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=500'],
-                    ['name' => 'Minivan', 'image' => 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=500'],
-                    ['name' => 'Electric', 'image' => 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=500'],
-                    ['name' => 'Truck', 'image' => 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=500'],
-                ];
-            @endphp
+        {{-- Grid Kartu Mobil --}}
+        @if($cars->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach ($cars as $car)
+                    <div class="bg-white rounded-[24px] border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col overflow-hidden group">
+                        
+                        {{-- Thumbnail Foto Depan --}}
+                        <div class="aspect-[16/10] bg-slate-100 relative overflow-hidden">
+                            @if($car->foto_depan)
+                                <img src="{{ asset('storage/' . $car->foto_depan) }}" 
+                                     alt="{{ $car->nama_merk }} {{ $car->tipe_kend }}" 
+                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                                    <svg class="w-10 h-10 mb-1 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider">Foto Belum Tersedia</span>
+                                </div>
+                            @endif
 
-            @foreach($types as $type)
-            <div class="flex-shrink-0 w-72 group cursor-pointer">
-                <div class="relative h-48 rounded-[35px] overflow-hidden mb-4 shadow-sm border border-gray-100">
-                    <img src="{{ $type['image'] }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700 brightness-90 group-hover:brightness-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60 group-hover:opacity-40 transition"></div>
-                    <div class="absolute bottom-6 left-8">
-                        <span class="text-white font-bold text-lg tracking-wide">{{ $type['name'] }}</span>
+                            {{-- Badge Plat Nomor --}}
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-black/75 backdrop-blur-md text-white font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                                    {{ $car->no_polisi ?? '-' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Konten Ringkas --}}
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="text-[10px] font-bold text-[#800000] uppercase tracking-wider">
+                                    {{ $car->nama_merk ?? 'Mobil' }} • {{ $car->tahun_buat ?? '-' }}
+                                </div>
+                                <h3 class="font-black text-slate-900 text-sm mt-0.5 group-hover:text-[#800000] transition-colors line-clamp-1">
+                                    {{ $car->tipe_kend ?? '-' }}
+                                </h3>
+
+                                {{-- Spesifikasi Singkat --}}
+                                <div class="flex flex-wrap gap-1.5 mt-3">
+                                    @if($car->transmisi)
+                                        <span class="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                                            {{ $car->transmisi }}
+                                        </span>
+                                    @endif
+                                    @if($car->warna_kend)
+                                        <span class="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                                            {{ $car->warna_kend }}
+                                        </span>
+                                    @endif
+                                    @if($car->jenis_kend)
+                                        <span class="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-md font-medium">
+                                            {{ $car->jenis_kend }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <div class="truncate max-w-[150px]">
+                                    <p class="text-[10px] text-slate-400 uppercase font-bold">Showroom</p>
+                                    <p class="text-xs font-bold text-slate-700 truncate">
+                                        {{ $car->showroom->nmdealer ?? 'Showroom Rekanan' }}
+                                    </p>
+                                </div>
+
+                                <a href="{{ route('cars.show', $car->id) }}" 
+                                   class="px-3.5 py-2 bg-[#800000] hover:bg-red-900 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all">
+                                    Detail
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    {{-- Script Navigasi --}}
-    <script>
-        function scrollSlider(id, direction) {
-            const slider = document.getElementById(id);
-            const scrollAmount = 300; 
-            if (direction === 'left') {
-                slider.scrollLeft -= scrollAmount;
-            } else {
-                slider.scrollLeft += scrollAmount;
-            }
-        }
-    </script>
-
-    {{-- 2. ALL BRANDS SECTION (Full Width Background) --}}
-    <div class="bg-[#f5f5f5] w-full py-16 mb-20"> {{-- Wrapper ini yang memberikan warna penuh ke ujung --}}
-        <div class="container mx-auto px-10"> {{-- Container ini menjaga konten tetap di tengah --}}
-            <div class="flex justify-between items-center mb-10">
-                <h2 class="text-2xl font-black text-gray-900">All Brands</h2>
-                <a href="#" class="text-[#244191] text-sm font-bold hover:underline">See all</a>
-            </div>
-
-            <div class="flex items-center gap-6 overflow-x-auto pb-4 scrollbar-hide">
-                @php
-                    $brands = [
-                        ['name' => 'Toyota', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Toyota_logo_%28Red%29.svg/960px-Toyota_logo_%28Red%29.svg.png'],
-                        ['name' => 'Honda', 'logo' => 'https://www.car-logos.org/wp-content/uploads/2011/09/honda.png'],
-                        ['name' => 'Hyundai', 'logo' => 'https://e7.pngegg.com/pngimages/466/857/png-clipart-hyundai-motor-company-car-logo-hyundai-starex-hyundai-emblem-text.png'],
-                        ['name' => 'Kia', 'logo' => 'https://e7.pngegg.com/pngimages/783/483/png-clipart-kia-motors-logo-symbol-design-kia-text-trademark.png'],
-                        ['name' => 'Ford', 'logo' => 'https://www.citypng.com/public/uploads/preview/ford-logo-emblem-hd-png-70175169471401511cpxj0ogw.png'],
-                        ['name' => 'Chevrolet', 'logo' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLdpO9foQSpbs6ttn9Y1EdmxvEY9zekXkfNg&s'],
-                        ['name' => 'Nissan', 'logo' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3_4xRHQcnM4mRQ5Pj1GCnDBt3OcFGd7yu5A&s'],
-                        ['name' => 'Mazda', 'logo' => 'https://fabrikbrands.com/wp-content/uploads/Mazda-Logo-1a-1155x770.png'],
-                        ['name' => 'Subaru', 'logo' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDut8Hm5EWuNmihBPvgnoFIqTPVWNzirDCzQ&s'],
-                        ['name' => 'VW', 'logo' => 'https://toppng.com/uploads/preview/volkswagen-logo-vector-free-download-11574231715elzfikw8ap.png'],
-                        ['name' => 'BMW', 'logo' => 'https://i.pinimg.com/1200x/9b/98/fe/9b98fe7973d0cb009e68fee1a586417a.jpg'],
-                        ['name' => 'Mercedes', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/500px-Mercedes-Logo.svg.png'],
-                    ];
-                @endphp
-
-                @foreach($brands as $brand)
-                <div class="flex-shrink-0 group cursor-pointer text-center">
-                    <div class="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl flex items-center justify-center p-5 border border-transparent group-hover:border-[#244191] transition-all duration-300 mb-3 shadow-sm group-hover:shadow-md">
-                        <img src="{{ $brand['logo'] }}" alt="{{ $brand['name'] }}" class="w-full h-full object-contain grayscale group-hover:grayscale-0 transition duration-300">
-                    </div>
-                    <span class="text-xs font-bold text-gray-500 group-hover:text-gray-900 transition">{{ $brand['name'] }}</span>
-                </div>
                 @endforeach
             </div>
-        </div>
-    </div>
-   
 
-    {{-- 4. CAR LIST GRID (Optional, following your original logic) --}}
-    <div class="container mx-auto px-6 py-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @foreach($cars as $car)
-                <div class="group cursor-pointer">
-                    <div class="bg-white rounded-[35px] p-5 mb-4 shadow-sm group-hover:shadow-xl transition-all border border-gray-100">
-                        <div class="w-full aspect-video rounded-[25px] overflow-hidden mb-4">
-                            <img src="{{ $car->image_path }}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="font-bold text-xl text-gray-800">{{ $car->brand }} {{ $car->model }}</h3>
-                                <p class="text-blue-600 font-black mt-1">Rp {{ number_format($car->price / 1000000, 0) }}jt</p>
-                            </div>
-                            <a href="{{ route('cars.show', $car->id) }}" class="bg-gray-100 hover:bg-black hover:text-white px-4 py-2 rounded-full text-xs font-bold transition">
-                                View
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
+            {{-- Pagination --}}
+            <div class="pt-4">
+                {{ $cars->links() }}
+            </div>
+        @else
+            <div class="bg-white rounded-[24px] border border-slate-100 p-12 text-center space-y-3">
+                <p class="text-slate-400 text-sm">Tidak ada unit mobil yang cocok dengan kriteria pencarian.</p>
+                <a href="{{ route('cars.index') }}" class="inline-block text-xs font-bold text-[#800000] underline">
+                    Reset Filter
+                </a>
+            </div>
+        @endif
+
     </div>
-    {{-- Include Footer --}}
-    @include('layouts.footer')
 </div>
-<script>
-    <script>
-        window.onscroll = function() {
-            const nav = document.getElementById('navbar');
-            const logoText = document.getElementById('nav-logo-text');
-            const navLinks = nav.querySelectorAll('a:not(.bg-white)');
-
-            if (window.pageYOffset > 50) {
-                // Saat di-scroll ke bawah
-                nav.classList.add('bg-white/80', 'backdrop-blur-md', 'shadow-sm', 'py-4');
-                nav.classList.remove('py-6');
-                logoText.classList.replace('text-white', 'text-gray-900');
-                navLinks.forEach(link => {
-                    link.classList.replace('text-white', 'text-gray-700');
-                });
-            } else {
-                // Saat kembali ke atas (Hero)
-                nav.classList.remove('bg-white/80', 'backdrop-blur-md', 'shadow-sm', 'py-4');
-                nav.classList.add('py-6');
-                logoText.classList.replace('text-gray-900', 'text-white');
-                navLinks.forEach(link => {
-                    link.classList.replace('text-gray-700', 'text-white');
-                });
-            }
-        };
-    </script>
-</script>
 @endsection

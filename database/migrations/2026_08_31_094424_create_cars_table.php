@@ -18,10 +18,16 @@ return new class extends Migration
             $table->string('no_cif')->index(); 
             
             // Kolom data spesifik mobil dari Excel
-            $table->string('nopol')->nullable()->index();
-            $table->string('merk')->nullable();
-            $table->string('type')->nullable();
-            $table->string('tahun')->nullable();
+            $table->string('no_polisi')->nullable()->index();
+            $table->string('jenis_kend')->nullable();
+            $table->string('nama_merk')->nullable();
+            $table->string('tipe_kend')->nullable();
+            $table->string('transmisi')->nullable();
+            $table->string('warna_kend')->nullable();
+            $table->string('tahun_buat')->nullable();
+            $table->string('foto_depan')->nullable();
+            $table->string('foto_samping')->nullable();
+            $table->string('foto_belakang')->nullable();
             
             $table->timestamps();
         });

@@ -98,15 +98,18 @@
                                                     <div class="flex items-start justify-between gap-2 border-b border-slate-200/60 pb-2">
                                                         <div>
                                                             <div class="font-black text-slate-900 text-xs">
-                                                                {{ $car->merk }} {{ $car->type }}
+                                                                {{ $car->nama_merk }} {{ $car->tipe_kend }}
                                                             </div>
+                                                            <div class="text-[10px] text-slate-400">
+    {{ $car->jenis_kend ?? '-' }} | {{ $car->transmisi ?? '-' }} | {{ $car->warna_kend ?? '-' }} | Thn {{ $car->tahun_buat ?? '-' }}
+</div>
                                                             <div class="text-[10px] text-slate-400">
                                                                 Tahun {{ $car->tahun ?? '-' }} | CIF: <span class="font-mono">{{ $car->no_cif }}</span>
                                                             </div>
                                                         </div>
-                                                        <span class="bg-red-100 text-red-800 font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
-                                                            {{ $car->nopol ?? '-' }}
-                                                        </span>
+                                                       <span class="bg-red-100 text-red-800 font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
+    {{ $car->no_polisi ?? '-' }}
+</span>
                                                     </div>
 
                                                     {{-- Baris Galeri 3 Sisi Foto --}}

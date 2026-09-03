@@ -41,4 +41,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
     Route::get('/showrooms/monitoring', [ShowroomController::class, 'monitoring'])->name('showrooms.monitoring');
     Route::post('/cars/upload-zip-photos', [CarController::class, 'uploadZipPhotos'])->name('cars.photos.zip');
+    Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
+Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
 require __DIR__.'/auth.php';
