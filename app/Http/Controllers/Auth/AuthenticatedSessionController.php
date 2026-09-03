@@ -28,7 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-return redirect()->intended(route('showroom.profile'));
+if (Auth::user()->is_admin) {
+        return redirect()->intended(route('admin.dashboard'));
+    }
+
+    // Jika user biasa / showroom
+    return redirect()->intended(route('cars.index'));
     }
 
     /**

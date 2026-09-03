@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShowroomController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\PortalController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
@@ -29,20 +30,28 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+
 
     // Profile (Urutan dibedakan agar tidak bentrok)
     Route::get('/showroom/profile', [ShowroomController::class, 'myProfile'])->name('showroom.profile');
   
 });
- Route::get('/upload-showroom', [ShowroomController::class, 'index'])->name('showrooms.upload');
+
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    // Dashboard Admin
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // Showroom Routes
+    Route::get('/upload-showroom', [ShowroomController::class, 'index'])->name('showrooms.upload');
     Route::post('/upload-showroom', [ShowroomController::class, 'upload'])->name('showrooms.import');
-   Route::get('/upload-cars', [CarController::class, 'createUpload'])->name('cars.upload');
-    Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
     Route::get('/showrooms/monitoring', [ShowroomController::class, 'monitoring'])->name('showrooms.monitoring');
+
+    // Car & Photos Routes
+    Route::get('/upload-cars', [CarController::class, 'createUpload'])->name('cars.upload');
+    Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
     Route::post('/cars/upload-zip-photos', [CarController::class, 'uploadZipPhotos'])->name('cars.photos.zip');
+});
+
     Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
 require __DIR__.'/auth.php';

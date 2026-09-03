@@ -191,34 +191,41 @@ public function show($id)
             ->with('totalSkipped', $totalSkipped);
     }
 public function monitoring(Request $request)
-{
-    // Eager load relasi cars agar query ringan dan cepat
-    $query = Showroom::with('cars');
+    {
+        $query = Showroom::with('cars');
 
-    // Filter Pencarian (Nama Dealer, CNO, KTP, atau Pemilik)
-    if ($request->filled('search')) {
-        $search = trim($request->search);
-        $query->where(function ($q) use ($search) {
-            $q->where('nmdealer', 'like', "%{$search}%")
-              ->orWhere('cno', 'like', "%{$search}%")
-              ->orWhere('clprnoktp', 'like', "%{$search}%")
-              ->orWhere('cnm', 'like', "%{$search}%")
-              ->orWhere('kota', 'like', "%{$search}%")
-              // Bisa juga cari berdasarkan nopol/merk mobil yang ada di showroom tersebut
-              ->orWhereHas('cars', function ($carQuery) use ($search) {
-                  $carQuery->where('nopol', 'like', "%{$search}%")
-                           ->orWhere('merk', 'like', "%{$search}%");
-              });
-        });
+        // Pencarian komprehensif pada Showroom dan Field Cars Terbaru
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                // Pencarian data Showroom
+                $q->where('cno', 'like', "%{$search}%")
+                  ->orWhere('nmdealer', 'like', "%{$search}%")
+                  ->orWhere('cnm', 'like', "%{$search}%")
+                  ->orWhere('clprnoktp', 'like', "%{$search}%")
+                  ->orWhere('kota', 'like', "%{$search}%")
+                  ->orWhere('kdcab', 'like', "%{$search}%")
+                  // Pencarian relasi ke tabel Cars dengan field-field baru
+                  ->orWhereHas('cars', function ($carQuery) use ($search) {
+                      $carQuery->where('no_polisi', 'like', "%{$search}%")
+                               ->orWhere('no_cif', 'like', "%{$search}%")
+                               ->orWhere('nama_merk', 'like', "%{$search}%")
+                               ->orWhere('tipe_kend', 'like', "%{$search}%")
+                               ->orWhere('jenis_kend', 'like', "%{$search}%")
+                               ->orWhere('warna_kend', 'like', "%{$search}%")
+                               ->orWhere('transmisi', 'like', "%{$search}%")
+                               ->orWhere('tahun_buat', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter Showroom yang memiliki unit mobil
+        if ($request->filled('has_cars') && $request->has_cars == '1') {
+            $query->has('cars');
+        }
+
+        $showrooms = $query->latest()->paginate(10)->withQueryString();
+
+        return view('showrooms.monitoring', compact('showrooms'));
     }
-
-    // Filter: Hanya tampilkan showroom yang punya mobil
-    if ($request->get('has_cars') === '1') {
-        $query->has('cars');
-    }
-
-    $showrooms = $query->paginate(20)->withQueryString();
-
-    return view('showrooms.monitoring', compact('showrooms'));
-}
 }

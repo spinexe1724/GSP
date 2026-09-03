@@ -6,33 +6,38 @@
 <div class="pt-28 pb-20 bg-[#F8F9FA] min-h-screen font-['Plus_Jakarta_Sans']">
     <div class="max-w-7xl mx-auto px-6 space-y-6">
 
-        {{-- Header & Statistik Singkat --}}
+        {{-- Header & Bar Pencarian --}}
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
             <div>
                 <h1 class="text-2xl font-black text-slate-900 tracking-tight">Monitoring Showroom & Unit Mobil</h1>
-                <p class="text-xs text-slate-500 mt-1">Pengecekan integrasi relasi CIF / CNO dan ketersediaan foto 3 sisi unit mobil.</p>
+                <p class="text-xs text-slate-500 mt-1">Pengecekan integrasi relasi no_cif / CNO dan verifikasi foto 3 sisi unit mobil.</p>
             </div>
 
-            {{-- Filter & Search Form --}}
+            {{-- Form Pencarian dengan Field Terbaru --}}
             <form action="{{ route('showrooms.monitoring') }}" method="GET" class="flex flex-wrap items-center gap-2">
                 <input type="text" 
                        name="search" 
                        value="{{ request('search') }}" 
-                       placeholder="Cari CNO, Dealer, Nopol, KTP..." 
-                       class="px-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-red-800 bg-slate-50">
+                       placeholder="Cari No Polisi, CIF, Merk, Tipe, Warna, Showroom..." 
+                       class="px-4 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-[#800000] bg-slate-50 w-72">
 
                 <select name="has_cars" onchange="this.form.submit()" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none bg-slate-50 text-slate-700">
                     <option value="">Semua Showroom</option>
                     <option value="1" {{ request('has_cars') === '1' ? 'selected' : '' }}>Hanya yang Memiliki Mobil</option>
                 </select>
 
-                <button type="submit" class="bg-[#800000] text-white text-xs font-bold px-4 py-2 rounded-xl uppercase tracking-wider">
-                    Filter
+                <button type="submit" class="bg-[#800000] hover:bg-red-900 text-white text-xs font-bold px-4 py-2 rounded-xl uppercase tracking-wider transition-all">
+                    Cari
                 </button>
+                @if(request('search') || request('has_cars'))
+                    <a href="{{ route('showrooms.monitoring') }}" class="text-slate-400 hover:text-slate-600 text-xs px-2 py-2">
+                        Reset
+                    </a>
+                @endif
             </form>
         </div>
 
-        {{-- Tabel Monitoring Showroom --}}
+        {{-- Tabel Monitoring --}}
         <div class="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs text-slate-600">
@@ -41,7 +46,7 @@
                             <th class="py-4 px-6 w-1/4">Informasi Dealer</th>
                             <th class="py-4 px-6 w-1/6">CNO / Pemilik</th>
                             <th class="py-4 px-6 text-center w-24">Jml Unit</th>
-                            <th class="py-4 px-6">Daftar Mobil & Foto (Depan, Samping, Belakang)</th>
+                            <th class="py-4 px-6">Daftar Unit Mobil & Foto 3 Sisi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -88,31 +93,31 @@
                                     @endif
                                 </td>
 
-                                {{-- Rincian Unit Mobil & Foto --}}
+                                {{-- Rincian Mobil dengan Field Terbaru --}}
                                 <td class="py-4 px-6">
                                     @if($showroom->cars->isNotEmpty())
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             @foreach ($showroom->cars as $car)
                                                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-3">
-                                                    {{-- Info Text Mobil --}}
+                                                    {{-- Info Unit Mobil --}}
                                                     <div class="flex items-start justify-between gap-2 border-b border-slate-200/60 pb-2">
                                                         <div>
                                                             <div class="font-black text-slate-900 text-xs">
                                                                 {{ $car->nama_merk }} {{ $car->tipe_kend }}
                                                             </div>
+                                                            <div class="text-[10px] text-slate-500 mt-0.5">
+                                                                {{ $car->jenis_kend ?? '-' }} • {{ $car->transmisi ?? '-' }} • {{ $car->warna_kend ?? '-' }} • Thn {{ $car->tahun_buat ?? '-' }}
+                                                            </div>
                                                             <div class="text-[10px] text-slate-400">
-    {{ $car->jenis_kend ?? '-' }} | {{ $car->transmisi ?? '-' }} | {{ $car->warna_kend ?? '-' }} | Thn {{ $car->tahun_buat ?? '-' }}
-</div>
-                                                            <div class="text-[10px] text-slate-400">
-                                                                Tahun {{ $car->tahun ?? '-' }} | CIF: <span class="font-mono">{{ $car->no_cif }}</span>
+                                                                No CIF: <span class="font-mono text-slate-700 font-bold">{{ $car->no_cif }}</span>
                                                             </div>
                                                         </div>
-                                                       <span class="bg-red-100 text-red-800 font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
-    {{ $car->no_polisi ?? '-' }}
-</span>
+                                                        <span class="bg-red-100 text-[#800000] font-mono text-[10px] font-black px-2 py-0.5 rounded uppercase">
+                                                            {{ $car->no_polisi ?? '-' }}
+                                                        </span>
                                                     </div>
 
-                                                    {{-- Baris Galeri 3 Sisi Foto --}}
+                                                    {{-- Galeri 3 Sisi Foto --}}
                                                     <div class="grid grid-cols-3 gap-2">
                                                         {{-- Tampak Depan --}}
                                                         <div class="space-y-1">
@@ -121,7 +126,7 @@
                                                                 <a href="{{ asset('storage/' . $car->foto_depan) }}" target="_blank">
                                                                     <img src="{{ asset('storage/' . $car->foto_depan) }}" 
                                                                          alt="Depan" 
-                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all cursor-pointer">
+                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>
                                                             @else
                                                                 <div class="w-full h-14 bg-slate-200/60 rounded-lg flex items-center justify-center text-[9px] text-slate-400 font-bold italic">
@@ -137,7 +142,7 @@
                                                                 <a href="{{ asset('storage/' . $car->foto_samping) }}" target="_blank">
                                                                     <img src="{{ asset('storage/' . $car->foto_samping) }}" 
                                                                          alt="Samping" 
-                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all cursor-pointer">
+                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>
                                                             @else
                                                                 <div class="w-full h-14 bg-slate-200/60 rounded-lg flex items-center justify-center text-[9px] text-slate-400 font-bold italic">
@@ -153,7 +158,7 @@
                                                                 <a href="{{ asset('storage/' . $car->foto_belakang) }}" target="_blank">
                                                                     <img src="{{ asset('storage/' . $car->foto_belakang) }}" 
                                                                          alt="Belakang" 
-                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all cursor-pointer">
+                                                                         class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>
                                                             @else
                                                                 <div class="w-full h-14 bg-slate-200/60 rounded-lg flex items-center justify-center text-[9px] text-slate-400 font-bold italic">
@@ -172,8 +177,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="py-12 text-center text-slate-400">
-                                    Tidak ada data showroom ditemukan.
+                                <td colspan="4" class="py-12 text-center text-slate-400 text-xs">
+                                    Tidak ada data showroom atau unit mobil yang cocok dengan pencarian.
                                 </td>
                             </tr>
                         @endforelse
