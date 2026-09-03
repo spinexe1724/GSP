@@ -52,22 +52,22 @@
 
             {{-- Grid Brand (2 Baris, 6 Kolom) --}}
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                @php
-                    $popularBrands = [
-                        ['name' => 'Honda', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Honda_logo.svg'],
-                        ['name' => 'Toyota', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Toyota.svg'],
-                        ['name' => 'Suzuki', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/1/12/Suzuki_logo_2016.svg'],
-                        ['name' => 'Nissan', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Nissan_2020_logo.svg'],
-                        ['name' => 'Mitsubishi', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/5/5a/Mitsubishi_logo.svg'],
-                        ['name' => 'Daihatsu', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/0/07/Daihatsu_logo.svg'],
-                        ['name' => 'Chevrolet', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/1/18/Chevrolet_logo.svg'],
-                        ['name' => 'Hyundai', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/4/44/Hyundai_Motor_Company_logo.svg'],
-                        ['name' => 'Isuzu', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/a/a2/Isuzu_logo.svg'],
-                        ['name' => 'Mazda', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/0/02/Mazda_logo_2018.svg'],
-                        ['name' => 'Subaru', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/4/47/Subaru_logo.svg'],
-                        ['name' => 'Wuling', 'logo' => 'https://upload.wikimedia.org/wikipedia/commons/0/03/Wuling_Motors_logo.svg'],
-                    ];
-                @endphp
+            @php
+    $popularBrands = [
+        ['name' => 'Honda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/honda.svg'],
+        ['name' => 'Toyota', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/toyota.svg'],
+        ['name' => 'Suzuki', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/suzuki.svg'],
+        ['name' => 'Nissan', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/nissan.svg'],
+        ['name' => 'Mitsubishi', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mitsubishi.svg'],
+        ['name' => 'Daihatsu', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/daihatsu.svg'],
+        ['name' => 'Chevrolet', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/chevrolet.svg'],
+        ['name' => 'Hyundai', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/hyundai.svg'],
+        ['name' => 'Isuzu', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/isuzu.svg'],
+        ['name' => 'Mazda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mazda.svg'],
+        ['name' => 'Subaru', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/subaru.svg'],
+        ['name' => 'Wuling', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/wuling.svg'],
+    ];
+@endphp
 
                 @foreach($popularBrands as $brand)
                     <a href="{{ route('cars.index', ['brand' => $brand['name']]) }}" 
@@ -87,7 +87,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
             {{-- SIDEBAR FILTER (KIRI) - MODEL OLX --}}
-            <aside class="lg:col-span-3 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sticky top-6">
+            <aside class="lg:col-span-3 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto">
                 <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
                     <h3 class="font-black text-slate-900 text-base">Filter Pencarian</h3>
                     <a href="{{ route('cars.index') }}" class="text-xs text-red-600 font-bold hover:underline">Reset</a>

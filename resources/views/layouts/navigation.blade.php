@@ -2,6 +2,7 @@
 <div class="relative min-h-screen bg-white">
 
     {{-- NAVBAR --}}
+    @if(!request()->is('admin*') && (!auth()->check() || !auth()->user()->is_admin))
     <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-6">
         <div class="container mx-auto flex justify-between items-center">
             {{-- Logo --}}
@@ -26,6 +27,7 @@
     <a href="{{ route('login') }}" id="nav-login-btn"  class="bg-Red text-black px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-100 transition">
         Login
     </a>
+    @endif
 </div>
         </div>
     </nav>

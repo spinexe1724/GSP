@@ -18,6 +18,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
+        @if(!auth()->check() || auth()->user()->role !== 'admin')
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
             @include('layouts.navigation')
 
@@ -29,11 +30,12 @@
                     </div>
                 </header>
             @endisset
-
+            
             <!-- Page Content -->
             <main>
                  @yield('content') 
             </main>
         </div>
+        @endif
     </body>
 </html>

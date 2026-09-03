@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Monitoring Showroom & Unit Mobil')
+@section('title', 'Admin Dashboard - Kelola Data')
 
 @section('content')
 <div class="pt-28 pb-20 bg-[#F8F9FA] min-h-screen font-['Plus_Jakarta_Sans']">
