@@ -290,5 +290,23 @@ class CarController extends Controller
             ->with('success', $responseMessage)
             ->with('unmatchedNopol', $unmatchedNopol);
     }
+    
+public function destroy($id)
+{
+    $car = Car::findOrFail($id);
+
+    // Hapus file fisik foto jika ada di disk storage public
+    $photoFields = ['foto_depan', 'foto_samping', 'foto_belakang'];
+    foreach ($photoFields as $field) {
+        if (!empty($car->$field) && Storage::disk('public')->exists($car->$field)) {
+            Storage::disk('public')->delete($car->$field);
+        }
+    }
+
+    $nopol = $car->no_polisi;
+    $car->delete();
+
+    return redirect()->back()->with('success', "Unit mobil dengan plat nomor {$nopol} berhasil dihapus.");
+}
 
 }
