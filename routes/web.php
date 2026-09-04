@@ -50,6 +50,7 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
     Route::get('/upload-cars', [CarController::class, 'createUpload'])->name('cars.upload');
     Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
     Route::post('/cars/upload-zip-photos', [CarController::class, 'uploadZipPhotos'])->name('cars.photos.zip');
+    Route::delete('/admin/cars/{id}', [CarController::class, 'destroy'])->name('admin.cars.destroy');
 });
 
     Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
