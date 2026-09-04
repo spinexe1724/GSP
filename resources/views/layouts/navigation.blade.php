@@ -10,21 +10,21 @@
                 <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                 </div>
-                <span class="text-black font-bold text-2xl tracking-tighter" id="nav-logo-text">GSP</span>
+                <span class="text-white font-bold text-2xl tracking-tighter" id="nav-logo-text">GSP</span>
             </div>
 
             {{-- Menu Utama --}}
             <div class="hidden md:flex items-center gap-10">
-                <a href="#" class="text-black hover:opacity-75 font-medium transition active-link">Home</a>
-                <a href="#" class="text-black hover:opacity-75 font-medium transition">Cars</a>
-                <a href="#" class="text-black hover:opacity-75 font-medium transition">Brands</a>
-                <a href="#" class="text-black hover:opacity-75 font-medium transition">Contact</a>
+                <a href="#" class="text-white hover:opacity-75 font-medium transition active-link">Home</a>
+                <a href="#" class="text-white hover:opacity-75 font-medium transition">Cars</a>
+                <a href="#" class="text-white hover:opacity-75 font-medium transition">Brands</a>
+                <a href="#" class="text-white hover:opacity-75 font-medium transition">Contact</a>
             </div>
 
             {{-- Button --}}
             <div class="flex items-center gap-4">
     
-    <a href="{{ route('login') }}" id="nav-login-btn"  class="bg-Red text-black px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-100 transition">
+    <a href="{{ route('login') }}" id="nav-login-btn"  class="bg-Red text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-100 transition">
         Login
     </a>
     @endif
