@@ -13,7 +13,7 @@ return new class extends Migration
     {
       Schema::create('showrooms', function (Blueprint $table) {
     $table->id();
-    $table->string('cno')->nullable();
+    $table->string('cno')->unique();
     $table->string('kdcab');
     $table->string('inisial');
     $table->string('nmdealer');
@@ -25,7 +25,7 @@ return new class extends Migration
     $table->string('dlmoutglfr');
     $table->string('dlmoutglto');
     $table->text('alamat');
-    $table->text('clprnoktp')->unique();
+    $table->text('clprnoktp')->nullable();
     $table->timestamps();
 });
     }

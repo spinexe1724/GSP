@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Showroom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-
+use Rap2hpoutre\FastExcel\FastExcel;
+use Carbon\Carbon;
 class ShowroomController extends Controller
 {
   public function index()
@@ -38,158 +38,90 @@ public function show($id)
 
     return view('showrooms.profile', compact('showroom'));
 }
-   public function upload(Request $request)
+public function upload(Request $request)
     {
-        ini_set('max_execution_time', '600');
-        ini_set('memory_limit', '512M');
+ $request->validate([
+        'file' => 'required|mimes:xlsx,csv|max:10240',
+    ], [
+        'file.required' => 'Pilih file Excel showroom terlebih dahulu.',
+        'file.mimes'    => 'Format file ditolak! Gunakan file .xlsx atau .csv.',
+        'file.max'      => 'Ukuran file maksimal 10MB.'
+    ]);
 
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv|max:20480',
-        ], [
-            'file.required' => 'Pilih file Excel terlebih dahulu.',
-            'file.mimes'    => 'Format file harus berupa .xlsx, .xls, atau .csv',
-            'file.max'      => 'Ukuran file maksimal 20MB.',
-        ]);
-
-        $file = $request->file('file');
-
-        try {
-            $spreadsheet = IOFactory::load($file->getRealPath());
-            $worksheet = $spreadsheet->getActiveSheet();
-            $rows = $worksheet->toArray(null, true, true, true);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal membaca file Excel: ' . $e->getMessage());
-        }
-
-        if (empty($rows)) {
-            return redirect()->back()->with('error', 'File Excel kosong.');
-        }
-
-        // 1. Ambil baris pertama sebagai Header
-        $rawHeader = array_shift($rows);
-        $headerMap = [];
-
-        foreach ($rawHeader as $colLetter => $colName) {
-            $cleaned = strtolower(trim((string)$colName));
-            if (!empty($cleaned)) {
-                $headerMap[$cleaned] = $colLetter;
-            }
-        }
-
-        // Validasi kolom clprnoktp
-        if (!isset($headerMap['clprnoktp'])) {
-            $foundColumns = implode(', ', array_slice(array_keys($headerMap), 0, 8));
-            return redirect()->back()->with('error', "Kolom 'clprnoktp' tidak ditemukan. Kolom yang terbaca: {$foundColumns}...");
-        }
-
-        // Cari index kolom cno atau variasinya
-        $cnoCol = $headerMap['cno'] 
-            ?? $headerMap['c_no'] 
-            ?? $headerMap['custno'] 
-            ?? $headerMap['c_custno'] 
-            ?? $headerMap['cif'] 
-            ?? null;
-
-        $importedCount = 0;
-        $skippedDetails = []; // Array untuk menampung alasan data gagal
-        $rowNumber = 1; // Baris 1 adalah header, data dimulai dari baris 2
-
-        // 2. Loop setiap baris data
-        foreach ($rows as $row) {
-            $rowNumber++;
-
-            // Cek jika seluruh baris kosong
-            $allEmpty = true;
-            foreach ($row as $val) {
-                if (trim((string)$val) !== '') {
-                    $allEmpty = false;
-                    break;
-                }
-            }
-            if ($allEmpty) {
-                // Abaikan baris kosong tanpa mencatat error
-                continue;
-            }
-
-            $ktpCol = $headerMap['clprnoktp'];
-            $rawKtp = isset($row[$ktpCol]) ? (string)$row[$ktpCol] : '';
-            $namaDealer = isset($headerMap['nmdealer']) ? trim((string)($row[$headerMap['nmdealer']] ?? '')) : '-';
-            $ktp = trim($rawKtp);
-
-            // Konversi scientific notation (3.201E+15)
-            if (stripos($ktp, 'E+') !== false || stripos($ktp, 'E-') !== false) {
-                $ktp = number_format((float)$ktp, 0, '', '');
-            }
-
-            // ================= KLASIFIKASI ALASAN TIDAK MASUK =================
-            if ($ktp === '' || $ktp === '-' || $ktp === '0') {
-                $skippedDetails[] = [
-                    'row'    => $rowNumber,
-                    'dealer' => $namaDealer,
-                    'ktp'    => $rawKtp ?: '(Kosong)',
-                    'reason' => 'Nomor KTP kosong / berisi strip (-)'
-                ];
-                continue;
-            }
-
-            if (!ctype_digit($ktp)) {
-                $skippedDetails[] = [
-                    'row'    => $rowNumber,
-                    'dealer' => $namaDealer,
-                    'ktp'    => $rawKtp,
-                    'reason' => 'Mengandung karakter non-angka (huruf/spasi/simbol)'
-                ];
-                continue;
-            }
-
-            $len = strlen($ktp);
-            if ($len !== 16) {
-                $skippedDetails[] = [
-                    'row'    => $rowNumber,
-                    'dealer' => $namaDealer,
-                    'ktp'    => $rawKtp,
-                    'reason' => "Panjang KTP tidak 16 digit (terdeteksi {$len} digit)"
-                ];
-                continue;
-            }
-
-            try {
-                Showroom::updateOrCreate(
-                    ['clprnoktp' => $ktp],
-                    [
-                        'cno'        => ($cnoCol && isset($row[$cnoCol])) ? trim((string)$row[$cnoCol]) : null,
-                        'kdcab'      => isset($headerMap['kdcab']) ? trim((string)($row[$headerMap['kdcab']] ?? '')) : null,
-                        'inisial'    => isset($headerMap['inisial']) ? trim((string)($row[$headerMap['inisial']] ?? '')) : null,
-                        'nmdealer'   => isset($headerMap['nmdealer']) ? trim((string)($row[$headerMap['nmdealer']] ?? '')) : null,
-                        'cnm'        => isset($headerMap['cnm']) ? trim((string)($row[$headerMap['cnm']] ?? '')) : null,
-                        'ad1'        => isset($headerMap['ad1']) ? trim((string)($row[$headerMap['ad1']] ?? '')) : null,
-                        'ad2'        => isset($headerMap['ad2']) ? trim((string)($row[$headerMap['ad2']] ?? '')) : null,
-                        'kota'       => isset($headerMap['kota']) ? trim((string)($row[$headerMap['kota']] ?? '')) : null,
-                        'alamat'     => isset($headerMap['alamat']) ? trim((string)($row[$headerMap['alamat']] ?? '')) : null,
-                        'dlmou'      => isset($headerMap['dlmou']) ? trim((string)($row[$headerMap['dlmou']] ?? '')) : null,
-                        'dlmoutglfr' => isset($headerMap['dlmoutglfr']) ? trim((string)($row[$headerMap['dlmoutglfr']] ?? '')) : null,
-                        'dlmoutglto' => isset($headerMap['dlmoutglto']) ? trim((string)($row[$headerMap['dlmoutglto']] ?? '')) : null,
-                    ]
-                );
-                $importedCount++;
-            } catch (\Exception $e) {
-                Log::warning("Gagal simpan KTP {$ktp}: " . $e->getMessage());
-                $skippedDetails[] = [
-                    'row'    => $rowNumber,
-                    'dealer' => $namaDealer,
-                    'ktp'    => $ktp,
-                    'reason' => 'Gagal simpan database: ' . $e->getMessage()
-                ];
-            }
-        }
-
-        $totalSkipped = count($skippedDetails);
-
-        return redirect()->back()
-            ->with('success', "Proses selesai: {$importedCount} data valid berhasil disimpan/diperbarui.")
-            ->with('skippedDetails', $skippedDetails)
-            ->with('totalSkipped', $totalSkipped);
+    $file = $request->file('file');
+    $filename = time() . '_showroom.' . $file->getClientOriginalExtension();
+    $destinationPath = storage_path('app/temp');
+    
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0777, true);
     }
+
+    $file->move($destinationPath, $filename);
+    $fullPath = $destinationPath . DIRECTORY_SEPARATOR . $filename;
+
+    $batchData = [];
+    $batchSize = 1000;
+    $now = Carbon::now();
+
+    (new FastExcel)->import($fullPath, function ($row) use (&$batchData, $batchSize, $now) {
+        $rowLower = array_change_key_case($row, CASE_LOWER);
+
+        $safeString = function ($value) {
+            if ($value instanceof \DateTimeInterface) {
+                return $value->format('Y-m-d');
+            }
+            return trim((string) $value);
+        };
+
+        // Ambil dan bersihkan data KTP
+        $rawKtp = $safeString($rowLower['clprnoktp'] ?? $rowLower['ktp'] ?? $rowLower['no_ktp'] ?? '');
+        $ktpClean = ($rawKtp === '') ? null : $rawKtp;
+
+        // Ambil cno, jika kosong jadikan null atau string kosong
+        $cno = $safeString($rowLower['cno'] ?? $rowLower['kode_dealer'] ?? '');
+        $finalCno = ($cno === '') ? null : $cno;
+
+        // Ambil variabel inisial
+        $inisialValue = $safeString($rowLower['inisial'] ?? '');
+
+        // TANPA FILTER empty($cno): Semua baris di Excel sekarang pasti masuk!
+        $batchData[] = [
+            'clprnoktp'  => $ktpClean,
+            'cno'        => $finalCno,
+            'kdcab'      => $safeString($rowLower['kdcab'] ?? ''),
+            'inisial'    => $inisialValue,
+            'nmdealer'   => $safeString($rowLower['nmdealer'] ?? $rowLower['nama_dealer'] ?? ''),
+            'cnm'        => $safeString($rowLower['cnm'] ?? ''),
+            'ad1'        => $safeString($rowLower['ad1'] ?? ''),
+            'ad2'        => $safeString($rowLower['ad2'] ?? ''),
+            'kota'       => $safeString($rowLower['kota'] ?? ''),
+            'alamat'     => $safeString($rowLower['alamat'] ?? ''),
+            'dlmou'      => $safeString($rowLower['dlmou'] ?? ''),
+            'dlmoutglfr' => $safeString($rowLower['dlmoutglfr'] ?? ''), 
+            'dlmoutglto' => $safeString($rowLower['dlmoutglto'] ?? ''), 
+            'created_at' => $now,
+            'updated_at' => $now,
+        ];
+
+        if (count($batchData) >= $batchSize) {
+            // Menggunakan insert biasa atau upsert dengan aman
+            // Catatan: Jika ada cno yang bernilai null secara massal, gunakan insert untuk menghindari bentrok unik key database.
+            Showroom::insert($batchData);
+            $batchData = [];
+        }
+    });
+
+    if (count($batchData) > 0) {
+        Showroom::insert($batchData);
+    }
+
+    if (file_exists($fullPath)) {
+        unlink($fullPath);
+    }
+
+    return redirect()->back()->with('success', 'Semua data showroom berhasil di-upload secara utuh! Data dengan CNO kosong tetap masuk.');
+}
+
 public function monitoring(Request $request)
     {
         $query = Showroom::with('cars');

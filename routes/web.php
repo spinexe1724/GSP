@@ -7,6 +7,8 @@ use App\Http\Controllers\PortalController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CarReviewController;
+use App\Http\Controllers\PhotoReviewController;
 use Illuminate\Support\Facades\Route;
 
 // --- Rute GUEST (Belum Login) ---
@@ -53,6 +55,20 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('adm
     Route::delete('/admin/cars/{id}', [CarController::class, 'destroy'])->name('admin.cars.destroy');
 });
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Tambahkan 'Route::' di depan get() dan post() serta delete()
+    Route::get('/cars/review', [CarReviewController::class, 'index'])->name('cars.review');
+    Route::post('/cars/review/{id}/approve', [CarReviewController::class, 'approve'])->name('cars.review.approve');
+    Route::delete('/cars/review/{id}', [CarReviewController::class, 'destroy'])->name('cars.review.destroy');
+    Route::post('/cars/upload-chunk', [CarController::class, 'uploadChunk'])->name('cars.chunk.upload');
+});
+
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    // Pastikan menggunakan Route::get untuk halaman utama review
+    Route::get('/cars/photo_review', [PhotoReviewController::class, 'index'])->name('cars.photo_review');
+    Route::post('/cars/photo_review/{id}/assign', [PhotoReviewController::class, 'assign'])->name('cars.photo_review.assign');
+    Route::delete('/cars/photo_review/clear', [PhotoReviewController::class, 'clearUnmatchedPhotos'])->name('cars.photo_review.clear');
+});
     Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
 require __DIR__.'/auth.php';

@@ -26,8 +26,8 @@
                     <span class="text-[11px] font-bold text-slate-700">1. Tampak Depan</span>
                     <div class="aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
                         @if($car->foto_depan)
-                            <a href="{{ asset('storage/' . $car->foto_depan) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $car->foto_depan) }}" alt="Tampak Depan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            <a href="{{ asset($car->foto_depan) }}" target="_blank">
+                                <img src="{{ asset($car->foto_depan) }}" alt="Tampak Depan" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                             </a>
                         @else
                             <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
@@ -42,8 +42,8 @@
                     <span class="text-[11px] font-bold text-slate-700">2. Tampak Samping</span>
                     <div class="aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
                         @if($car->foto_samping)
-                            <a href="{{ asset('storage/' . $car->foto_samping) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $car->foto_samping) }}" alt="Tampak Samping" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            <a href="{{ asset($car->foto_samping) }}" target="_blank">
+                                <img src="{{ asset($car->foto_samping) }}" alt="Tampak Samping" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                             </a>
                         @else
                             <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
@@ -58,8 +58,8 @@
                     <span class="text-[11px] font-bold text-slate-700">3. Tampak Belakang</span>
                     <div class="aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200">
                         @if($car->foto_belakang)
-                            <a href="{{ asset('storage/' . $car->foto_belakang) }}" target="_blank">
-                                <img src="{{ asset('storage/' . $car->foto_belakang) }}" alt="Tampak Belakang" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+                            <a href="{{ asset($car->foto_belakang) }}" target="_blank">
+                                <img src="{{ asset($car->foto_belakang) }}" alt="Tampak Belakang" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
                             </a>
                         @else
                             <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">

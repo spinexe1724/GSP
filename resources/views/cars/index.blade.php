@@ -59,7 +59,7 @@
                         {{-- Thumbnail Foto Depan --}}
                         <div class="aspect-[16/10] bg-slate-100 relative overflow-hidden">
                             @if($car->foto_depan)
-                                <img src="{{ asset('storage/' . $car->foto_depan) }}" 
+                                <img src="{{ asset($car->foto_depan) }}" 
                                      alt="{{ $car->nama_merk }} {{ $car->tipe_kend }}" 
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             @else
