@@ -1,147 +1,728 @@
-@extends('layouts.app')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<style>
-    /* Sedikit penyesuaian agar tampilan Select2 cocok dengan Tailwind CSS */
-    .select2-container .select2-selection--single {
-        height: 42px !important;
-        border-color: #d1d5db !important; 
-        border-radius: 0.375rem !important; 
-        display: flex;
-        align-items: center;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 40px !important;
-    }
-</style>
-@section('title', 'Review Foto Unit Pending')
+@extends('layouts.admin')
+
+@section('title', 'Review Foto Unit')
 
 @section('content')
-<div class="container mx-auto p-4">
-    
-    {{-- Header & Tombol Bersihkan --}}
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h2 class="text-2xl font-bold text-gray-800">Review Foto Unit (Belum Terpetakan)</h2>
-        
-        {{-- TOMBOL BERSIHKAN SEMUA FOTO REVIEW --}}
-        <form action="{{ route('admin.cars.photo_review.clear') }}" method="POST" class="inline-block w-full md:w-auto" onsubmit="return confirm('Peringatan: Apakah Anda yakin ingin menghapus SEMUA data foto review ini beserta file aslinya dari server? Tindakan ini tidak dapat dibatalkan.');">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow transition duration-150 ease-in-out">
-                Bersihkan Semua Foto Review
-            </button>
-        </form>
+
+<div class="min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans']">
+
+```
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4">
+
+    {{-- HEADER --}}
+    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+            <div class="min-w-0">
+
+                <div class="flex items-center gap-2 mb-1">
+
+                    <h1 class="text-lg font-black text-slate-900">
+                        Review Foto Unit
+                    </h1>
+
+                    @if($groupedPhotos->count() > 0)
+                        <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold">
+                            {{ $groupedPhotos->count() }} Folder
+                        </span>
+                    @endif
+
+                </div>
+
+                <p class="text-[11px] text-slate-400">
+                    Kelola foto unit yang belum terpetakan ke kendaraan.
+                </p>
+
+            </div>
+
+
+            <form
+                action="{{ route('admin.cars.photo_review.clear') }}"
+                method="POST"
+                class="w-full sm:w-auto"
+                onsubmit="return confirm('Peringatan: Apakah Anda yakin ingin menghapus SEMUA data foto review ini beserta file aslinya dari server? Tindakan ini tidak dapat dibatalkan.');"
+            >
+                @csrf
+                @method('DELETE')
+
+                <button
+                    type="submit"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2
+                           bg-[#800000] hover:bg-red-900
+                           text-white text-[10px] font-black
+                           px-4 py-2.5 rounded-lg
+                           uppercase tracking-wide transition"
+                >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                    </svg>
+
+                    Bersihkan Semua
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
 
-    {{-- Notifikasi Sukses/Error --}}
+
+    {{-- FLASH MESSAGE --}}
     @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 shadow-sm">
-            {{ session('success') }}
+
+        <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3">
+
+            <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                    />
+                </svg>
+
+            </div>
+
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-wide">
+                    Berhasil
+                </p>
+
+                <p class="text-[11px]">
+                    {{ session('success') }}
+                </p>
+            </div>
+
         </div>
+
     @endif
+
+
     @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 shadow-sm">
-            {{ session('error') }}
+
+        <div class="flex items-center gap-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl px-4 py-3">
+
+            <div class="w-7 h-7 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
+
+                <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    />
+                </svg>
+
+            </div>
+
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-wide">
+                    Error
+                </p>
+
+                <p class="text-[11px]">
+                    {{ session('error') }}
+                </p>
+            </div>
+
         </div>
+
     @endif
 
-    {{-- Daftar Accordion --}}
-    <div class="w-full">
+
+    {{-- STATISTIK --}}
+    <div class="grid grid-cols-3 gap-3">
+
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
+                Folder Review
+            </p>
+
+            <p class="text-xl font-black text-slate-900 mt-1">
+                {{ $groupedPhotos->count() }}
+            </p>
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
+                Total Foto
+            </p>
+
+            <p class="text-xl font-black text-slate-900 mt-1">
+                {{ collect($groupedPhotos)->flatten()->count() }}
+            </p>
+        </div>
+
+
+        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+            <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
+                Unit Kandidat
+            </p>
+
+            <p class="text-xl font-black text-slate-900 mt-1">
+                {{ $carsNeedingPhotos->count() }}
+            </p>
+        </div>
+
+    </div>
+
+
+    {{-- DAFTAR FOLDER --}}
+    <div class="space-y-3">
+
         @forelse($groupedPhotos as $nopol => $photos)
-            <details class="group bg-white border border-gray-300 rounded-lg mb-3 shadow-sm overflow-hidden">
-                
-                {{-- SUMMARY: Bagian Header List yang selalu tampil --}}
-                <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <svg class="w-5 h-5 text-gray-500 transition-transform duration-300 group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                        
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-800 uppercase">Folder Nopol: <span class="text-blue-700">{{ $nopol }}</span></h3>
-                            <p class="text-xs text-gray-500 font-normal mt-0.5">Terdapat {{ $photos->count() }} foto / file yang perlu ditinjau</p>
-                        </div>
-                    </div>
-                    
-                    <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full border border-red-200">
-                        Butuh Review
-                    </span>
-                </summary>
 
-                {{-- CONTENT: Bagian isi form yang tampil saat list dibuka --}}
-                <div class="p-5 border-t border-gray-200 bg-white">
-                    <form action="{{ route('admin.cars.photo_review.assign', ['id' => $nopol]) }}" method="POST" class="w-full">                        
-                        @csrf
-                        
-                        {{-- Pilih Unit Mobil Tujuan --}}
-                        <div class="mb-5 bg-blue-50 p-4 rounded-md border border-blue-200 flex flex-col md:flex-row items-start md:items-center gap-4">
-                            <div class="w-full">
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Pilih Unit Mobil untuk Foto Ini:</label>
-                                <select name="car_id" class="select2-car w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm py-2 px-3" required>                                    
-                                    <option value="">-- Cari dan Pilih Nopol Mobil di Database --</option>
-                                    
-                                    {{-- Dropdown hanya menampilkan mobil yang kurang foto --}}
-                                    @foreach($carsNeedingPhotos as $car)
-                                        <option value="{{ $car->id }}">
-                                            {{ $car->no_polisi }} - {{ $car->nama_merk }} {{ $car->tipe_kend }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <button type="submit" class="mt-2 md:mt-5 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-6 rounded-md shadow whitespace-nowrap transition">
-                                Simpan Pilihan
-                            </button>
+            <details
+                class="review-folder group bg-white border border-slate-200 rounded-xl overflow-hidden"
+            >
+
+                {{-- FOLDER HEADER --}}
+                <summary
+                    class="flex items-center justify-between gap-3 px-4 py-3
+                           cursor-pointer list-none
+                           hover:bg-slate-50 transition"
+                >
+
+                    <div class="flex items-center gap-3 min-w-0">
+
+                        <div
+                            class="w-7 h-7 rounded-lg bg-slate-100
+                                   flex items-center justify-center flex-shrink-0
+                                   transition-transform duration-200
+                                   group-open:rotate-90"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 text-slate-500"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 5l7 7-7 7"
+                                />
+                            </svg>
                         </div>
 
-                        {{-- Daftar Foto dalam Folder --}}
-                        <h4 class="text-sm font-bold text-gray-700 mb-3 border-b pb-2">Pilih Slot untuk Masing-masing Foto:</h4>
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                            @foreach($photos as $photo)
-                              <div class="border border-gray-200 rounded-md p-2 flex flex-col bg-gray-50 hover:shadow-sm transition">
-        
-                                {{-- PASTIKAN NAME INI ADA DAN SESUAI --}}
-                                <input type="hidden" name="photos[{{ $photo->id }}][id]" value="{{ $photo->id }}">
 
-                                <a href="{{ asset($photo->file_path) }}" target="_blank" class="w-full group/img relative mb-2">
-                                    <img src="{{ asset($photo->file_path) }}" alt="{{ $photo->file_name }}" class="w-full h-32 object-cover rounded border border-gray-300">
-                                </a>
-                                
-                                <span class="text-[10px] font-mono bg-white border border-gray-200 px-1 py-1 w-full text-center truncate rounded mb-2 text-gray-600">
-                                    {{ $photo->file_name }}
+                        <div class="min-w-0">
+
+                            <div class="flex items-center gap-2 min-w-0">
+
+                                <span class="text-xs font-bold text-slate-500">
+                                    Nopol
                                 </span>
 
-                                {{-- PASTIKAN NAME INI MENGGUNAKAN [slot] --}}
-                                <select name="photos[{{ $photo->id }}][slot]" class="w-full text-xs border-gray-300 rounded focus:border-blue-500 focus:ring-blue-500 py-1 bg-white cursor-pointer">
-                                    <option value="ignore">Abaikan File Ini</option>
-                                    <option value="foto_depan">Jadikan Foto Depan</option>
-                                    <option value="foto_belakang">Jadikan Foto Belakang</option>
-                                    <option value="foto_samping">Jadikan Foto Samping</option>
-                                </select>
+                                <span class="text-xs font-black text-[#800000] uppercase truncate">
+                                    {{ $nopol }}
+                                </span>
+
                             </div>
-                            @endforeach
+
+                            <p class="text-[9px] text-slate-400">
+                                {{ $photos->count() }} foto perlu ditinjau
+                            </p>
+
                         </div>
+
+                    </div>
+
+
+                    <span
+                        class="flex-shrink-0 text-[9px] font-bold
+                               px-2 py-1 rounded-md
+                               bg-rose-50 text-rose-600"
+                    >
+                        Review
+                    </span>
+
+                </summary>
+
+
+                {{-- FOLDER CONTENT --}}
+                <div class="border-t border-slate-100 bg-slate-50 p-4">
+
+                    <form
+                        action="{{ route('admin.cars.photo_review.assign', ['id' => $nopol]) }}"
+                        method="POST"
+                        class="space-y-4"
+                    >
+
+                        @csrf
+
+
+                        {{-- PILIH UNIT --}}
+                        <div class="bg-white border border-slate-200 rounded-xl p-3">
+
+                            <div class="flex flex-col md:flex-row md:items-end gap-3">
+
+                                <div class="flex-1 min-w-0">
+
+                                    <label class="block text-[9px] uppercase tracking-wide font-bold text-slate-500 mb-1.5">
+                                        Unit Mobil Tujuan
+                                    </label>
+
+                                    <select
+                                        name="car_id"
+                                        class="select2-car w-full"
+                                        required
+                                    >
+                                        <option value="">
+                                            -- Cari Nopol / Merk / Tipe --
+                                        </option>
+
+                                        @foreach($carsNeedingPhotos as $car)
+
+                                            <option value="{{ $car->id }}">
+                                                {{ $car->no_polisi }}
+                                                -
+                                                {{ $car->nama_merk }}
+                                                {{ $car->tipe_kend }}
+                                            </option>
+
+                                        @endforeach
+
+                                    </select>
+
+                                </div>
+
+
+                                <button
+                                    type="submit"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2
+                                           bg-[#800000] hover:bg-red-900
+                                           text-white text-[10px] font-black
+                                           px-4 py-2.5 rounded-lg
+                                           uppercase tracking-wide transition"
+                                >
+
+                                    <svg
+                                        class="w-3.5 h-3.5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+
+                                    Simpan
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- GALERI HEADER --}}
+                        <div class="flex items-center justify-between">
+
+                            <div>
+                                <h3 class="text-[10px] font-black text-slate-700 uppercase tracking-wide">
+                                    Foto
+                                </h3>
+
+                                <p class="text-[9px] text-slate-400">
+                                    Pilih slot foto
+                                </p>
+                            </div>
+
+                            <span class="text-[9px] font-bold bg-white border border-slate-200 text-slate-500 px-2 py-1 rounded-md">
+                                {{ $photos->count() }} File
+                            </span>
+
+                        </div>
+
+
+                        {{-- GALERI --}}
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+
+                            @foreach($photos as $photo)
+
+                                <div
+                                    class="bg-white border border-slate-200 rounded-xl p-2
+                                           hover:border-slate-300 transition"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="photos[{{ $photo->id }}][id]"
+                                        value="{{ $photo->id }}"
+                                    >
+
+
+                                    {{-- FOTO --}}
+                                    @if($photo->file_path)
+
+                                        <a
+                                            href="{{ asset($photo->file_path) }}"
+                                            target="_blank"
+                                            class="block mb-2 overflow-hidden rounded-lg"
+                                        >
+
+                                            <img
+                                                src="{{ asset($photo->file_path) }}"
+                                                alt="{{ $photo->file_name }}"
+                                                class="w-full h-24 object-cover rounded-lg
+                                                       hover:scale-[1.03]
+                                                       transition-transform duration-200"
+                                            >
+
+                                        </a>
+
+                                    @else
+
+                                        <div class="w-full h-24 bg-slate-100 rounded-lg flex items-center justify-center text-[9px] text-slate-400">
+                                            Tidak ada foto
+                                        </div>
+
+                                    @endif
+
+
+                                    {{-- FILE NAME --}}
+                                    <div
+                                        class="text-[8px] font-mono bg-slate-50
+                                               border border-slate-100
+                                               px-1.5 py-1
+                                               w-full text-center truncate
+                                               rounded-md mb-2 text-slate-500"
+                                        title="{{ $photo->file_name }}"
+                                    >
+                                        {{ $photo->file_name }}
+                                    </div>
+
+
+                                    {{-- SLOT --}}
+                                    <label class="block text-[8px] uppercase tracking-wide font-bold text-slate-400 mb-1">
+                                        Slot
+                                    </label>
+
+                                    <select
+                                        name="photos[{{ $photo->id }}][slot]"
+                                        class="review-slot-select w-full"
+                                    >
+                                        <option value="ignore">
+                                            Abaikan
+                                        </option>
+
+                                        <option value="foto_depan">
+                                            Foto Depan
+                                        </option>
+
+                                        <option value="foto_belakang">
+                                            Foto Belakang
+                                        </option>
+
+                                        <option value="foto_samping">
+                                            Foto Samping
+                                        </option>
+                                    </select>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
                     </form>
+
                 </div>
+
             </details>
+
         @empty
-            <div class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-lg flex items-center shadow-sm">
-                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                <span class="font-medium">Semua foto unit sudah terpetakan dengan baik! Tidak ada file yang perlu direview.</span>
+
+            {{-- EMPTY STATE --}}
+            <div class="bg-white border border-emerald-200 rounded-xl p-10 text-center">
+
+                <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-50 flex items-center justify-center mb-3">
+
+                    <svg
+                        class="w-6 h-6 text-emerald-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 13l4 4L19 7"
+                        />
+                    </svg>
+
+                </div>
+
+                <h2 class="text-sm font-black text-slate-900">
+                    Semua Foto Sudah Terpetakan
+                </h2>
+
+                <p class="text-[10px] text-slate-400 mt-1">
+                    Tidak ada foto yang menunggu proses review.
+                </p>
+
             </div>
+
         @endforelse
+
     </div>
+
 </div>
+```
+
+</div>
+
+{{-- SELECT2 --}}
+
+<link
+    href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+    rel="stylesheet"
+/>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Load JS Select2 -->
+
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<style>
+
+    /* SELECT2 */
+    .select2-container {
+        width: 100% !important;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 9px !important;
+        background: #f8fafc !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .select2-container .select2-selection--single:hover {
+        border-color: #cbd5e1 !important;
+    }
+
+    .select2-container--focus .select2-selection--single,
+    .select2-container--open .select2-selection--single {
+        border-color: #800000 !important;
+        box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.07) !important;
+    }
+
+    .select2-container .select2-selection__rendered {
+        color: #334155 !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        padding-left: 11px !important;
+        padding-right: 30px !important;
+        line-height: 36px !important;
+    }
+
+    .select2-container .select2-selection__placeholder {
+        color: #94a3b8 !important;
+    }
+
+    .select2-container .select2-selection__arrow {
+        height: 36px !important;
+        width: 28px !important;
+        right: 3px !important;
+    }
+
+    .select2-container .select2-selection__arrow b {
+        border-color: #94a3b8 transparent transparent transparent !important;
+        border-width: 4px 3px 0 3px !important;
+    }
+
+    .select2-container--open .select2-selection__arrow b {
+        border-color: transparent transparent #800000 transparent !important;
+        border-width: 0 3px 4px 3px !important;
+    }
+
+    /* DROPDOWN */
+    .select2-dropdown {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.10) !important;
+        margin-top: 3px;
+    }
+
+    .select2-search--dropdown {
+        padding: 8px !important;
+    }
+
+    .select2-search--dropdown .select2-search__field {
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 7px 9px !important;
+        font-size: 10px !important;
+        outline: none !important;
+    }
+
+    .select2-search--dropdown .select2-search__field:focus {
+        border-color: #800000 !important;
+    }
+
+    .select2-results__option {
+        font-size: 10px !important;
+        color: #475569 !important;
+        padding: 8px 10px !important;
+    }
+
+    .select2-results__option--highlighted {
+        background: #800000 !important;
+        color: white !important;
+    }
+
+    .select2-results__option[aria-selected="true"] {
+        background: #fef2f2 !important;
+        color: #800000 !important;
+        font-weight: 700 !important;
+    }
+
+    /* SLOT */
+    .review-slot-select {
+        width: 100%;
+        min-height: 34px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        background-color: #f8fafc;
+        color: #475569;
+        font-size: 9px;
+        font-weight: 600;
+        padding: 0 7px;
+        outline: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .review-slot-select:hover {
+        border-color: #cbd5e1;
+    }
+
+    .review-slot-select:focus {
+        border-color: #800000;
+        box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.07);
+    }
+
+    /* DETAILS */
+    summary::-webkit-details-marker {
+        display: none;
+    }
+
+    summary::marker {
+        display: none;
+    }
+
+</style>
+
 <script>
-    $(document).ready(function() {
-        // Mengaktifkan fitur Select2 pada dropdown kita
+
+    $(document).ready(function () {
+
+        /*
+         * SELECT2 UNIT MOBIL
+         */
         $('.select2-car').select2({
-            width: '100%', // Wajib 100% agar tidak error saat berada di dalam Accordion
-            placeholder: "-- Ketik Nopol atau Merk Mobil di sini --",
-            allowClear: true
+            width: '100%',
+            placeholder: '-- Ketik Nopol atau Merk Mobil di sini --',
+            allowClear: true,
+            language: {
+                noResults: function () {
+                    return 'Unit tidak ditemukan';
+                },
+                searching: function () {
+                    return 'Mencari...';
+                }
+            }
         });
+
+
+        /*
+         * OPEN FOLDER TERAKHIR SETELAH VALIDASI ERROR
+         */
+        @if(session('error'))
+
+            const firstFolder = document.querySelector('.review-folder');
+
+            if (firstFolder) {
+                firstFolder.open = true;
+            }
+
+        @endif
+
+
+        /*
+         * PREVENT DOUBLE SUBMIT
+         */
+        $('form').on('submit', function () {
+
+            const button = $(this).find('button[type="submit"]');
+
+            if (button.length && !button.data('confirmed')) {
+
+                button.data('confirmed', true);
+
+                const originalHtml = button.html();
+
+                button.html(`
+                    <svg
+                        class="w-3.5 h-3.5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        ></circle>
+
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        ></path>
+                    </svg>
+
+                    Memproses...
+                `);
+
+                button.prop('disabled', true);
+
+                setTimeout(function () {
+
+                    button.prop('disabled', false);
+                    button.data('confirmed', false);
+                    button.html(originalHtml);
+
+                }, 10000);
+
+            }
+
+        });
+
     });
+
 </script>
+
 @endsection

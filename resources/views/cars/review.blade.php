@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Review Data Unit Pending')
+@section('title', 'Review Foto Unit')
 
 @section('content')
 <div class="container mx-auto px-4 py-8 font-['Plus_Jakarta_Sans'] text-slate-800">
