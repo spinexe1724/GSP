@@ -46,7 +46,7 @@
                 
                 <form action="{{ route('showrooms.import') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                     @csrf
-                    <input type="file" name="file_excel" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
+                    <input type="file" name="file" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"/>
                     <button type="submit" class="w-full bg-[#0a1128] hover:bg-black text-white font-medium py-2 px-4 rounded transition text-sm">
                         UPLOAD EXCEL SHOWROOM
                     </button>

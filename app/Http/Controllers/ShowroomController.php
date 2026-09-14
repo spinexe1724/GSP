@@ -40,6 +40,8 @@ public function show($id)
 }
 public function upload(Request $request)
     {
+
+    set_time_limit(0); // Menghapus batas waktu eksekusi script
  $request->validate([
         'file' => 'required|mimes:xlsx,csv|max:10240',
     ], [
