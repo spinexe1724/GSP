@@ -25,6 +25,7 @@ return new class extends Migration
     $table->string('dlmoutglfr');
     $table->string('dlmoutglto');
     $table->text('alamat');
+    $table->string('nopic');
     $table->text('clprnoktp')->nullable();
     $table->timestamps();
 });

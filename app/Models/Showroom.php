@@ -8,7 +8,7 @@ class Showroom extends Model
 {
     protected $fillable = [
         'cno','kdcab', 'inisial', 'nmdealer','cnm','ad1', 'ad2','kota', 
-        'dlmou', 'dlmoutglfr', 'dlmoutglto', 'alamat', 'clprnoktp',
+        'dlmou', 'dlmoutglfr', 'dlmoutglto', 'alamat','nopic','clprnoktp',
     ];
 use HasFactory;
 

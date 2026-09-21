@@ -121,7 +121,14 @@ if ($zip->open($this->fullZipPath) === TRUE) {
                                 $car->foto_samping = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
-                            } else {
+                            }
+                            elseif (preg_match('/pdf_pmb.*_1\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
+    copy($f['pathname'], $targetPhysicalPath);
+    $car->foto_odometer = $targetRelativePath;
+    $matchedCount++;
+    $hasAssignedPhoto = true;
+}
+                             else {
                                 // File sisa otomatis dibuang/diabaikan sesuai logika Anda
                             }
                         }

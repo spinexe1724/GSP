@@ -433,7 +433,15 @@
                                             Foto Samping
                                         </option>
                                     </select>
-
+<select name="photos[{{ $photo->id }}][slot]" class="w-full text-xs border-gray-300 rounded focus:border-blue-500 focus:ring-blue-500 py-1 bg-white cursor-pointer">
+    <option value="ignore">Abaikan File Ini</option>
+    <option value="foto_depan">Jadikan Foto Depan</option>
+    <option value="foto_belakang">Jadikan Foto Belakang</option>
+    <option value="foto_samping">Jadikan Foto Samping</option>
+    
+    {{-- TAMBAHKAN BARIS INI --}}
+    <option value="foto_odometer">Jadikan Foto Odometer</option>
+</select>
                                 </div>
 
                             @endforeach

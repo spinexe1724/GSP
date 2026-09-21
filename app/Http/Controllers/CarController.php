@@ -39,23 +39,30 @@ class CarController extends Controller
                   });
             });
         }
+if ($request->filled('showroom_id')) {
+    $query->whereHas('showroom', function ($showroomQuery) use ($request) {
+        // 'id' di sini adalah primary key dari tabel showroom (dealer)
+        $showroomQuery->where('id', $request->showroom_id); 
+    });
+}
+    // -----------------------------------------------------
 
-        // Filter Merk
-        if ($request->filled('merk')) {
-            $query->where('nama_merk', $request->merk);
-        }
+    // Filter Merk
+    if ($request->filled('merk')) {
+        $query->where('nama_merk', $request->merk);
+    }
 
-        // Filter Transmisi
-        if ($request->filled('transmisi')) {
-            $query->where('transmisi', $request->transmisi);
-        }
+    // Filter Transmisi
+    if ($request->filled('transmisi')) {
+        $query->where('transmisi', $request->transmisi);
+    }
 
-        $cars = $query->latest()->paginate(12)->withQueryString();
+    $cars = $query->latest()->paginate(12)->withQueryString();
 
-        // Ambil daftar merk unik untuk opsi filter dropdown
-        $brands = Car::whereNotNull('nama_merk')->distinct()->pluck('nama_merk');
+    // Ambil daftar merk unik untuk opsi filter dropdown
+    $brands = Car::whereNotNull('nama_merk')->distinct()->pluck('nama_merk');
 
-        return view('cars.index', compact('cars', 'brands'));
+    return view('cars.index', compact('cars', 'brands'));
     }
     public function show($id)
     {
