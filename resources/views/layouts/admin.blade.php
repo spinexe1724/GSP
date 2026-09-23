@@ -58,9 +58,9 @@
             SIDEBAR
         ========================================================== --}}
         <aside
-            class="w-64 bg-white border-r border-slate-100
+            class="w-64 bg-[#F1F3F5] border-r border-slate-200
                    flex flex-col justify-between
-                   p-6 fixed h-full z-20"
+                   p-5 fixed h-full z-20 shadow-xl"
         >
 
             <div class="space-y-8">
@@ -72,47 +72,33 @@
                 <div class="flex items-center gap-3 px-2">
 
                     <div
-                        class="w-8 h-8 bg-[#800000]
-                               rounded-lg
+                        class="w-9 h-9 bg-[#800000]
+                               rounded-xl
                                flex items-center justify-center
                                text-white font-black
-                               shadow-sm"
+                               shadow-lg shadow-black/20"
                     >
                         G
                     </div>
 
-
-                    <span
-                        class="text-xl font-black
-                               text-slate-900
-                               tracking-wider"
-                    >
-                        GSP
-                    </span>
+                    <div>
+                        <span class="block text-xl font-black text-black tracking-wider">
+                            GSP
+                        </span>
+                        <span class="block text-[9px] font-semibold text-slate-400 uppercase tracking-[0.18em]">
+                            Admin Portal
+                        </span>
+                    </div>
 
                 </div>
 
 
 
-                {{-- =================================================
-                    MAIN MENU
-                ================================================== --}}
-                <nav class="space-y-1.5">
-
-                    <p
-                        class="px-3
-                               text-[10px]
-                               font-black
-                               text-slate-400
-                               uppercase
-                               tracking-wider
-                               mb-3"
-                    >
-                        Main Menu
-                    </p>
-
-
-
+                {{-- =========================================================
+                    DASHBOARD
+                    Dashboard berdiri sendiri, di luar section MAIN MENU.
+                ========================================================== --}}
+                <div class="mb-7">
                     {{-- =================================================
                         DASHBOARD
                     ================================================= --}}
@@ -126,8 +112,8 @@
                             transition-all duration-200
 
                             {{ request()->routeIs('admin.dashboard')
-                                ? 'bg-[#800000] text-white shadow-sm'
-                                : 'text-slate-600 hover:bg-slate-50 hover:text-[#800000]' }}
+                                ? 'bg-[#800000] text-white shadow-md shadow-[#800000]/15'
+                                : 'text-slate-600 hover:bg-white hover:text-[#800000]' }}
                         "
                     >
 
@@ -154,6 +140,66 @@
 
 
 
+                </div>
+
+
+                {{-- =========================================================
+                    MAIN MENU
+                ========================================================== --}}
+                <nav class="space-y-1.5">
+
+                    <p
+                        class="px-3
+                               text-[10px]
+                               font-black
+                               text-slate-400
+                               uppercase
+                               tracking-wider
+                               mb-3"
+                    >
+                        Main Menu
+                    </p>
+
+
+                    {{-- =================================================
+                        UPLOAD DATA
+                    ================================================== --}}
+                    <a
+                        href="{{ route('admin.upload-data') }}"
+                        class="
+                            flex items-center gap-3
+                            px-4 py-3
+                            rounded-xl
+                            text-xs font-bold
+                            transition-all duration-200
+
+                            {{ request()->routeIs('admin.upload-data')
+                                ? 'bg-[#800000] text-white shadow-md shadow-[#800000]/15'
+                                : 'text-slate-600 hover:bg-white hover:text-[#800000]' }}
+                        "
+                    >
+
+                        <svg
+                            class="w-4 h-4 flex-shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12V3m0 0L8 7m4-4l4 4"
+                            />
+                        </svg>
+
+                        <span>
+                            Upload Data
+                        </span>
+
+                    </a>
+
+
                     {{-- =================================================
                         MONITORING
                     ================================================== --}}
@@ -167,8 +213,8 @@
                             transition-all duration-200
 
                             {{ request()->routeIs('showrooms.monitoring')
-                                ? 'bg-[#800000] text-white shadow-sm'
-                                : 'text-slate-600 hover:bg-slate-50 hover:text-[#800000]' }}
+                                ? 'bg-[#800000] text-white shadow-md shadow-[#800000]/15'
+                                : 'text-slate-600 hover:bg-white hover:text-[#800000]' }}
                         "
                     >
 
@@ -209,8 +255,8 @@
 
                             {{ request()->routeIs('admin.cars.photo_review')
                                 || request()->routeIs('admin.cars.photo_review.*')
-                                ? 'bg-[#800000] text-white shadow-sm'
-                                : 'text-slate-600 hover:bg-slate-50 hover:text-[#800000]' }}
+                                ? 'bg-[#800000] text-white shadow-md shadow-[#800000]/15'
+                                : 'text-slate-600 hover:bg-white hover:text-[#800000]' }}
                         "
                     >
 
@@ -259,8 +305,8 @@
 
                             {{ request()->routeIs('admin.cars.review')
                                 || request()->routeIs('admin.cars.review.*')
-                                ? 'bg-[#800000] text-white shadow-sm'
-                                : 'text-slate-600 hover:bg-slate-50 hover:text-[#800000]' }}
+                                ? 'bg-[#800000] text-white shadow-md shadow-[#800000]/15'
+                                : 'text-slate-600 hover:bg-white hover:text-[#800000]' }}
                         "
                     >
 
@@ -302,7 +348,10 @@
             {{-- =========================================================
                 LOGOUT
             ========================================================== --}}
-            <div>
+            <div class="pt-5 border-t border-slate-200">
+                <div class="px-3 mb-3 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-400">
+                    Account
+                </div>
 
                 <form
                     action="{{ route('logout') }}"
@@ -318,8 +367,10 @@
                             flex items-center
                             justify-center gap-2
                             px-4 py-2.5
-                            bg-rose-50
-                            hover:bg-rose-100
+                            bg-white
+                            hover:bg-rose-50
+                            border border-slate-200
+                            hover:border-rose-200
                             text-rose-700
                             text-xs font-bold
                             rounded-xl
@@ -357,7 +408,7 @@
             CONTENT AREA
         ========================================================== --}}
         <main
-            class="flex-1 ml-64 min-h-screen p-8"
+            class="flex-1 ml-64 min-h-screen p-8 bg-[#F8F9FA]"
         >
 
             @yield('content')
@@ -368,4 +419,3 @@
 
 </body>
 
-</html>

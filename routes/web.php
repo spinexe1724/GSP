@@ -42,7 +42,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'admin'])->group(function () {
     // Dashboard Admin
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // Upload Data
+    Route::get('/admin/upload-data', function () {
+        return view('admin.upload-data');
+    })->name('admin.upload-data');
+
     // Showroom Routes
     Route::get('/upload-showroom', [ShowroomController::class, 'index'])->name('showrooms.upload');
     Route::post('/upload-showroom', [ShowroomController::class, 'upload'])->name('showrooms.import');

@@ -1,54 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Dashboard - Kelola Data')
+@section('title', 'Monitoring Showroom & Unit Mobil')
 
 @section('content')
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Showroom & Unit Mobil - Gratama</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
-</head>
-<body class="bg-[#F8F9FA] text-slate-800 antialiased min-h-screen">
-
-    {{-- Top Navbar --}}
-    <nav class="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="bg-[#800000] text-white font-black text-sm px-3 py-1.5 rounded-xl uppercase tracking-wider">
-                    GSP Admin
-                </span>
-                <span class="text-xs font-semibold text-slate-400">| Monitoring Unit</span>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="{{ route('admin.dashboard') }}" class="text-xs font-bold text-slate-600 hover:text-[#800000] transition">
-                    ← Kembali ke Dashboard
-                </a>
-                <a href="{{ route('portal.index') }}" target="_blank" class="text-xs font-bold text-slate-600 hover:text-[#800000] transition">
-                    Katalog Unit ↗
-                </a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl transition">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-    {{-- Container Konten --}}
-    <main class="max-w-7xl mx-auto px-6 py-8 space-y-6">
-
-        {{-- Flash Messages --}}
+<div class="w-full h-[calc(100vh-4rem)] min-h-0 flex flex-col overflow-hidden">
+{{-- Flash Messages --}}
         @if (session('success'))
             <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl font-bold">
                 {{ session('success') }}
@@ -61,9 +17,9 @@
         @endif
 
         {{-- Header & Bar Pencarian --}}
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-6 rounded-[28px] border border-slate-100 shadow-sm">
+        <div class="shrink-0 flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white px-5 py-4 rounded-[24px] border border-slate-100 shadow-sm">
             <div>
-                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Monitoring Showroom & Unit Mobil</h1>
+                <h1 class="text-xl font-black text-slate-900 tracking-tight">Monitoring Showroom & Unit Mobil</h1>
                 <p class="text-xs text-slate-500 mt-1">Verifikasi relasi no_cif / CNO, foto 3 sisi, serta status unit mobil rekanan.</p>
             </div>
 
@@ -93,15 +49,15 @@
         </div>
 
         {{-- Tabel Data Monitoring --}}
-        <div class="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden">
-            <div class="overflow-x-auto">
+        <div class="bg-white rounded-[28px] border border-slate-100 shadow-sm overflow-hidden flex-1 min-h-0 flex flex-col">
+            <div class="flex-1 min-h-0 overflow-auto">
                 <table class="w-full text-left text-xs text-slate-600">
-                    <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-100">
+                    <thead class="sticky top-0 z-10 bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-100">
                         <tr>
-                            <th class="py-4 px-6 w-1/4">Informasi Dealer</th>
-                            <th class="py-4 px-6 w-1/6">CNO / Pemilik</th>
-                            <th class="py-4 px-6 text-center w-24">Jml Unit</th>
-                            <th class="py-4 px-6">Daftar Mobil & Foto 3 Sisi</th>
+                            <th class="py-4 px-4 w-1/4">Informasi Dealer</th>
+                            <th class="py-4 px-4 w-1/6">CNO / Pemilik</th>
+                            <th class="py-4 px-4 text-center w-24">Jml Unit</th>
+                            <th class="py-4 px-4">Daftar Mobil & Foto 3 Sisi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -109,7 +65,7 @@
                             <tr class="hover:bg-slate-50/50 align-top">
                                 
                                 {{-- Kolom Info Dealer --}}
-                                <td class="py-4 px-6">
+                                <td class="py-4 px-4">
                                     <div class="font-black text-slate-900 text-sm">
                                         {{ $showroom->nmdealer ?? 'Tanpa Nama Dealer' }}
                                     </div>
@@ -122,7 +78,7 @@
                                 </td>
 
                                 {{-- Kolom CNO & Pemilik --}}
-                                <td class="py-4 px-6">
+                                <td class="py-4 px-4">
                                     @if($showroom->cno)
                                         <span class="bg-red-50 text-[#800000] font-mono font-bold px-2 py-0.5 rounded text-[11px]">
                                             CNO: {{ $showroom->cno }}
@@ -137,7 +93,7 @@
                                 </td>
 
                                 {{-- Kolom Jumlah Mobil --}}
-                                <td class="py-4 px-6 text-center">
+                                <td class="py-4 px-4 text-center">
                                     @if($showroom->cars->count() > 0)
                                         <span class="bg-emerald-50 text-emerald-700 font-black px-2.5 py-1 rounded-xl text-xs">
                                             {{ $showroom->cars->count() }} Unit
@@ -150,7 +106,7 @@
                                 </td>
 
                                 {{-- Kolom Daftar Mobil & Galeri Foto --}}
-                                <td class="py-4 px-6">
+                                <td class="py-4 px-4">
                                     @if($showroom->cars->isNotEmpty())
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             @foreach ($showroom->cars as $car)
@@ -261,13 +217,14 @@
             </div>
 
             {{-- Pagination Bar --}}
-            <div class="p-6 border-t border-slate-100">
-                {{ $showrooms->links() }}
+            <div class="shrink-0 px-4 py-2 border-t border-slate-100 bg-white flex items-center justify-between gap-3 overflow-x-auto">
+                <div class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">
+                    Menampilkan data showroom
+                </div>
+                <div class="shrink-0 [&_nav]:text-xs [&_a]:px-2 [&_a]:py-1 [&_span]:px-2 [&_span]:py-1">
+                    {{ $showrooms->links() }}
+                </div>
             </div>
         </div>
-
-    </main>
-
-</body>
-</html>
+</div>
 @endsection

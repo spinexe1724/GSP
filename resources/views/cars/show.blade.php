@@ -19,12 +19,7 @@
             >
                 ← Kembali ke Katalog
             </a>
-
-            <span class="text-xs font-mono bg-slate-100 text-slate-600 px-3 py-1 rounded-xl">
-                CIF: {{ $car->no_cif }}
-            </span>
-
-        </div>
+</div>
 
 
         {{-- =========================================================
@@ -503,12 +498,7 @@
                         <span class="bg-[#800000] text-white text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-wider">
                             {{ $car->nama_merk ?? 'Unit' }}
                         </span>
-
-                        <span class="font-mono text-xs font-black text-slate-800 bg-slate-100 px-3 py-1 rounded-md uppercase">
-                            {{ $car->no_polisi ?? '-' }}
-                        </span>
-
-                    </div>
+</div>
 
 
                     <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-2">
@@ -563,30 +553,7 @@
                             {{ $car->tahun_buat ?? '-' }}
                         </span>
                     </div>
-
-
-                    <div class="bg-slate-50 p-4 rounded-2xl">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold">
-                            Plat Nomor
-                        </span>
-
-                        <span class="font-black text-slate-800 text-sm mt-0.5 block font-mono uppercase">
-                            {{ $car->no_polisi ?? '-' }}
-                        </span>
-                    </div>
-
-
-                    <div class="bg-slate-50 p-4 rounded-2xl">
-                        <span class="text-slate-400 block text-[10px] uppercase font-bold">
-                            Nomor CIF
-                        </span>
-
-                        <span class="font-black text-slate-800 text-sm mt-0.5 block font-mono">
-                            {{ $car->no_cif ?? '-' }}
-                        </span>
-                    </div>
-
-                </div>
+</div>
 
             </div>
 
@@ -725,12 +692,7 @@
                                     <span class="font-bold text-slate-800 truncate">
                                         {{ $rel->nama_merk }} {{ $rel->tipe_kend }}
                                     </span>
-
-                                    <span class="font-mono text-[10px] text-slate-400 uppercase">
-                                        {{ $rel->no_polisi }}
-                                    </span>
-
-                                </a>
+</a>
 
                             @endforeach
 

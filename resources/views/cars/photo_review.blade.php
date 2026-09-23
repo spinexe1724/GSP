@@ -4,13 +4,23 @@
 
 @section('content')
 
-<div class="min-h-screen bg-slate-50 font-['Plus_Jakarta_Sans']">
+<div class="min-h-screen bg-[#f8fafc] font-['Plus_Jakarta_Sans'] text-slate-800">
 
 ```
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4">
+<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-3 space-y-3">
+
+    @php
+        // Pagination berada di level folder/nopol, bukan per foto.
+        $perPage = 10;
+        $currentPage = max(1, (int) request()->query('page', 1));
+        $totalFolders = $groupedPhotos->count();
+        $totalPages = max(1, (int) ceil($totalFolders / $perPage));
+        $currentPage = min($currentPage, $totalPages);
+        $pagedPhotos = $groupedPhotos->forPage($currentPage, $perPage);
+    @endphp
 
     {{-- HEADER --}}
-    <div class="bg-white border border-slate-200 rounded-2xl px-5 py-4">
+    <div class="bg-white border border-slate-200 rounded-xl px-5 py-3">
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
@@ -24,7 +34,7 @@
 
                     @if($groupedPhotos->count() > 0)
                         <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[9px] font-bold">
-                            {{ $groupedPhotos->count() }} Folder
+                            {{ $totalFolders }} Folder
                         </span>
                     @endif
 
@@ -139,9 +149,9 @@
 
 
     {{-- STATISTIK --}}
-    <div class="grid grid-cols-3 gap-3">
+    <div class="grid grid-cols-3 gap-2">
 
-        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5">
             <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
                 Folder Review
             </p>
@@ -152,7 +162,7 @@
         </div>
 
 
-        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5">
             <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
                 Total Foto
             </p>
@@ -163,7 +173,7 @@
         </div>
 
 
-        <div class="bg-white border border-slate-200 rounded-xl px-4 py-3">
+        <div class="bg-white border border-slate-200 rounded-lg px-4 py-2.5">
             <p class="text-[9px] uppercase tracking-wide font-bold text-slate-400">
                 Unit Kandidat
             </p>
@@ -177,9 +187,9 @@
 
 
     {{-- DAFTAR FOLDER --}}
-    <div class="space-y-3">
+    <div class="space-y-2">
 
-        @forelse($groupedPhotos as $nopol => $photos)
+        @forelse($pagedPhotos as $nopol => $photos)
 
             <details
                 class="review-folder group bg-white border border-slate-200 rounded-xl overflow-hidden"
@@ -187,7 +197,7 @@
 
                 {{-- FOLDER HEADER --}}
                 <summary
-                    class="flex items-center justify-between gap-3 px-4 py-3
+                    class="flex items-center justify-between gap-3 px-3.5 py-2
                            cursor-pointer list-none
                            hover:bg-slate-50 transition"
                 >
@@ -195,7 +205,7 @@
                     <div class="flex items-center gap-3 min-w-0">
 
                         <div
-                            class="w-7 h-7 rounded-lg bg-slate-100
+                            class="w-6 h-6 rounded-md bg-slate-100
                                    flex items-center justify-center flex-shrink-0
                                    transition-transform duration-200
                                    group-open:rotate-90"
@@ -220,11 +230,11 @@
 
                             <div class="flex items-center gap-2 min-w-0">
 
-                                <span class="text-xs font-bold text-slate-500">
+                                <span class="text-[11px] font-bold text-slate-500">
                                     Nopol
                                 </span>
 
-                                <span class="text-xs font-black text-[#800000] uppercase truncate">
+                                <span class="text-[11px] font-black text-[#800000] uppercase truncate">
                                     {{ $nopol }}
                                 </span>
 
@@ -351,13 +361,12 @@
 
 
                         {{-- GALERI --}}
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2.5">
 
                             @foreach($photos as $photo)
 
                                 <div
-                                    class="bg-white border border-slate-200 rounded-xl p-2
-                                           hover:border-slate-300 transition"
+                                    class="bg-white border border-slate-200 rounded-lg p-2 hover:border-slate-300 hover:shadow-sm transition"
                                 >
 
                                     <input
@@ -417,31 +426,12 @@
                                         name="photos[{{ $photo->id }}][slot]"
                                         class="review-slot-select w-full"
                                     >
-                                        <option value="ignore">
-                                            Abaikan
-                                        </option>
-
-                                        <option value="foto_depan">
-                                            Foto Depan
-                                        </option>
-
-                                        <option value="foto_belakang">
-                                            Foto Belakang
-                                        </option>
-
-                                        <option value="foto_samping">
-                                            Foto Samping
-                                        </option>
+                                        <option value="ignore">Abaikan File Ini</option>
+                                        <option value="foto_depan">Foto Depan</option>
+                                        <option value="foto_belakang">Foto Belakang</option>
+                                        <option value="foto_samping">Foto Samping</option>
+                                        <option value="foto_odometer">Foto Odometer</option>
                                     </select>
-<select name="photos[{{ $photo->id }}][slot]" class="w-full text-xs border-gray-300 rounded focus:border-blue-500 focus:ring-blue-500 py-1 bg-white cursor-pointer">
-    <option value="ignore">Abaikan File Ini</option>
-    <option value="foto_depan">Jadikan Foto Depan</option>
-    <option value="foto_belakang">Jadikan Foto Belakang</option>
-    <option value="foto_samping">Jadikan Foto Samping</option>
-    
-    {{-- TAMBAHKAN BARIS INI --}}
-    <option value="foto_odometer">Jadikan Foto Odometer</option>
-</select>
                                 </div>
 
                             @endforeach
@@ -495,6 +485,55 @@
 ```
 
 </div>
+
+
+    {{-- PAGINATION --}}
+    @if($totalPages > 1)
+        <div class="sticky bottom-0 z-20 -mx-2 px-2 py-2 bg-[#f8fafc]/95 backdrop-blur-sm border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p class="text-[10px] text-slate-400">
+                Menampilkan
+                <span class="font-bold text-slate-600">
+                    {{ (($currentPage - 1) * $perPage) + 1 }}
+                    - {{ min($currentPage * $perPage, $totalFolders) }}
+                </span>
+                dari
+                <span class="font-bold text-slate-600">{{ $totalFolders }}</span>
+                folder
+            </p>
+
+            <div class="flex items-center gap-1">
+                @if($currentPage > 1)
+                    <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage - 1]) }}"
+                       class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900 transition"
+                       aria-label="Halaman sebelumnya">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                @endif
+
+                @for($page = 1; $page <= $totalPages; $page++)
+                    <a href="{{ request()->fullUrlWithQuery(['page' => $page]) }}"
+                       class="inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-lg border text-[10px] font-bold transition
+                       {{ $page === $currentPage
+                            ? 'bg-[#800000] border-[#800000] text-white'
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-900' }}">
+                        {{ $page }}
+                    </a>
+                @endfor
+
+                @if($currentPage < $totalPages)
+                    <a href="{{ request()->fullUrlWithQuery(['page' => $currentPage + 1]) }}"
+                       class="inline-flex items-center justify-center w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-900 transition"
+                       aria-label="Halaman berikutnya">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                @endif
+            </div>
+        </div>
+    @endif
 
 {{-- SELECT2 --}}
 
@@ -628,6 +667,34 @@
     .review-slot-select:focus {
         border-color: #800000;
         box-shadow: 0 0 0 2px rgba(128, 0, 0, 0.07);
+    }
+
+
+    /* MINIMAL PHOTO REVIEW */
+    .review-folder {
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .review-folder[open] {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, .04);
+    }
+
+    .review-folder summary {
+        min-height: 46px;
+    }
+
+    .review-folder summary:focus-visible,
+    .review-folder a:focus-visible,
+    .review-slot-select:focus-visible {
+        outline: 2px solid rgba(128, 0, 0, .25);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+        .review-folder summary {
+            min-height: 44px;
+        }
     }
 
     /* DETAILS */
