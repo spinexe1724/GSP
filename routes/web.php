@@ -66,6 +66,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/cars/review/{id}/approve', [CarReviewController::class, 'approve'])->name('cars.review.approve');
     Route::delete('/cars/review/{id}', [CarReviewController::class, 'destroy'])->name('cars.review.destroy');
     Route::post('/cars/upload-chunk', [CarController::class, 'uploadChunk'])->name('cars.chunk.upload');
+
 });
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -76,4 +77,6 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 });
     Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');
+    Route::get('/check-zip-status', [CarController::class, 'checkZipStatus'])->name('check.zip.status');
+
 require __DIR__.'/auth.php';

@@ -419,3 +419,50 @@
 
 </body>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Jalankan interval setiap 5000 milidetik (5 detik)
+        let checkInterval = setInterval(function() {
+            
+            fetch('{{ route("check.zip.status") }}')
+                .then(response => response.json())
+                .then(data => {
+                    
+                    // JIKA WORKER SUDAH SELESAI
+                    if (data.status === 'completed') {
+                        clearInterval(checkInterval); // Hentikan pengecekan
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Selesai!',
+                                text: 'Proses un-zip selesai. Seluruh foto unit telah berhasil masuk ke dalam database.',
+                                confirmButtonColor: '#10B981',
+                                allowOutsideClick: false
+                            }).then(() => {
+                                window.location.reload(); // Refresh untuk melihat foto baru
+                            });
+                        } else {
+                            alert('Berhasil! Seluruh foto unit telah masuk ke database.');
+                            window.location.reload();
+                        }
+                    } 
+                    // JIKA TERJADI ERROR SAAT PROSES
+                    else if (data.status === 'error') {
+                        clearInterval(checkInterval);
+
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Proses Gagal',
+                                text: 'Terjadi kesalahan saat memproses ZIP di sistem latar belakang.',
+                                confirmButtonColor: '#EF4444'
+                            });
+                        }
+                    }
+                })
+                .catch(error => console.error('Error checking status:', error));
+                
+        }, 5000); 
+    });
+</script>

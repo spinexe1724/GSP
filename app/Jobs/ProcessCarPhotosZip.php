@@ -32,11 +32,12 @@ class ProcessCarPhotosZip implements ShouldQueue
         ini_set('memory_limit', '2048M');
 
         try {
-           $zip = new \ZipArchive;
-if ($zip->open($this->fullZipPath) === TRUE) {
-    $extractPath = storage_path('app/temp_extracted_' . time());
-    $zip->extractTo($extractPath);
-    $zip->close();
+            $zip = new \ZipArchive;
+            if ($zip->open($this->fullZipPath) === TRUE) {
+                $extractPath = storage_path('app/temp_extracted_' . time());
+                $zip->extractTo($extractPath);
+                $zip->close();
+                
                 $destinationDir = public_path('uploads/cars');
                 if (!file_exists($destinationDir)) {
                     mkdir($destinationDir, 0777, true);
@@ -121,15 +122,13 @@ if ($zip->open($this->fullZipPath) === TRUE) {
                                 $car->foto_samping = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
-                            }
-                            elseif (preg_match('/pdf_pmb.*_1\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
-    copy($f['pathname'], $targetPhysicalPath);
-    $car->foto_odometer = $targetRelativePath;
-    $matchedCount++;
-    $hasAssignedPhoto = true;
-}
-                             else {
-                                // File sisa otomatis dibuang/diabaikan sesuai logika Anda
+                            } elseif (preg_match('/_1\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
+                                copy($f['pathname'], $targetPhysicalPath);
+                                $car->foto_odometer = $targetRelativePath;
+                                $matchedCount++;
+                                $hasAssignedPhoto = true;
+                            } else {
+                                // File sisa di dalam folder valid otomatis dibuang (Sangat Bagus!)
                             }
                         }
 
@@ -138,10 +137,23 @@ if ($zip->open($this->fullZipPath) === TRUE) {
                         }
                         
                     } else {
+                        
+                        // =========================================================================
+                        // PERUBAHAN ADA DI SINI: File ditolak masuk ke folder khusus 'unmatched'
+                        // =========================================================================
+                        
+                        // Buat folder uploads/unmatched jika belum ada
+                        $unmatchedDir = public_path('uploads/unmatched');
+                        if (!file_exists($unmatchedDir)) {
+                            mkdir($unmatchedDir, 0777, true);
+                        }
+
                         foreach ($group['files'] as $f) {
                             $originalName = $f['name'];
                             $uniqueFileName = time() . '_' . uniqid() . '_' . $originalName;
-                            $targetRelativePath = 'uploads/cars/' . $uniqueFileName;
+                            
+                            // TARGET PATH DIUBAH KE FOLDER UNMATCHED
+                            $targetRelativePath = 'uploads/unmatched/' . $uniqueFileName;
                             $targetPhysicalPath = public_path($targetRelativePath);
 
                             copy($f['pathname'], $targetPhysicalPath);
@@ -150,7 +162,7 @@ if ($zip->open($this->fullZipPath) === TRUE) {
                                 'file_name'      => $originalName,
                                 'nopol_detected' => $rawFolderName,
                                 'slot_detected'  => '-',
-                                'file_path'      => $targetRelativePath,
+                                'file_path'      => $targetRelativePath, // Path ke database tersimpan sbg uploads/unmatched/...
                                 'reason'         => 'Folder tidak berurutan (tidak ada penanda _1) atau unit mobil tidak terdaftar.'
                             ]);
                             $reviewCount++;
@@ -166,9 +178,11 @@ if ($zip->open($this->fullZipPath) === TRUE) {
             if (file_exists($this->fullZipPath)) {
                 @unlink($this->fullZipPath);
             }
+            \Illuminate\Support\Facades\Cache::put('zip_process_status', 'completed', now()->addMinutes(10));
 
         } catch (\Exception $e) {
             // LEMPAR EXCEPTION AGAR TERCETAK DI TERMINAL WORKER
+            \Illuminate\Support\Facades\Cache::put('zip_process_status', 'error', now()->addMinutes(10));
             throw $e; 
         }
     }

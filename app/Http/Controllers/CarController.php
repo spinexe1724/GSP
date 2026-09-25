@@ -154,7 +154,7 @@ if ($request->filled('showroom_id')) {
 }
 public function uploadZipPhotos(Request $request)
 {
-   $request->validate([
+    $request->validate([
         'zip_file' => 'required|file|mimes:zip,application/zip,application/x-zip-compressed',
     ]);
 
@@ -179,13 +179,24 @@ public function uploadZipPhotos(Request $request)
             throw new \Exception("Gagal memindahkan file ZIP ke folder penyimpanan.");
         }
 
-        // Lempar ke Background Job (Queue)
+        // 1. Lempar ke Background Job (Queue)
         \App\Jobs\ProcessCarPhotosZip::dispatch($fullZipPath);
 
-        return redirect()->back()->with('success', 'File ZIP berhasil diunggah dan masuk antrean proses!');
+        // 2. Tandai status cache (SUDAN BENAR)
+        \Illuminate\Support\Facades\Cache::put('zip_process_status', 'processing', now()->addHours(2));
+
+        // 3. Kembalikan JSON Sukses
+        return response()->json([
+            'status' => 'completed', 
+            'message' => 'File berhasil diunggah dan sedang diproses di latar belakang!'
+        ]);
 
     } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
+        // PERBAIKAN: Kembalikan JSON Error agar seragam dengan balikan sukses
+        return response()->json([
+            'status' => 'error', 
+            'message' => 'Gagal: ' . $e->getMessage()
+        ], 500); 
     }
 }
 public function destroy($id)
@@ -260,5 +271,17 @@ public function uploadChunk(Request $request)
         'message' => 'Chunk diterima.'
     ]);
 }
+public function checkZipStatus()
+{
+    // Ambil status saat ini. Defaultnya 'idle' (tidak ada proses)
+    $status = \Illuminate\Support\Facades\Cache::get('zip_process_status', 'idle');
+    
+    // Jika statusnya sudah selesai atau error, hapus cache-nya 
+    // agar notifikasi tidak muncul terus-terusan saat halaman di-refresh
+    if (in_array($status, ['completed', 'error'])) {
+        \Illuminate\Support\Facades\Cache::forget('zip_process_status');
+    }
 
+    return response()->json(['status' => $status]);
+}
 }
