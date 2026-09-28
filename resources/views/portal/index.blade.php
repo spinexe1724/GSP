@@ -16,25 +16,27 @@
         <div class="relative z-10 mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
             <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
 
-                {{-- Text Header & Search --}}
-                <div class="space-y-5 text-white lg:col-span-7">
-                    <div class="inline-flex max-w-full items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-md">
-                        <span class="h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-300"></span>
-                        <span class="truncate text-[9px] font-bold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-widest">
-                            Gratama Showroom Partners
-                        </span>
-                    </div>
+          <div class="space-y-4 text-white lg:col-span-7">
 
-                    <h1 class="max-w-3xl text-2xl font-black leading-tight tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
-                        Temukan Mobil Impian
-                        <span class="block bg-gradient-to-r from-red-100 via-slate-100 to-white bg-clip-text text-transparent">
-                            Dengan Transaksi Aman & Transparan
-                        </span>
-                    </h1>
+    <div class="inline-flex max-w-full items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 backdrop-blur-md">
+        <span class="h-2 w-2 shrink-0 animate-pulse rounded-full bg-red-300"></span>
 
-                    <p class="max-w-2xl text-xs leading-relaxed text-slate-200 sm:text-sm md:text-base">
-                        Jelajahi ratusan unit mobil bekas & baru terverifikasi dari jaringan showroom mitra terpercaya kami di seluruh Indonesia.
-                    </p>
+        <span class="truncate text-[13px] font-bold uppercase tracking-[0.16em] sm:text-[16px] sm:tracking-widest">
+            Gratama Showroom Partners
+        </span>
+    </div>
+
+    <h1 class="max-w-2xl text-xl font-black leading-tight tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
+        Cari Mobil yang Pas,
+        <span class="block text-white/90">
+            Tanpa Ribet
+        </span>
+    </h1>
+
+    <p class="max-w-2xl text-xs leading-relaxed text-slate-200 sm:text-sm md:text-base">
+        Pilih dari berbagai unit pilihan showroom partner kami.
+        Cek detailnya, lihat kondisinya, lalu hubungi showroom langsung.
+    </p>
 
                     {{-- Quick Search --}}
                     <form
@@ -173,8 +175,40 @@
     {{-- =========================================================
          3. MAIN CATALOG
     ========================================================== --}}
-    <section class="bg-slate-50 py-7 sm:py-10 lg:py-12">
-        <div class="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
+    <section class="relative bg-[#F4F6F8] py-7 sm:py-10 lg:py-12">
+
+        {{-- GRATAMA SIGNATURE BACKGROUND --}}
+        <div class="pointer-events-none absolute inset-0">
+
+            {{-- Soft maroon ambient --}}
+            <div class="absolute -left-32 top-16 h-[460px] w-[460px] rounded-full bg-[#800000]/[0.065] blur-[100px]"></div>
+            <div class="absolute -right-40 bottom-[-80px] h-[520px] w-[520px] rounded-full bg-[#800000]/[0.055] blur-[115px]"></div>
+
+            {{-- Oversized GSP watermark --}}
+            <div class="absolute -right-8 top-8 select-none text-[220px] font-black leading-none tracking-[-0.08em] text-[#800000]/[0.028]">
+                GSP
+            </div>
+
+            {{-- Architectural diagonal planes --}}
+            <div
+                class="absolute right-[-6%] top-[12%] h-[260px] w-[52%] rotate-[-8deg] border border-[#800000]/[0.08]"
+                style="clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);"
+            ></div>
+
+            <div
+                class="absolute left-[-8%] bottom-[8%] h-[210px] w-[42%] rotate-[7deg] bg-[#800000]/[0.018]"
+                style="clip-path: polygon(0 0, 100% 14%, 88% 100%, 0 86%);"
+            ></div>
+
+            {{-- Fine technical lines --}}
+            <div class="absolute inset-x-[8%] top-8 h-px bg-gradient-to-r from-transparent via-[#800000]/20 to-transparent"></div>
+            <div class="absolute inset-x-[14%] bottom-10 h-px bg-gradient-to-r from-transparent via-slate-400/30 to-transparent"></div>
+
+            {{-- Small vertical brand accent --}}
+            <div class="absolute left-[4%] top-1/2 h-20 w-1 -translate-y-1/2 rounded-full bg-gradient-to-b from-transparent via-[#800000]/30 to-transparent"></div>
+        </div>
+
+<div class="relative z-10 mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
 
             <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-12 lg:gap-8">
 

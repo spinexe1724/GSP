@@ -12,7 +12,7 @@
                 <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                 </div>
-                <span class="text-white font-bold text-2xl tracking-tighter" id="nav-logo-text">GSP</span>
+                <span class="text-white font-bold text-2xl tracking-tighter" id="nav-logo-text">Gratama</span>
             </div>
 
             {{-- Menu Utama --}}

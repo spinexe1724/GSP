@@ -1,12 +1,113 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ ($car->nama_merk ?? 'Mobil') . ' ' . ($car->tipe_kend ?? '') }} - Gratama</title>
 
-@section('title', ($car->nama_merk ?? 'Mobil') . ' ' . ($car->tipe_kend ?? '') . ' - Detail Unit')
+    <script src="https://cdn.tailwindcss.com"></script>
 
-@section('content')
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-<div class="pt-24 pb-20 bg-[#F8F9FA] min-h-screen font-['Plus_Jakarta_Sans']">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
 
-    <div class="max-w-6xl mx-auto px-6 space-y-8">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f3f4f6;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-[#F3F4F6] text-slate-800 antialiased">
+
+    {{-- =========================================================
+         NAVBAR STANDALONE
+    ========================================================== --}}
+    <header class="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.05)]">
+        <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+
+            {{-- Logo --}}
+            <a href="{{ route('portal.index') }}" class="flex items-center gap-2.5">
+                <div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#800000] shadow-sm">
+                    <div class="flex h-6 w-5 flex-col justify-center gap-[2px]">
+                        <span class="mx-auto block h-[2px] w-4 rounded-full bg-white"></span>
+                        <span class="mx-auto block h-[2px] w-3.5 rounded-full bg-white"></span>
+                        <span class="mx-auto block h-[2px] w-3 rounded-full bg-white"></span>
+                        <span class="mx-auto block h-[2px] w-2.5 rounded-full bg-white"></span>
+                    </div>
+                </div>
+
+                <span class="text-xl font-extrabold tracking-tight text-slate-900">
+                    Gratama
+                </span>
+            </a>
+
+            {{-- Navigasi --}}
+            <nav class="hidden items-center gap-8 md:flex">
+                <a href="{{ route('portal.index') }}"
+                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
+                    Home
+                </a>
+
+                <a href="{{ route('cars.index') }}"
+                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
+                    Cars
+                </a>
+
+                <a href="{{ route('portal.index') }}#brands"
+                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
+                    Brands
+                </a>
+
+                <a href="{{ route('portal.index') }}#contact"
+                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
+                    Contact
+                </a>
+            </nav>
+        </div>
+    </header>
+<div class="relative pt-8 sm:pt-10 pb-16 sm:pb-20 bg-[#F3F4F6] min-h-screen font-['Plus_Jakarta_Sans'] overflow-x-hidden">
+    {{-- PREMIUM FINANCE V2: visible but elegant Gratama background --}}
+    <div class="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
+
+        {{-- Base tonal layer --}}
+        <div class="absolute inset-0 bg-gradient-to-br from-[#EEF1F4] via-[#F5F6F8] to-[#E8ECEF]"></div>
+
+        {{-- Maroon ambient areas --}}
+        <div class="absolute -left-24 top-24 h-[560px] w-[560px] rounded-full bg-[#800000]/[0.11] blur-[120px]"></div>
+        <div class="absolute -right-28 bottom-[-120px] h-[620px] w-[620px] rounded-full bg-[#800000]/[0.085] blur-[130px]"></div>
+
+        {{-- Large diagonal brand planes --}}
+        <div
+            class="absolute -right-[10%] top-[18%] h-[330px] w-[58%] rotate-[-7deg] rounded-[80px] bg-gradient-to-r from-[#800000]/[0.045] via-[#800000]/[0.075] to-transparent"
+        ></div>
+
+        <div
+            class="absolute -left-[14%] bottom-[18%] h-[260px] w-[48%] rotate-[6deg] rounded-[70px] border border-[#800000]/[0.10] bg-white/25"
+        ></div>
+
+        {{-- Fine architectural lines --}}
+        <div class="absolute left-[6%] right-[6%] top-24 h-px bg-gradient-to-r from-transparent via-[#800000]/25 to-transparent"></div>
+        <div class="absolute left-[18%] right-[18%] bottom-24 h-px bg-gradient-to-r from-transparent via-slate-400/35 to-transparent"></div>
+
+        {{-- Subtle oversized brand mark --}}
+        <div class="absolute -right-8 top-1/2 -translate-y-1/2 select-none text-[240px] font-black leading-none tracking-[-0.09em] text-[#800000]/[0.035]">
+            G
+        </div>
+
+        {{-- Small vertical identity accent --}}
+        <div class="absolute left-[5%] top-1/2 h-28 w-1 -translate-y-1/2 rounded-full bg-gradient-to-b from-transparent via-[#800000]/45 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 space-y-8">
 
         {{-- =========================================================
             NAVIGASI
@@ -712,6 +813,58 @@
 
 
 
+
+    {{-- =========================================================
+         FOOTER STANDALONE — SELARAS DENGAN HOMEPAGE
+    ========================================================== --}}
+    <footer class="border-t border-slate-200 bg-white">
+        <div class="mx-auto max-w-7xl px-6 py-6 md:px-10">
+            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+
+                <div class="flex items-center gap-3">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#800000]">
+                        <span class="text-sm font-black text-white">G</span>
+                    </div>
+
+                    <div>
+                        <div class="text-sm font-bold text-slate-900">GSP</div>
+                        <div class="text-[11px] text-slate-400">
+                            Gratama Showroom Partners
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="flex items-center gap-5 text-xs font-medium text-slate-500">
+                    <a href="{{ route('portal.index') }}"
+                       class="transition hover:text-[#800000]">
+                        Beranda
+                    </a>
+
+                    <a href="{{ route('cars.index') }}"
+                       class="transition hover:text-[#800000]">
+                        Mobil
+                    </a>
+
+                    <a href="{{ route('portal.index') }}#brands"
+                       class="transition hover:text-[#800000]">
+                        Merek
+                    </a>
+
+                    <a href="{{ route('portal.index') }}#contact"
+                       class="transition hover:text-[#800000]">
+                        Kontak
+                    </a>
+                </nav>
+
+                <div class="text-center text-[11px] text-slate-400 md:text-right">
+                    © 2026 GSP
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+
 {{-- =============================================================
     IMAGE POPUP / MODAL
 ============================================================== --}}
@@ -985,4 +1138,5 @@
 
 </script>
 
-@endsection
+</body>
+</html>
