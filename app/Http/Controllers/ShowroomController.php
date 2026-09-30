@@ -11,19 +11,7 @@ class ShowroomController extends Controller
 {
   public function index()
 {
-    // 1. Mulai query dasar (jangan langsung get() atau paginate())
-    $query = Car::query();
-
-    // 2. TANGKAP FILTER SHOWROOM: Jika ada parameter showroom_id di URL
-    if ($request->filled('showroom_id')) {
-        $query->where('showroom_id', $request->showroom_id);
-    }
-
-    // Anda bisa menambahkan filter lain di sini jika ada (seperti pencarian merek, dll)
-    // if ($request->filled('search')) { ... }
-
-    // 3. Eksekusi query dengan pagination
-    $cars = $query->latest()->paginate(12);
+    
     return view('showrooms.upload-showrooms');
 }
 
@@ -53,7 +41,7 @@ public function show($id)
 }
 public function upload(Request $request)
     {
- 
+ try {
 
     set_time_limit(0); // Menghapus batas waktu eksekusi script
  $request->validate([
@@ -135,9 +123,11 @@ public function upload(Request $request)
     if (file_exists($fullPath)) {
         unlink($fullPath);
     }
-
-    return redirect()->back()->with('success', 'Semua data showroom berhasil di-upload secara utuh! Data dengan CNO kosong tetap masuk.');
-}
+return redirect()->route('admin.upload-data', ['imported' => 'showroom_success']);
+    } catch (\Exception $e) {
+        return redirect()->route('admin.upload-data', ['imported' => 'error', 'msg' => $e->getMessage()]);
+    }
+    }
 
 public function monitoring(Request $request)
     {

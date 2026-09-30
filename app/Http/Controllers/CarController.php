@@ -90,6 +90,7 @@ if ($request->filled('showroom_id')) {
      */
    public function upload(Request $request)
     {
+        try {
         // 1. Validasi File Excel/CSV
        $request->validate([
         'file' => 'required|mimes:xlsx,csv|max:10240',
@@ -150,8 +151,11 @@ if ($request->filled('showroom_id')) {
         unlink($fullPath);
     }
 
-    return redirect()->back()->with('success', 'Proses Excel selesai! Data yang CIF-nya tidak cocok diamankan ke menu Review.');
-}
+return redirect()->route('admin.upload-data', ['imported' => 'cars_success']);
+    } catch (\Exception $e) {
+        return redirect()->route('admin.upload-data', ['imported' => 'error', 'msg' => $e->getMessage()]);
+    }
+    }
 public function uploadZipPhotos(Request $request)
 {
     $request->validate([
@@ -178,9 +182,10 @@ public function uploadZipPhotos(Request $request)
         if (!file_exists($fullZipPath)) {
             throw new \Exception("Gagal memindahkan file ZIP ke folder penyimpanan.");
         }
-
+$extractPath = storage_path('app/temp_extracted_' . uniqid());
+$chunkFolder = storage_path('app/temp_chunks/' . $uploadId);
         // 1. Lempar ke Background Job (Queue)
-        \App\Jobs\ProcessCarPhotosZip::dispatch($fullZipPath);
+        \App\Jobs\ProcessCarPhotosZip::dispatch($fullZipPath,$extractPath, $chunkFolder);
 
         // 2. Tandai status cache (SUDAN BENAR)
         \Illuminate\Support\Facades\Cache::put('zip_process_status', 'processing', now()->addHours(2));

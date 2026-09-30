@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CarReviewController;
 use App\Http\Controllers\PhotoReviewController;
+use App\Http\Controllers\PelunasanController;
 use Illuminate\Support\Facades\Route;
 
 // --- Rute GUEST (Belum Login) ---
@@ -58,6 +59,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/upload-cars', [CarController::class, 'upload'])->name('cars.import');
     Route::post('/cars/upload-zip-photos', [CarController::class, 'uploadZipPhotos'])->name('cars.photos.zip');
     Route::delete('/admin/cars/{id}', [CarController::class, 'destroy'])->name('admin.cars.destroy');
+    Route::post('/cars/pelunasan', [PelunasanController::class, 'importPelunasan'])->name('pelunasan.import');
 });
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -69,11 +71,18 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
 });
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    // Pastikan menggunakan Route::get untuk halaman utama review
-    Route::get('/cars/photo_review', [PhotoReviewController::class, 'index'])->name('cars.photo_review');
-    Route::post('/cars/photo_review/{id}/assign', [PhotoReviewController::class, 'assign'])->name('cars.photo_review.assign');
-    Route::delete('/cars/photo_review/clear', [PhotoReviewController::class, 'clearUnmatchedPhotos'])->name('cars.photo_review.clear');
+Route::prefix('admin/cars')->name('admin.cars.')->group(function () {
+    // 1. GET: Halaman utama (List Nopol)
+    Route::get('photo_review', [PhotoReviewController::class, 'index'])->name('photo_review.index');
+
+    // 2. DELETE: Hapus semua (Gunakan path /clear agar tidak bentrok dengan GET di atas)
+    Route::delete('photo_review/clear', [PhotoReviewController::class, 'clearUnmatchedPhotos'])->name('photo_review.clear');
+
+    // 3. GET: Halaman detail per Nopol
+    Route::get('photo_review/{id}', [PhotoReviewController::class, 'detail'])->name('photo_review.detail');
+
+    // 4. POST: Proses simpan/assign foto
+    Route::post('photo_review/{id}/assign', [PhotoReviewController::class, 'assign'])->name('photo_review.assign');
 });
     Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{id}', [CarController::class, 'show'])->name('cars.show');

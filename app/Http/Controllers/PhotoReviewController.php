@@ -40,55 +40,44 @@ $unmatchedCars = \App\Models\UnmatchedCar::latest()->paginate(10);
 
     // Aksi Admin: Tautkan foto secara manual ke Nopol / Mobil yang benar
    public function assign(Request $request, $id)
-    {
-        // 1. Validasi input
+   {
         $request->validate([
             'car_id' => 'required|exists:cars,id',
             'photos' => 'required|array'
-        ], [
-            'car_id.required' => 'Pilih unit mobil terlebih dahulu dari dropdown.'
         ]);
 
-        // 2. Cari unit mobil berdasarkan pilihan dropdown
-        $car = \App\Models\Car::findOrFail($request->car_id);
-        $assignedAny = false;
-        $processedPhotoIds = [];
+        $nopol_detected = urldecode($id);
+        $car = Car::findOrFail($request->car_id);
 
-        // 3. Looping data array photos yang dikirim dari form
-        foreach ($request->photos as $photoData) {
-            // Pastikan data slot dipilih dan bukan 'ignore'
-            if (isset($photoData['id']) && isset($photoData['slot']) && $photoData['slot'] !== 'ignore') {
+        // Looping data foto yang dikirim dari form
+        foreach ($request->photos as $photoId => $data) {
+            $slot = $data['slot']; // Berisi: ignore, foto_depan, foto_belakang, dll
+
+            if ($slot !== 'ignore') {
+                // Cari foto di tabel temporary
+                $tempPhoto = UnmatchedPhoto::find($photoId);
                 
-                $unmatchedPhoto = \App\Models\UnmatchedPhoto::find($photoData['id']);
-                
-                if ($unmatchedPhoto) {
-                    $slot = $photoData['slot']; // Berisi 'foto_depan', 'foto_belakang', atau 'foto_samping'
+                if ($tempPhoto) {
+                    // Masukkan path foto ke kolom slot yang dipilih di tabel cars
+                    // Misalnya: $car->foto_depan = $tempPhoto->file_path;
+                    $car->{$slot} = $tempPhoto->file_path;
                     
-                    if (in_array($slot, ['foto_depan', 'foto_belakang', 'foto_samping'])) {
-                        // Masukkan path file ke kolom database mobil
-                        $car->{$slot} = $unmatchedPhoto->file_path;
-                        $assignedAny = true;
-                        
-                        // Kumpulkan ID foto yang berhasil dipasang
-                        $processedPhotoIds[] = $unmatchedPhoto->id;
-                    }
+                    // (Opsional) Pindahkan file fisik dari folder temp ke folder permanen di sini jika diperlukan
                 }
             }
         }
 
-        // 4. Jika ada foto yang dipilih, simpan mobil dan hapus foto dari tabel review
-        if ($assignedAny) {
-            $car->save();
-            
-            if (!empty($processedPhotoIds)) {
-                \App\Models\UnmatchedPhoto::whereIn('id', $processedPhotoIds)->delete();
-            }
-            
-            return redirect()->back()->with('success', "Foto berhasil dipasangkan ke unit mobil secara manual!");
-        }
+        // Simpan perubahan ke tabel cars
+        $car->save();
 
-        return redirect()->back()->with('error', 'Tidak ada foto yang dipilih untuk dipasangkan. Ubah status minimal satu foto menjadi Depan/Belakang/Samping.');
+        // Hapus data foto di tabel temporary (PhotoReview) untuk Nopol ini agar hilang dari daftar antrean
+        UnmatchedPhoto::where('nopol_detected', $nopol_detected)->delete();
+
+        // Redirect kembali ke halaman utama list nopol
+        return redirect()->route('admin.cars.photo_review.index')
+                         ->with('success', "Foto untuk antrean {$nopol_detected} berhasil dipetakan ke unit {$car->no_polisi}.");
     }
+    
 
     public function clearUnmatchedPhotos()
 {
@@ -109,6 +98,35 @@ $unmatchedCars = \App\Models\UnmatchedCar::latest()->paginate(10);
         $count++;
     }
 
-    return back()->with('success', "Berhasil menghapus {$count} foto review beserta file fisiknya.");
+return redirect()->route('admin.cars.photo_review.index')->with('success', 'Semua data dihapus');
+
 }
+public function detail($id)
+{
+    // 1. Decode ID (nama folder / nopol) dari URL
+    $nopol_detected = urldecode($id);
+
+    // 2. Ambil foto berdasarkan nama folder. 
+    // PENTING: Sesuaikan 'folder_name' dengan nama kolom asli di database Anda! 
+    // (Bisa jadi namanya 'folder', 'nama_folder', atau 'no_polisi')
+    $photos = \App\Models\UnmatchedPhoto::where('nopol_detected', $nopol_detected)->get();
+
+    // 3. VALIDASI PINTAR: Jika foto sudah kosong (sudah diproses semua/dihapus dari database), 
+    // langsung kembalikan ke halaman list agar tidak menampilkan halaman kosong.
+    if ($photos->isEmpty()) {
+        return redirect()->route('admin.cars.photo_review.index')
+                         ->with('info', "Semua antrean foto untuk folder {$nopol_detected} sudah selesai diproses.");
+    }
+
+    // 4. Ambil daftar mobil untuk dropdown pilihan
+    $carsNeedingPhotos = \App\Models\Car::select('id', 'no_polisi', 'nama_merk', 'tipe_kend')
+        ->orderBy('no_polisi', 'asc')
+        ->get();
+
+    // 5. Tampilkan ke view
+    // (Pastikan variabel yang dilempar sesuai dengan yang dipanggil di file blade Anda)
+    return view('cars.photo_review_detail', compact('nopol_detected', 'photos', 'carsNeedingPhotos'));
+}
+
+
 }

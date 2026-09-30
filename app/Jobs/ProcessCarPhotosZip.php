@@ -16,14 +16,17 @@ class ProcessCarPhotosZip implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $fullZipPath;
-
+    protected $extractPath;
+    protected $chunkFolder;
     // Atur timeout job hingga 30 menit khusus file besar
     public $timeout = 3000;
     public $tries = 1;
 
-    public function __construct($fullZipPath)
+    public function __construct($fullZipPath,$extractPath = null, $chunkFolder = null)
     {
         $this->fullZipPath = $fullZipPath;
+        $this->extractPath = $extractPath;
+        $this->chunkFolder = $chunkFolder;
     }
 
     public function handle()
@@ -184,6 +187,23 @@ class ProcessCarPhotosZip implements ShouldQueue
             // LEMPAR EXCEPTION AGAR TERCETAK DI TERMINAL WORKER
             \Illuminate\Support\Facades\Cache::put('zip_process_status', 'error', now()->addMinutes(10));
             throw $e; 
+        }finally {
+            // 2. BERSIHKAN FILE & FOLDER TEMPORARY SECARA OTOMATIS
+            
+            // Hapus file ZIP utama jika ada
+            if ($this->zipPath && File::exists($this->zipPath)) {
+                File::delete($this->zipPath);
+            }
+
+            // Hapus folder hasil ekstraksi sementara (misal: temp_extracted_xxxxx)
+            if ($this->extractPath && File::exists($this->extractPath)) {
+                File::deleteDirectory($this->extractPath);
+            }
+
+            // Hapus folder chunks jika Anda menggunakan chunk upload (Resumable.js)
+            if ($this->chunkFolder && File::exists($this->chunkFolder)) {
+                File::deleteDirectory($this->chunkFolder);
+            }
         }
     }
 }

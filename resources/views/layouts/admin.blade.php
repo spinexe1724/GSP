@@ -245,7 +245,7 @@
                         PHOTO REVIEW
                     ================================================== --}}
                     <a
-                        href="{{ route('admin.cars.photo_review') }}"
+                        href="{{ route('admin.cars.photo_review.index') }}"
                         class="
                             flex items-center gap-3
                             px-4 py-3
