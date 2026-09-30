@@ -26,59 +26,22 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-[#F4F6F8] text-slate-800 antialiased">
+<body class="min-h-screen flex flex-col bg-[#F4F6F8] text-slate-800 antialiased">
 
     {{-- =========================================================
          NAVBAR STANDALONE — SELARAS DENGAN HOMEPAGE
     ========================================================== --}}
-    <header class="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.05)]">
-        <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+    <header class="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
+    <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
+        <a href="{{ route('portal.index') }}" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo">
+            <span class="text-xl font-extrabold tracking-tight text-slate-900">Gratama</span>
+        </a>
+       
+    </div>
+</header>
 
-            {{-- Logo --}}
-            <a href="{{ route('portal.index') }}" class="flex items-center gap-2.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#800000] shadow-sm">
-                    <div class="flex h-6 w-5 flex-col justify-center gap-[2px]">
-                        <span class="mx-auto block h-[2px] w-4 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-3.5 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-3 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-2.5 rounded-full bg-white"></span>
-                    </div>
-                </div>
-
-                <span class="text-xl font-extrabold tracking-tight text-slate-900">
-                    Gratama
-                </span>
-            </a>
-
-            {{-- Navigasi --}}
-            <nav class="hidden items-center gap-8 md:flex">
-                <a href="{{ route('portal.index') }}"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Home
-                </a>
-
-                <a href="{{ route('cars.index') }}"
-                   class="text-sm font-semibold text-[#800000]">
-                    Cars
-                </a>
-
-                <a href="{{ route('portal.index') }}#brands"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Brands
-                </a>
-
-                <a href="{{ route('portal.index') }}#contact"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Contact
-                </a>
-            </nav>
-
-           
-
-        </div>
-    </header>
-
-<main class="relative min-h-screen overflow-x-hidden bg-[#F4F6F8] py-8 sm:py-10 lg:py-12 font-['Plus_Jakarta_Sans']">
+<main class="relative flex-1 overflow-x-hidden bg-[#F4F6F8] py-8 sm:py-10 lg:py-12 font-['Plus_Jakarta_Sans']">
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute -left-40 top-20 h-[430px] w-[430px] rounded-full bg-[#800000]/[0.045] blur-[110px]"></div>
         <div class="absolute -right-40 bottom-[-100px] h-[500px] w-[500px] rounded-full bg-[#800000]/[0.035] blur-[120px]"></div>
@@ -435,36 +398,27 @@
 
 
     {{-- =========================================================
-         FOOTER STANDALONE — SELARAS DENGAN HOMEPAGE
+         FOOTER STANDALONE — MINIMALIS
     ========================================================== --}}
-    <footer class="relative z-10 border-t border-slate-200 bg-white">
-        <div class="mx-auto max-w-7xl px-6 py-6 md:px-10">
-            <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-
+    <footer class="relative z-10 mt-auto border-t border-slate-200 bg-white">
+        <div class="mx-auto max-w-7xl px-6 py-5 md:px-10">
+            <div class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#800000]">
-                        <span class="text-sm font-black text-white">G</span>
+                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#800000]">
+                        <span class="text-xs font-black text-white">G</span>
                     </div>
 
                     <div>
-                        <div class="text-sm font-bold text-slate-900">GSP</div>
-                        <div class="text-[11px] text-slate-400">
+                        <div class="text-xs font-bold text-slate-900">GSP</div>
+                        <div class="text-[10px] text-slate-400">
                             Gratama Showroom Partners
                         </div>
                     </div>
                 </div>
 
-                <nav class="flex items-center gap-5 text-xs font-medium text-slate-500">
-                    <a href="{{ route('portal.index') }}" class="transition hover:text-[#800000]">Beranda</a>
-                    <a href="{{ route('cars.index') }}" class="text-[#800000] font-semibold">Mobil</a>
-                    <a href="{{ route('portal.index') }}#brands" class="transition hover:text-[#800000]">Merek</a>
-                    <a href="{{ route('portal.index') }}#contact" class="transition hover:text-[#800000]">Kontak</a>
-                </nav>
-
-                <div class="text-center text-[11px] text-slate-400 md:text-right">
+                <div class="text-[10px] text-slate-400">
                     © 2026 GSP
                 </div>
-
             </div>
         </div>
     </footer>

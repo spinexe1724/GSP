@@ -35,43 +35,15 @@
         <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
 
             {{-- Logo --}}
-            <a href="{{ route('portal.index') }}" class="flex items-center gap-2.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-md bg-[#800000] shadow-sm">
-                    <div class="flex h-6 w-5 flex-col justify-center gap-[2px]">
-                        <span class="mx-auto block h-[2px] w-4 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-3.5 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-3 rounded-full bg-white"></span>
-                        <span class="mx-auto block h-[2px] w-2.5 rounded-full bg-white"></span>
-                    </div>
-                </div>
+            <a href="{{ route('portal.index') }}" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo">
+                
 
                 <span class="text-xl font-extrabold tracking-tight text-slate-900">
                     Gratama
                 </span>
             </a>
 
-            {{-- Navigasi --}}
-            <nav class="hidden items-center gap-8 md:flex">
-                <a href="{{ route('portal.index') }}"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Home
-                </a>
-
-                <a href="{{ route('cars.index') }}"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Cars
-                </a>
-
-                <a href="{{ route('portal.index') }}#brands"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Brands
-                </a>
-
-                <a href="{{ route('portal.index') }}#contact"
-                   class="text-sm font-semibold text-slate-600 transition hover:text-[#800000]">
-                    Contact
-                </a>
-            </nav>
         </div>
     </header>
 <div class="relative pt-8 sm:pt-10 pb-16 sm:pb-20 bg-[#F3F4F6] min-h-screen font-['Plus_Jakarta_Sans'] overflow-x-hidden">
@@ -124,462 +96,120 @@
 
 
         {{-- =========================================================
-            GALERI 4 SISI FOTO
+            GALERI UNIT — MARKETPLACE STYLE
         ========================================================== --}}
-        <div class="bg-white p-6 md:p-8 rounded-[32px] border border-slate-100 shadow-sm space-y-4">
+        @php
+            $galleryImages = collect([
+                ['label' => 'Tampak Depan', 'path' => $car->foto_depan],
+                ['label' => 'Tampak Samping', 'path' => $car->foto_samping],
+                ['label' => 'Tampak Belakang', 'path' => $car->foto_belakang],
+                ['label' => 'Tampak Odometer', 'path' => $car->foto_odometer],
+            ])->filter(fn ($item) => !empty($item['path']))->values();
+        @endphp
 
-            <h2 class="text-xs font-black text-slate-400 uppercase tracking-wider">
-                Dokumentasi 4 Sisi Unit
-            </h2>
+        <section class="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm">
+            <div class="relative bg-[#101214]">
+                <div id="mainGalleryStage" class="relative flex h-[360px] w-full items-center justify-center overflow-hidden sm:h-[450px] lg:h-[520px]">
+                    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(128,0,0,0.10),transparent_55%)]"></div>
 
-            {{-- UPDATE: Menggunakan md:grid-cols-2 lg:grid-cols-4 agar muat 4 foto --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
-
-                {{-- =====================================================
-                    FOTO DEPAN
-                ====================================================== --}}
-                <div class="space-y-2">
-
-                    <span class="text-[11px] font-bold text-slate-700">
-                        1. Tampak Depan
-                    </span>
-
-                    <div
-                        class="relative aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 select-none cursor-zoom-in group"
-                        @if($car->foto_depan)
-                            onclick="openImageModal('{{ asset($car->foto_depan) }}', 'Tampak Depan')"
-                        @endif
-                    >
-
-                        @if($car->foto_depan)
-
-                            {{-- FOTO --}}
+                    @if($galleryImages->isNotEmpty())
+                        @foreach($galleryImages as $index => $image)
                             <img
-                                src="{{ asset($car->foto_depan) }}"
-                                alt="Tampak Depan"
-                                class="w-full h-full object-cover pointer-events-none select-none group-hover:scale-105 transition-transform duration-300"
+                                id="galleryImage{{ $index }}"
+                                src="{{ asset($image['path']) }}"
+                                alt="{{ $image['label'] }}"
+                                class="gallery-main-image absolute inset-0 mx-auto h-full w-full object-contain px-4 py-4 transition-opacity duration-300 {{ $index === 0 ? 'opacity-100' : 'pointer-events-none opacity-0' }}"
                                 draggable="false"
+                                data-index="{{ $index }}"
+                                data-src="{{ asset($image['path']) }}"
+                                data-title="{{ $image['label'] }}"
                             >
+                        @endforeach
 
-
-                            {{-- OVERLAY WATERMARK --}}
-                            <div class="absolute inset-0 pointer-events-none overflow-hidden">
-
-                                {{-- Watermark utama --}}
-                                <div class="absolute inset-0 flex items-center justify-center -rotate-[20deg]">
-
-                                    <span
-                                        class="whitespace-nowrap text-white/70 text-xl md:text-2xl font-black tracking-[0.25em] drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
-                                    >
-                                        GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                {{-- Watermark tambahan --}}
-                                <div class="absolute top-[25%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[65%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- LABEL --}}
-                            <div class="absolute bottom-3 left-3 pointer-events-none">
-
-                                <span class="bg-[#800000] text-white text-[9px] md:text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg uppercase tracking-wider">
+                        {{-- Watermark tetap ada, tetapi jauh lebih pudar --}}
+                        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+                            <div class="absolute inset-0 flex items-center justify-center -rotate-[18deg]">
+                                <span class="whitespace-nowrap text-white/[0.20] text-2xl sm:text-4xl lg:text-5xl font-black tracking-[0.28em]">
                                     GRATAMA FINANCE
                                 </span>
-
                             </div>
 
-
-                            {{-- ICON ZOOM --}}
-                            <div class="absolute top-3 right-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-
-                                <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center">
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                        />
-                                    </svg>
-
-                                </div>
-
-                            </div>
-
-                        @else
-
-                            <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
-                                Belum ada foto depan
-                            </div>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- =====================================================
-                    FOTO SAMPING
-                ====================================================== --}}
-                <div class="space-y-2">
-
-                    <span class="text-[11px] font-bold text-slate-700">
-                        2. Tampak Samping
-                    </span>
-
-                    <div
-                        class="relative aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 select-none cursor-zoom-in group"
-                        @if($car->foto_samping)
-                            onclick="openImageModal('{{ asset($car->foto_samping) }}', 'Tampak Samping')"
-                        @endif
-                    >
-
-                        @if($car->foto_samping)
-
-                            {{-- FOTO --}}
-                            <img
-                                src="{{ asset($car->foto_samping) }}"
-                                alt="Tampak Samping"
-                                class="w-full h-full object-cover pointer-events-none select-none group-hover:scale-105 transition-transform duration-300"
-                                draggable="false"
-                            >
-
-
-                            {{-- OVERLAY WATERMARK --}}
-                            <div class="absolute inset-0 pointer-events-none overflow-hidden">
-
-                                <div class="absolute inset-0 flex items-center justify-center -rotate-[20deg]">
-
-                                    <span
-                                        class="whitespace-nowrap text-white/70 text-xl md:text-2xl font-black tracking-[0.25em] drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
-                                    >
-                                        GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[25%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[65%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- LABEL --}}
-                            <div class="absolute bottom-3 left-3 pointer-events-none">
-
-                                <span class="bg-[#800000] text-white text-[9px] md:text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg uppercase tracking-wider">
-                                    GRATAMA FINANCE
+                            <div class="absolute top-[25%] left-[-25%] w-[150%] -rotate-[18deg] text-center">
+                                <span class="text-white/[0.12] text-[10px] sm:text-xs lg:text-sm font-bold tracking-[0.28em]">
+                                    PROPERTY OF GRATAMA FINANCE
                                 </span>
-
                             </div>
 
-
-                            {{-- ICON ZOOM --}}
-                            <div class="absolute top-3 right-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-
-                                <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center">
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                        />
-                                    </svg>
-
-                                </div>
-
-                            </div>
-
-                        @else
-
-                            <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
-                                Belum ada foto samping
-                            </div>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-
-
-                {{-- =====================================================
-                    FOTO BELAKANG
-                ====================================================== --}}
-                <div class="space-y-2">
-
-                    <span class="text-[11px] font-bold text-slate-700">
-                        3. Tampak Belakang
-                    </span>
-
-                    <div
-                        class="relative aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 select-none cursor-zoom-in group"
-                        @if($car->foto_belakang)
-                            onclick="openImageModal('{{ asset($car->foto_belakang) }}', 'Tampak Belakang')"
-                        @endif
-                    >
-
-                        @if($car->foto_belakang)
-
-                            {{-- FOTO --}}
-                            <img
-                                src="{{ asset($car->foto_belakang) }}"
-                                alt="Tampak Belakang"
-                                class="w-full h-full object-cover pointer-events-none select-none group-hover:scale-105 transition-transform duration-300"
-                                draggable="false"
-                            >
-
-
-                            {{-- OVERLAY WATERMARK --}}
-                            <div class="absolute inset-0 pointer-events-none overflow-hidden">
-
-                                <div class="absolute inset-0 flex items-center justify-center -rotate-[20deg]">
-
-                                    <span
-                                        class="whitespace-nowrap text-white/70 text-xl md:text-2xl font-black tracking-[0.25em] drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
-                                    >
-                                        GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[25%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[65%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- LABEL --}}
-                            <div class="absolute bottom-3 left-3 pointer-events-none">
-
-                                <span class="bg-[#800000] text-white text-[9px] md:text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg uppercase tracking-wider">
-                                    GRATAMA FINANCE
+                            <div class="absolute top-[67%] left-[-25%] w-[150%] -rotate-[18deg] text-center">
+                                <span class="text-white/[0.12] text-[10px] sm:text-xs lg:text-sm font-bold tracking-[0.28em]">
+                                    PROPERTY OF GRATAMA FINANCE
                                 </span>
-
                             </div>
+                        </div>
 
+                        <div class="absolute left-4 top-4 z-20 rounded-full bg-black/55 px-3 py-1.5 text-[10px] font-bold text-white backdrop-blur-md">
+                            <span id="galleryCounter">1</span> / {{ $galleryImages->count() }}
+                        </div>
 
-                            {{-- ICON ZOOM --}}
-                            <div class="absolute top-3 right-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div class="absolute bottom-4 left-4 z-20 rounded-lg bg-black/55 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur-md">
+                            <span id="galleryTitle">{{ $galleryImages[0]['label'] }}</span>
+                        </div>
 
-                                <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center">
+                        <button type="button" onclick="openImageModalFromGallery()"
+                            class="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-black/70"
+                            aria-label="Perbesar foto">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 3H5a2 2 0 00-2 2v3m13-5h3a2 2 0 012 2v3M3 16v3a2 2 0 002 2h3m13-5v3a2 2 0 01-2 2h-3" />
+                            </svg>
+                        </button>
 
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                        />
-                                    </svg>
+                        @if($galleryImages->count() > 1)
+                            <button type="button" onclick="changeGalleryImage(-1)"
+                                class="absolute left-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-black/75"
+                                aria-label="Foto sebelumnya">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
 
-                                </div>
-
-                            </div>
-
-                        @else
-
-                            <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
-                                Belum ada foto belakang
-                            </div>
-
+                            <button type="button" onclick="changeGalleryImage(1)"
+                                class="absolute right-4 top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition hover:bg-black/75"
+                                aria-label="Foto berikutnya">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
                         @endif
-
-                    </div>
-
+                    @else
+                        <div class="flex flex-col items-center justify-center gap-3 text-slate-500">
+                            <svg class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7a2 2 0 012-2h3l2-2h4l2 2h3a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+                            </svg>
+                            <span class="text-sm font-semibold">Foto unit belum tersedia</span>
+                        </div>
+                    @endif
                 </div>
-                
-                {{-- =====================================================
-                    FOTO ODOMETER (TAMBAHAN BARU)
-                ====================================================== --}}
-                <div class="space-y-2">
-
-                    <span class="text-[11px] font-bold text-slate-700">
-                        4. Tampak Odometer
-                    </span>
-
-                    <div
-                        class="relative aspect-[4/3] rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 select-none cursor-zoom-in group"
-                        @if($car->foto_odometer)
-                            onclick="openImageModal('{{ asset($car->foto_odometer) }}', 'Tampak Odometer')"
-                        @endif
-                    >
-
-                        @if($car->foto_odometer)
-
-                            {{-- FOTO --}}
-                            <img
-                                src="{{ asset($car->foto_odometer) }}"
-                                alt="Tampak Odometer"
-                                class="w-full h-full object-cover pointer-events-none select-none group-hover:scale-105 transition-transform duration-300"
-                                draggable="false"
-                            >
-
-
-                            {{-- OVERLAY WATERMARK --}}
-                            <div class="absolute inset-0 pointer-events-none overflow-hidden">
-
-                                <div class="absolute inset-0 flex items-center justify-center -rotate-[20deg]">
-
-                                    <span
-                                        class="whitespace-nowrap text-white/70 text-xl md:text-2xl font-black tracking-[0.25em] drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
-                                    >
-                                        GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[25%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-
-                                <div class="absolute top-[65%] left-[-30%] w-[160%] -rotate-[20deg] text-center">
-
-                                    <span class="text-white/45 text-[10px] md:text-xs font-black tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
-                                        PROPERTY OF GRATAMA FINANCE
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- LABEL --}}
-                            <div class="absolute bottom-3 left-3 pointer-events-none">
-
-                                <span class="bg-[#800000] text-white text-[9px] md:text-[10px] font-black px-3 py-1.5 rounded-lg shadow-lg uppercase tracking-wider">
-                                    GRATAMA FINANCE
-                                </span>
-
-                            </div>
-
-
-                            {{-- ICON ZOOM --}}
-                            <div class="absolute top-3 right-3 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-
-                                <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur-sm text-white flex items-center justify-center">
-
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="w-4 h-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                        />
-                                    </svg>
-
-                                </div>
-
-                            </div>
-
-                        @else
-
-                            <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs italic font-semibold">
-                                Belum ada foto odometer
-                            </div>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
             </div>
 
-
-            <p class="text-[11px] text-slate-400 italic text-center md:text-right mt-2">
-                * Klik foto untuk melihat ukuran lebih besar
-            </p>
-
-        </div>
-
-
+            @if($galleryImages->isNotEmpty())
+                <div class="border-t border-slate-100 bg-white px-4 py-4 sm:px-5">
+                    <div class="flex gap-3 overflow-x-auto pb-1">
+                        @foreach($galleryImages as $index => $image)
+                            <button type="button" onclick="selectGalleryImage({{ $index }})"
+                                class="gallery-thumbnail group relative h-[76px] w-[100px] shrink-0 overflow-hidden rounded-xl border-2 {{ $index === 0 ? 'border-[#800000]' : 'border-transparent' }} bg-slate-100 transition sm:h-[86px] sm:w-[115px]"
+                                data-thumb-index="{{ $index }}" aria-label="{{ $image['label'] }}">
+                                <img src="{{ asset($image['path']) }}" alt="{{ $image['label'] }}"
+                                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105" draggable="false">
+                                <span class="pointer-events-none absolute inset-0 flex items-center justify-center -rotate-[18deg]">
+                                    <span class="whitespace-nowrap text-[7px] font-black tracking-[0.18em] text-white/[0.25]">GRATAMA</span>
+                                </span>
+                                <span class="absolute bottom-1 left-1 rounded-md bg-black/55 px-1.5 py-0.5 text-[8px] font-bold text-white">{{ $index + 1 }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </section>
 
         {{-- =========================================================
             DETAIL SPESIFIKASI MOBIL & INFO SHOWROOM
@@ -935,7 +565,7 @@
                 <div class="absolute inset-0 flex items-center justify-center -rotate-[20deg]">
 
                     <span
-                        class="whitespace-nowrap text-white/65
+                        class="whitespace-nowrap text-white/[0.28]
                                text-3xl sm:text-4xl md:text-5xl lg:text-6xl
                                font-black tracking-[0.3em]
                                drop-shadow-[0_2px_5px_rgba(0,0,0,0.9)]"
@@ -953,7 +583,7 @@
                 >
 
                     <span
-                        class="text-white/40 text-sm md:text-lg
+                        class="text-white/[0.16] text-sm md:text-lg
                                font-black tracking-[0.3em]
                                drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
                     >
@@ -970,7 +600,7 @@
                 >
 
                     <span
-                        class="text-white/40 text-sm md:text-lg
+                        class="text-white/[0.16] text-sm md:text-lg
                                font-black tracking-[0.3em]
                                drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]"
                     >
@@ -986,7 +616,7 @@
             <div class="absolute bottom-4 left-4 pointer-events-none">
 
                 <span
-                    class="bg-[#800000]/90 text-white
+                    class="bg-[#800000]/80 text-white
                            text-[9px] md:text-[11px]
                            font-black px-4 py-2 rounded-lg
                            uppercase tracking-wider shadow-lg"
@@ -1008,6 +638,58 @@
     JAVASCRIPT
 ============================================================== --}}
 <script>
+
+    let currentGalleryIndex = 0;
+
+    function getGalleryImages() {
+        return Array.from(document.querySelectorAll('.gallery-main-image'));
+    }
+
+    function selectGalleryImage(index) {
+        const images = getGalleryImages();
+        const thumbs = Array.from(document.querySelectorAll('.gallery-thumbnail'));
+        const title = document.getElementById('galleryTitle');
+        const counter = document.getElementById('galleryCounter');
+
+        if (!images.length || !images[index]) return;
+        currentGalleryIndex = index;
+
+        images.forEach((image, i) => {
+            image.classList.toggle('opacity-100', i === index);
+            image.classList.toggle('opacity-0', i !== index);
+            image.classList.toggle('pointer-events-none', i !== index);
+        });
+
+        thumbs.forEach((thumb, i) => {
+            thumb.classList.toggle('border-[#800000]', i === index);
+            thumb.classList.toggle('border-transparent', i !== index);
+        });
+
+        if (title) title.textContent = images[index].dataset.title || 'Foto Unit';
+        if (counter) counter.textContent = index + 1;
+    }
+
+    function changeGalleryImage(direction) {
+        const images = getGalleryImages();
+        if (images.length < 2) return;
+
+        let nextIndex = currentGalleryIndex + direction;
+        if (nextIndex < 0) nextIndex = images.length - 1;
+        if (nextIndex >= images.length) nextIndex = 0;
+
+        selectGalleryImage(nextIndex);
+    }
+
+    function openImageModalFromGallery() {
+        const images = getGalleryImages();
+        const activeImage = images[currentGalleryIndex];
+        if (!activeImage) return;
+
+        openImageModal(
+            activeImage.dataset.src || activeImage.src,
+            activeImage.dataset.title || 'Detail Foto'
+        );
+    }
 
     /**
      * Membuka popup foto
