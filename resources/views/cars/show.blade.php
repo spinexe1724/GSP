@@ -23,6 +23,8 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: #f3f4f6;
         }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 
@@ -436,9 +438,134 @@
             </div>
 
         </div>
+     
+    </div>
+    
+</div>
 
     </div>
+@if($relatedCars->count() > 0)
+<div class="relative w-full max-w-6xl mx-auto mt-10 px-4">
+    <h2 class="text-xl font-bold text-slate-600 mb-4">Unit lain yang ada di Showroom ini</h2>
+    
+    <!-- Tombol Kiri -->
+    <button onclick="scrollSlider('sellerSlider', -1)" class="absolute left-0 top-[55%] -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hidden md:block hover:bg-gray-100">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
 
+    <!-- Wrapper Slider -->
+    <div id="sellerSlider" class="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-4 scroll-smooth">
+        @foreach($relatedCars as $item)
+        <!-- Card Item -->
+        <a href="{{ route('cars.show', $item->id) }}" class="min-w-[220px] md:min-w-[240px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm snap-start hover:shadow-md transition-shadow duration-300 relative group flex-shrink-0 block">
+            <div class="relative h-40 bg-gray-100">
+                <!-- Asumsi kolom gambar adalah $item->image, sesuaikan dengan nama kolom Anda -->
+                <img src="{{ asset($item->foto_depan) }}" alt="{{ $item->merk }}" class="w-full h-full object-cover">
+                
+                <!-- Badge Super Dealer (Opsional) -->
+                
+            </div>
+            
+            <div class="p-3">
+                <h3 class="font-bold text-[#004e7c] text-lg mb-1">{{$item->nama_merk}}</h3>
+                <p class="text-sm text-gray-500 truncate">{{ $item->merk }} {{ $item->tipe_kend }}</p>
+                  <div class="flex min-w-0 items-center gap-1.5 text-[10px] text-slate-600">
+                                                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31.07-2.37-2.37a1.724 1.724 0 001.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543-.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                    </svg>
+
+                                                    <span class="truncate font-medium">
+                                                        {{ $car->transmisi ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+
+                                                <div class="flex min-w-0 items-center gap-1.5 text-[10px] text-slate-600">
+                                                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                                    </svg>
+
+                                                    <span class="truncate font-medium">
+                                                        {{ $car->warna_kend ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+                
+            </div>
+             <div class="absolute right-2.5 top-2.5">
+                                            <span class="rounded-md bg-white/95 px-2 py-1 text-[9px] font-bold text-slate-800 shadow-sm backdrop-blur-md sm:text-[10px]">
+                                                {{ $car->tahun_buat ?? '-' }}
+                                            </span>
+                                        </div>
+                                        
+                                        
+        </a>
+        
+        @endforeach
+    </div>
+
+    <!-- Tombol Kanan -->
+    <button onclick="scrollSlider('sellerSlider', 1)" class="absolute right-0 top-[55%] -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hidden md:block hover:bg-gray-100">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+</div>
+@endif
+
+<!-- SECTION 2: IKLAN TERKAIT (TIPE KENDARAAN SAMA) -->
+@if($similarTypeCars->count() > 0)
+<div class="relative w-full max-w-6xl mx-auto mt-8 mb-12 px-4">
+    <h2 class="text-xl font-bold text-slate-600 mb-4">Tipe Unit yang terkait</h2>
+    
+    <!-- Tombol Kiri -->
+    <button onclick="scrollSlider('similarSlider', -1)" class="absolute left-0 top-[55%] -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hidden md:block hover:bg-gray-100">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+
+    <!-- Wrapper Slider -->
+    <div id="similarSlider" class="flex gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar pb-4 scroll-smooth">
+        @foreach($similarTypeCars as $item)
+        <!-- Card Item -->
+        <a href="{{ route('cars.show', $item->id) }}" class="min-w-[220px] md:min-w-[240px] bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm snap-start hover:shadow-md transition-shadow duration-300 relative group flex-shrink-0 block">
+            <div class="relative h-40 bg-gray-100">
+                <img src="{{ asset($item->foto_depan) }}" alt="{{ $item->merk }}" class="w-full h-full object-cover">
+            </div>
+            <div class="p-3">
+                <h3 class="font-bold text-[#004e7c] text-lg mb-1">{{$item->nama_merk}}</h3>
+                <p class="text-sm text-gray-500 truncate">{{ $item->merk }} {{ $item->tipe_kend }}</p>
+                  <div class="flex min-w-0 items-center gap-1.5 text-[10px] text-slate-600">
+                                                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31.07-2.37-2.37a1.724 1.724 0 001.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543-.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                    </svg>
+
+                                                    <span class="truncate font-medium">
+                                                        {{ $car->transmisi ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+
+                                                <div class="flex min-w-0 items-center gap-1.5 text-[10px] text-slate-600">
+                                                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                                    </svg>
+
+                                                    <span class="truncate font-medium">
+                                                        {{ $car->warna_kend ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+                
+            </div>
+             <div class="absolute right-2.5 top-2.5">
+                                            <span class="rounded-md bg-white/95 px-2 py-1 text-[9px] font-bold text-slate-800 shadow-sm backdrop-blur-md sm:text-[10px]">
+                                                {{ $car->tahun_buat ?? '-' }}
+                                            </span>
+                                        </div>
+        </a>
+        @endforeach
+    </div>
+
+    <!-- Tombol Kanan -->
+    <button onclick="scrollSlider('similarSlider', 1)" class="absolute right-0 top-[55%] -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 hidden md:block hover:bg-gray-100">
+        <svg class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+</div>
+@endif
 </div>
 
 
@@ -817,7 +944,12 @@
         }
 
     });
-
+function scrollSlider(sliderId, direction) {
+        const slider = document.getElementById(sliderId);
+        // Menggeser sebesar lebar kira-kira 1 card + gap (misal 260px)
+        const scrollAmount = 260; 
+        slider.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+    }
 </script>
 
 </body>

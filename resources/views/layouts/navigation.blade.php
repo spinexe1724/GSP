@@ -16,13 +16,7 @@
             </div>
 
             {{-- Menu Utama --}}
-            <div class="hidden md:flex items-center gap-10">
-                <a href="#" class="nav-link text-white hover:opacity-75 font-medium transition active-link">Home</a>
-                <a href="#" class="nav-link text-white hover:opacity-75 font-medium transition">Cars</a>
-                <a href="#" class="nav-link text-white hover:opacity-75 font-medium transition">Brands</a>
-                <a href="#" class="nav-link text-white hover:opacity-75 font-medium transition">Contact</a>
-            </div>
-
+           
             {{-- Button --}}
             <div class="flex items-center gap-4">
                 @auth

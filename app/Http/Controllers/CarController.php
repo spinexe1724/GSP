@@ -74,7 +74,12 @@ if ($request->filled('showroom_id')) {
             ->limit(3)
             ->get();
 
-        return view('cars.show', compact('car', 'relatedCars'));
+            $similarTypeCars = Car::where('tipe_kend', $car->tipe_kend)
+        ->where('id', '!=', $car->id)
+        ->latest()
+        ->limit(10) // Dinaikkan menjadi 10 agar bisa digeser
+        ->get();
+        return view('cars.show', compact('car', 'relatedCars','similarTypeCars'));
     }
 
     /**
