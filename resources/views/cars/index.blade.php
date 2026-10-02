@@ -41,7 +41,7 @@
     </div>
 </header>
 
-<main class="relative flex-1 overflow-x-hidden bg-[#F4F6F8] py-8 sm:py-10 lg:py-12 font-['Plus_Jakarta_Sans']">
+<main class="relative flex-1 min-h-0 overflow-x-hidden bg-[#F4F6F8] py-8 sm:py-10 lg:py-12 font-['Plus_Jakarta_Sans']">
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="absolute -left-40 top-20 h-[430px] w-[430px] rounded-full bg-[#800000]/[0.045] blur-[110px]"></div>
         <div class="absolute -right-40 bottom-[-100px] h-[500px] w-[500px] rounded-full bg-[#800000]/[0.035] blur-[120px]"></div>
@@ -228,28 +228,46 @@
                                     </span>
 
                                 </div>
-
                             @else
 
-                                <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                                {{-- FOTO DEFAULT — SELARAS DENGAN HALAMAN DETAIL UNIT --}}
+                                <div class="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-800 to-[#800000]">
 
-                                    <svg
-                                        class="w-10 h-10 mb-1 opacity-40"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="1.5"
-                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        ></path>
-                                    </svg>
+                                    <div class="absolute -right-10 -top-10 h-28 w-28 rounded-full border border-white/10 bg-white/5"></div>
+                                    <div class="absolute -left-14 bottom-[-35px] h-36 w-36 rounded-full bg-[#800000]/40 blur-2xl"></div>
+                                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/30 to-transparent"></div>
 
-                                    <span class="text-[10px] font-bold uppercase tracking-wider">
-                                        Foto Belum Tersedia
-                                    </span>
+                                    {{-- Watermark halus --}}
+                                    <div class="absolute inset-0 flex items-center justify-center -rotate-[18deg] pointer-events-none">
+                                        <span class="whitespace-nowrap text-white/[0.10] text-2xl font-black tracking-[0.18em]">
+                                            PROPERTY OF GRATAMA FINANCE
+                                        </span>
+                                    </div>
+
+                                    {{-- Siluet mobil --}}
+                                    <div class="absolute inset-x-0 top-[17%] flex justify-center">
+                                        <svg viewBox="0 0 260 120" class="w-[68%] max-w-[220px] h-auto text-white/80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M43 72L54 48C58 39 66 33 76 31L102 25H166C177 25 187 30 194 39L210 59L222 64C229 67 233 73 233 80V86H27V79C27 75 33 72 43 72Z" fill="currentColor"/>
+                                            <path d="M80 34L103 29H164C174 29 181 33 187 41L196 54H69L77 38C78 36 79 35 80 34Z" fill="#1F2937"/>
+                                            <path d="M109 30L104 52H147L143 30H109Z" fill="#CBD5E1" opacity=".45"/>
+                                            <path d="M75 59H193" stroke="#0F172A" stroke-width="3" opacity=".35"/>
+                                            <rect x="37" y="66" width="18" height="7" rx="3.5" fill="#800000"/>
+                                            <rect x="205" y="66" width="18" height="7" rx="3.5" fill="#800000"/>
+                                            <circle cx="65" cy="86" r="16" fill="#111827" stroke="#E5E7EB" stroke-width="5"/>
+                                            <circle cx="195" cy="86" r="16" fill="#111827" stroke="#E5E7EB" stroke-width="5"/>
+                                        </svg>
+                                    </div>
+
+                                    <div class="absolute inset-x-0 bottom-[16%] text-center text-white">
+                                        <div class="text-[17px] sm:text-lg font-black tracking-[0.10em]">GRATAMA FINANCE</div>
+                                        <div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[0.28em] text-white/60 uppercase">Foto Unit Belum Tersedia</div>
+                                    </div>
+
+                                    <div class="absolute bottom-2.5 left-2.5">
+                                        <span class="bg-[#800000] text-white text-[8px] font-black px-2 py-1 rounded-md shadow-lg uppercase tracking-wider">
+                                            GRATAMA FINANCE
+                                        </span>
+                                    </div>
 
                                 </div>
 
@@ -397,6 +415,11 @@
 
 
 
+
+
+</main>
+
+
     {{-- =========================================================
          FOOTER STANDALONE — MINIMALIS
     ========================================================== --}}
@@ -422,8 +445,6 @@
             </div>
         </div>
     </footer>
-
-</main>
 
 {{-- =============================================================
     PROTEKSI FOTO / KLIK KANAN

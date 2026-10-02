@@ -71,7 +71,7 @@ if ($request->filled('showroom_id')) {
         // Rekomendasi mobil lain dari showroom yang sama
         $relatedCars = Car::where('no_cif', $car->no_cif)
             ->where('id', '!=', $car->id)
-            ->limit(3)
+            ->limit(10)
             ->get();
 
             $similarTypeCars = Car::where('tipe_kend', $car->tipe_kend)

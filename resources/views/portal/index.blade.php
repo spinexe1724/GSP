@@ -136,13 +136,13 @@
                     ['name' => 'Suzuki', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/suzuki.svg'],
                     ['name' => 'Nissan', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/nissan.svg'],
                     ['name' => 'Mitsubishi', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mitsubishi.svg'],
-                    ['name' => 'Ford', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/ford.svg'],
+                    ['name' => 'Daihatsu', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/daihatsu.svg'],
                     ['name' => 'Chevrolet', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/chevrolet.svg'],
                     ['name' => 'Hyundai', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/hyundai.svg'],
-                    ['name' => 'KIA', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/kia.svg'],
+                    ['name' => 'Isuzu', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/isuzu.svg'],
                     ['name' => 'Mazda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mazda.svg'],
                     ['name' => 'Subaru', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/subaru.svg'],
-                    ['name' => 'Mini Cooper', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mini.svg'],
+                    ['name' => 'Wuling', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/wuling.svg'],
                 ];
             @endphp
 
@@ -175,40 +175,8 @@
     {{-- =========================================================
          3. MAIN CATALOG
     ========================================================== --}}
-    <section class="relative bg-[#F4F6F8] py-7 sm:py-10 lg:py-12">
-
-        {{-- GRATAMA SIGNATURE BACKGROUND --}}
-        <div class="pointer-events-none absolute inset-0">
-
-            {{-- Soft maroon ambient --}}
-            <div class="absolute -left-32 top-16 h-[460px] w-[460px] rounded-full bg-[#800000]/[0.065] blur-[100px]"></div>
-            <div class="absolute -right-40 bottom-[-80px] h-[520px] w-[520px] rounded-full bg-[#800000]/[0.055] blur-[115px]"></div>
-
-            {{-- Oversized GSP watermark --}}
-            <div class="absolute -right-8 top-8 select-none text-[220px] font-black leading-none tracking-[-0.08em] text-[#800000]/[0.028]">
-                GSP
-            </div>
-
-            {{-- Architectural diagonal planes --}}
-            <div
-                class="absolute right-[-6%] top-[12%] h-[260px] w-[52%] rotate-[-8deg] border border-[#800000]/[0.08]"
-                style="clip-path: polygon(12% 0, 100% 0, 88% 100%, 0 100%);"
-            ></div>
-
-            <div
-                class="absolute left-[-8%] bottom-[8%] h-[210px] w-[42%] rotate-[7deg] bg-[#800000]/[0.018]"
-                style="clip-path: polygon(0 0, 100% 14%, 88% 100%, 0 86%);"
-            ></div>
-
-            {{-- Fine technical lines --}}
-            <div class="absolute inset-x-[8%] top-8 h-px bg-gradient-to-r from-transparent via-[#800000]/20 to-transparent"></div>
-            <div class="absolute inset-x-[14%] bottom-10 h-px bg-gradient-to-r from-transparent via-slate-400/30 to-transparent"></div>
-
-            {{-- Small vertical brand accent --}}
-            <div class="absolute left-[4%] top-1/2 h-20 w-1 -translate-y-1/2 rounded-full bg-gradient-to-b from-transparent via-[#800000]/30 to-transparent"></div>
-        </div>
-
-<div class="relative z-10 mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
+    <section class="bg-slate-50 py-7 sm:py-10 lg:py-12">
+        <div class="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
 
             <div class="grid grid-cols-1 items-start gap-5 lg:grid-cols-12 lg:gap-8">
 
@@ -632,14 +600,39 @@
 
                                         @else
 
-                                            <div class="flex h-full w-full flex-col items-center justify-center bg-slate-100 text-slate-400">
-                                                <svg class="mb-1 h-7 w-7 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
+                                            {{-- DEFAULT IMAGE / PLACEHOLDER --}}
+                                            <div class="relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#17181b] via-[#26282d] to-[#800000]">
 
-                                                <span class="text-[9px] font-medium uppercase tracking-wider">
-                                                    Gambar Tidak Tersedia
-                                                </span>
+                                                {{-- Ambient glow --}}
+                                                <div class="absolute -left-8 -top-10 h-28 w-28 rounded-full bg-[#800000]/35 blur-2xl"></div>
+                                                <div class="absolute -bottom-10 -right-8 h-32 w-32 rounded-full bg-white/10 blur-2xl"></div>
+
+                                                {{-- Car silhouette / icon --}}
+                                                <div class="relative z-10 flex flex-col items-center justify-center px-4 text-center">
+                                                    <svg class="h-12 w-12 text-white/70 sm:h-14 sm:w-14" fill="none" viewBox="0 0 64 64" aria-hidden="true">
+                                                        <path d="M12 38l4-14c.7-2.5 3-4 5.6-4h20.8c2.6 0 4.9 1.5 5.6 4l4 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                        <path d="M9 38h46v9a3 3 0 01-3 3h-2a4 4 0 00-8 0H22a4 4 0 00-8 0h-2a3 3 0 01-3-3v-9z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                                                        <circle cx="18" cy="50" r="3.5" fill="currentColor"/>
+                                                        <circle cx="46" cy="50" r="3.5" fill="currentColor"/>
+                                                        <path d="M21 25h22M24 20l-3 5m22-5l3 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                                    </svg>
+
+                                                    <span class="mt-2 text-[8px] font-black uppercase tracking-[0.22em] text-white/90 sm:text-[9px]">
+                                                        Foto Unit Belum Tersedia
+                                                    </span>
+
+                                                    <span class="mt-1 text-[6px] font-bold uppercase tracking-[0.28em] text-white/45 sm:text-[7px]">
+                                                        Gratama Finance
+                                                    </span>
+                                                </div>
+
+                                                {{-- Watermark --}}
+                                                <div class="pointer-events-none absolute inset-0 flex items-center justify-center -rotate-[20deg] opacity-20">
+                                                    <span class="whitespace-nowrap text-[13px] font-black tracking-[0.2em] text-white sm:text-base">
+                                                        GRATAMA FINANCE
+                                                    </span>
+                                                </div>
+
                                             </div>
 
                                         @endif
