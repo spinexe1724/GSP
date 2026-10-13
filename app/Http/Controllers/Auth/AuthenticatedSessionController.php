@@ -41,12 +41,13 @@ if (Auth::user()->is_admin) {
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+   // Hanya logout dari guard web (admin)
+   Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
+    // 2. Hanya hapus kunci session login web, jangan hancurkan session lain
+    $request->session()->forget('login_web_' . sha1(get_class(Auth::guard('web')->getProvider())));
+    $request->session()->regenerateToken();
 
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+    return redirect('/login'); // atau halaman login admin Anda
     }
 }

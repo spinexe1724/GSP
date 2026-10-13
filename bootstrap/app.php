@@ -11,15 +11,22 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Here is the new line!
         $middleware->trustProxies(at: '*');
+        
+        // Mengecualikan rute tertentu dari CSRF untuk mencegah error 419 saat lintas tab
         $middleware->validateCsrfTokens(except: [
             '/upload',
+            '/admin/login',
+            '/showrooms/login',
         ]);
+
         $middleware->alias([
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
-    ]);
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            // Jika terjadi 419 Page Expired, kembalikan dengan pesan yang ramah
+            return back()->with('error', 'Sesi Anda telah diperbarui. Silakan coba klik sekali lagi.');
+        });
     })->create();

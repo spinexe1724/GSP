@@ -35,13 +35,19 @@ return [
     |
     */
 
-    'guards' => [
+  'guards' => [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
+'showroom' => [
+            'driver' => 'session',
+            'provider' => 'showrooms',
+            // Tambahkan baris ini agar guard showroom memakai file sesi yang baru kita buat
+            'session' => 'showroom_session',
+        ],
     ],
-
+   
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -65,10 +71,11 @@ return [
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+   'showrooms' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Showroom::class,
+        ],
+
     ],
 
     /*

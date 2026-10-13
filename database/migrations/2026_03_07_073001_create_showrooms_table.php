@@ -27,6 +27,7 @@ return new class extends Migration
     $table->text('alamat');
     $table->string('nopic');
     $table->text('clprnoktp')->nullable();
+    $table->string('password')->nullable();
     $table->timestamps();
 });
     }

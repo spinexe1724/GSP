@@ -151,8 +151,8 @@
                                                         <div class="space-y-1">
                                                             <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Depan</p>
                                                             @if($car->foto_depan)
-                                                                <a href="{{ asset('storage/' . $car->foto_depan) }}" target="_blank">
-                                                                    <img src="{{ asset('storage/' . $car->foto_depan) }}" 
+                                                                <a href="{{ asset($car->foto_depan)}}" target="_blank">
+                                                                    <img src="{{ asset($car->foto_depan) }}" 
                                                                          alt="Depan" 
                                                                          class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>
@@ -167,8 +167,8 @@
                                                         <div class="space-y-1">
                                                             <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Samping</p>
                                                             @if($car->foto_samping)
-                                                                <a href="{{ asset('storage/' . $car->foto_samping) }}" target="_blank">
-                                                                    <img src="{{ asset('storage/' . $car->foto_samping) }}" 
+                                                                <a href="{{ asset($car->foto_samping) }}" target="_blank">
+                                                                    <img src="{{asset($car->foto_samping) }}" 
                                                                          alt="Samping" 
                                                                          class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>
@@ -183,8 +183,8 @@
                                                         <div class="space-y-1">
                                                             <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Belakang</p>
                                                             @if($car->foto_belakang)
-                                                                <a href="{{ asset('storage/' . $car->foto_belakang) }}" target="_blank">
-                                                                    <img src="{{ asset('storage/' . $car->foto_belakang) }}" 
+                                                                <a href="{{ asset($car->foto_belakang) }}" target="_blank">
+                                                                    <img src="{{ asset($car->foto_belakang) }}" 
                                                                          alt="Belakang" 
                                                                          class="w-full h-14 object-cover rounded-lg border border-slate-200 hover:scale-105 transition-all">
                                                                 </a>

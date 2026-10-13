@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CarReviewController;
 use App\Http\Controllers\PhotoReviewController;
 use App\Http\Controllers\PelunasanController;
+use App\Http\Controllers\ShowroomAuthController;
+use App\Http\Controllers\ShowroomDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // --- Rute GUEST (Belum Login) ---
@@ -19,6 +21,23 @@ Route::middleware('guest')->group(function () {
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
+});
+
+Route::prefix('showrooms')->name('showrooms.')->group(function () {
+    
+    // Rute Login (bisa diakses publik)
+    Route::get('/login', [ShowroomAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [ShowroomAuthController::class, 'login'])->name('login.post');
+    
+    // Rute Dasbor (wajib login)
+    Route::middleware('auth:showroom')->group(function () {
+        Route::get('/dashboard', [ShowroomDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/cars/{id}/foto', [ShowroomDashboardController::class, 'editFoto'])->name('cars.foto.edit');
+        Route::put('/cars/{id}/foto', [ShowroomDashboardController::class, 'updateFoto'])->name('cars.foto.update');
+        Route::get('/settings', [ShowroomDashboardController::class, 'edit_profile'])->name('settings.edit_profile');
+    Route::put('/settings', [ShowroomDashboardController::class, 'update_profile'])->name('settings.update_profile');
+        Route::post('/logout', [ShowroomAuthController::class, 'logout'])->name('logout');
+    });
 });
 
 // --- Rute PUBLIC (Bisa diakses siapa saja) ---
@@ -41,9 +60,10 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth:web', 'admin'])->group(function () {
     // Dashboard Admin
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
     // Upload Data
     Route::get('/admin/upload-data', function () {
         return view('admin.upload-data');
