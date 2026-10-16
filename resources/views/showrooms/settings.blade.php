@@ -1,70 +1,145 @@
 @extends('layouts.app')
 
+@section('title', 'Pengaturan Akun Showroom')
+
 @section('content')
-<div class="max-w-3xl mx-auto py-8 px-4">
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Pengaturan Akun Showroom</h2>
+<div class="min-h-screen bg-slate-50 px-4 pb-12 pt-24 font-['Plus_Jakarta_Sans'] sm:px-6">
+    <div class="mx-auto max-w-4xl">
+        <a href="{{ route('showrooms.dashboard') }}" class="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#800000]">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6M9 12h12" />
+            </svg>
+            Kembali ke dashboard
+        </a>
+
+        <header class="mt-5 rounded-3xl bg-[#800000] p-6 text-white shadow-sm sm:p-8">
+            <p class="text-xs font-extrabold uppercase tracking-[0.18em] text-white/70">Akun mitra showroom</p>
+            <h1 class="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Pengaturan akun</h1>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-white/80">Perbarui informasi kontak operasional atau ganti password akun showroom Anda.</p>
+            <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/20 pt-4 text-sm">
+                <span class="font-bold">{{ $user->nmdealer ?? 'Showroom' }}</span>
+                @if($user->cno)
+                    <span class="rounded-full bg-white/15 px-3 py-1 text-xs font-bold">CIF / CNO: {{ $user->cno }}</span>
+                @endif
+            </div>
+        </header>
 
         @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-                {{ session('success') }}
+            <div role="status" class="mt-5 flex gap-3 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+                <svg class="mt-0.5 h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m5 12 4 4L19 6" />
+                </svg>
+                <p class="font-semibold">{{ session('success') }}</p>
             </div>
         @endif
 
         @if($errors->any())
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                <ul class="list-disc pl-5 text-sm">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div role="alert" class="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                <p class="font-extrabold">Pengaturan belum berhasil disimpan.</p>
+                <p class="mt-1">Periksa kembali informasi yang ditandai di bawah.</p>
             </div>
         @endif
 
-        <form action="{{ route('showrooms.settings.update_profile') }}" method="POST">
+        <form action="{{ route('showrooms.settings.update_profile') }}" method="POST" class="mt-6 space-y-5">
             @csrf
             @method('PUT')
 
-            {{-- Bagian 1: Informasi Kontak / Nomor WhatsApp --}}
-            <div class="mb-8 pb-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Informasi Kontak</h3>
-                
-                <div class="max-w-md">
-                    <label for="nopic" class="block text-sm font-medium text-gray-700 mb-1">Nomor WhatsApp (PIC)</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <!-- Ikon WhatsApp / Telepon -->
-                            <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                        </div>
-                        <input type="text" name="nopic" id="nopic" value="{{ old('nopic', $user->nopic) }}" class="pl-10 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border" placeholder="Contoh: 08123456789">
-                    </div>
-                    <p class="mt-1 text-xs text-gray-500">Nomor ini akan digunakan untuk komunikasi operasional atau B2B.</p>
-                </div>
-            </div>
-
-            {{-- Bagian 2: Ganti Password --}}
-            <div class="mb-8">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Ubah Password</h3>
-                <p class="text-sm text-gray-500 mb-4">Biarkan kosong jika Anda tidak ingin mengubah password saat ini.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+                <div class="flex items-start gap-4">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-[#800000]" aria-hidden="true">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h3.3a1 1 0 0 1 .95.68l1.5 4.5a1 1 0 0 1-.5 1.21L8 10.52a11 11 0 0 0 5.48 5.48l1.13-2.25a1 1 0 0 1 1.21-.5l4.5 1.5a1 1 0 0 1 .68.95V19a2 2 0 0 1-2 2h-1C9.72 21 3 14.28 3 6V5Z" />
+                        </svg>
+                    </span>
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password Baru</label>
-                        <input type="password" name="password" id="password" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border" placeholder="Minimal 8 karakter">
-                    </div>
-                    <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password Baru</label>
-                        <input type="password" name="password_confirmation" id="password_confirmation" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border" placeholder="Ulangi password baru">
+                        <h2 class="text-lg font-extrabold text-slate-900">Informasi kontak</h2>
+                        <p class="mt-1 text-sm leading-6 text-slate-500">Nomor PIC untuk komunikasi operasional showroom.</p>
                     </div>
                 </div>
-            </div>
 
-            {{-- Tombol Aksi --}}
-            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium">Batal</a>
-                <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">Simpan Pengaturan</button>
+                <div class="mt-6 max-w-xl">
+                    <label for="nopic" class="block text-sm font-bold text-slate-800">Nomor WhatsApp PIC <span class="font-medium text-slate-400">(opsional)</span></label>
+                    <input
+                        type="tel"
+                        name="nopic"
+                        id="nopic"
+                        value="{{ old('nopic', $user->nopic) }}"
+                        maxlength="20"
+                        autocomplete="tel"
+                        inputmode="tel"
+                        placeholder="Contoh: 08123456789"
+                        aria-describedby="nopic-help @error('nopic') nopic-error @enderror"
+                        @error('nopic') aria-invalid="true" @enderror
+                        class="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#800000] focus:outline-none focus:ring-2 focus:ring-[#800000]/20 @error('nopic') border-red-500 @enderror"
+                    >
+                    <p id="nopic-help" class="mt-2 text-xs leading-5 text-slate-500">Maksimal 20 karakter. Pastikan nomor dapat dihubungi.</p>
+                    @error('nopic')
+                        <p id="nopic-error" class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
+            </section>
+
+            <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+                <div class="flex items-start gap-4">
+                    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-700" aria-hidden="true">
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <rect x="4" y="10" width="16" height="11" rx="2" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 10V7a4 4 0 1 1 8 0v3m-4 5v2" />
+                        </svg>
+                    </span>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">Keamanan akun</h2>
+                        <p class="mt-1 text-sm leading-6 text-slate-500">Isi kedua kolom berikut hanya jika ingin mengganti password.</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid gap-5 md:grid-cols-2">
+                    <div>
+                        <label for="password" class="block text-sm font-bold text-slate-800">Password baru</label>
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            placeholder="Minimal 8 karakter"
+                            aria-describedby="password-help @error('password') password-error @enderror"
+                            @error('password') aria-invalid="true" @enderror
+                            class="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#800000] focus:outline-none focus:ring-2 focus:ring-[#800000]/20 @error('password') border-red-500 @enderror"
+                        >
+                        <p id="password-help" class="mt-2 text-xs leading-5 text-slate-500">Gunakan minimal 8 karakter.</p>
+                        @error('password')
+                            <p id="password-error" class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-bold text-slate-800">Konfirmasi password baru</label>
+                        <input
+                            type="password"
+                            name="password_confirmation"
+                            id="password_confirmation"
+                            autocomplete="new-password"
+                            minlength="8"
+                            placeholder="Ketik ulang password baru"
+                            aria-describedby="@error('password') password-confirmation-error @enderror"
+                            @error('password') aria-invalid="true" @enderror
+                            class="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#800000] focus:outline-none focus:ring-2 focus:ring-[#800000]/20 @error('password') border-red-500 @enderror"
+                        >
+                        @error('password')
+                            <p id="password-confirmation-error" class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </section>
+
+            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <a href="{{ route('showrooms.dashboard') }}" class="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]">Batal</a>
+                <button type="submit" class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#800000] px-6 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#650000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m5 12 4 4L19 6" />
+                    </svg>
+                    Simpan pengaturan
+                </button>
             </div>
         </form>
     </div>
