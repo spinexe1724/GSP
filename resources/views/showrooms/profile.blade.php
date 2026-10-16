@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profil Showroom - ' . ($showroom->nmdealer ?? 'Showroom'))
+@section('title', 'Profil showrooms - ' . ($showrooms->nmdealer ?? 'showrooms'))
 
 @section('content')
 <div class="pt-28 pb-20 bg-[#F8F9FA] min-h-screen font-['Plus_Jakarta_Sans']">
@@ -19,20 +19,20 @@
             </div>
         @endif
 
-        {{-- ================= KARTU INFORMASI SHOWROOM ================= --}}
+        {{-- ================= KARTU INFORMASI showrooms ================= --}}
         <div class="bg-white p-8 md:p-10 rounded-[32px] border border-slate-100 shadow-sm">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
                 <div>
                     <div class="flex items-center gap-3">
                         <span class="bg-red-50 text-red-800 text-xs font-black px-3 py-1.5 rounded-xl uppercase tracking-wider">
-                            Kode CIF / CNO: {{ $showroom->cno ?? '-' }}
+                            Kode CIF / CNO: {{ $showrooms->cno ?? '-' }}
                         </span>
                     </div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mt-3">
-                        {{ $showroom->nmdealer ?? 'Nama Dealer Belum Diatur' }}
+                        {{ $showrooms->nmdealer ?? 'Nama Dealer Belum Diatur' }}
                     </h1>
                     <p class="text-slate-500 text-sm mt-1">
-                        Pemilik / Penanggung Jawab: <span class="font-bold text-slate-700">{{ $showroom->cnm ?? '-' }}</span>
+                        Pemilik / Penanggung Jawab: <span class="font-bold text-slate-700">{{ $showrooms->cnm ?? '-' }}</span>
                     </p>
                 </div>
 
@@ -41,7 +41,7 @@
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-right min-w-[140px]">
                         <p class="text-[11px] font-black uppercase tracking-wider text-slate-400">Total Mobil</p>
                         <p class="text-2xl font-black text-[#800000] mt-0.5">
-                            {{ $showroom->cars->count() }} <span class="text-xs font-bold text-slate-500">Unit</span>
+                            {{ $showrooms->cars->count() }} <span class="text-xs font-bold text-slate-500">Unit</span>
                         </p>
                     </div>
 
@@ -63,44 +63,44 @@
             {{-- Detail Alamat & Info Tambahan --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 <div>
-                    <p class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Alamat Showroom</p>
+                    <p class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Alamat showrooms</p>
                     <p class="text-sm font-semibold text-slate-800 mt-1">
-                        {{ $showroom->ad1 ?? $showroom->alamat ?? '-' }}
-                        @if(!empty($showroom->ad2))
-                            <br>{{ $showroom->ad2 }}
+                        {{ $showrooms->ad1 ?? $showrooms->alamat ?? '-' }}
+                        @if(!empty($showrooms->ad2))
+                            <br>{{ $showrooms->ad2 }}
                         @endif
                     </p>
                 </div>
                 <div>
                     <p class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Kota / Wilayah</p>
                     <p class="text-sm font-semibold text-slate-800 mt-1">
-                        {{ $showroom->kota ?? '-' }} (Cabang: {{ $showroom->kdcab ?? '-' }})
+                        {{ $showrooms->kota ?? '-' }} (Cabang: {{ $showrooms->kdcab ?? '-' }})
                     </p>
                 </div>
                 <div>
                     <p class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Nomor KTP Rekanan</p>
                     <p class="text-sm font-semibold text-slate-800 mt-1">
-                        {{ $showroom->clprnoktp ?? '-' }}
+                        {{ $showrooms->clprnoktp ?? '-' }}
                     </p>
                 </div>
             </div>
         </div>
 
-        {{-- ================= DAFTAR UNIT MOBIL DI SHOWROOM ================= --}}
+        {{-- ================= DAFTAR UNIT MOBIL DI showrooms ================= --}}
         <div>
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h2 class="text-xl font-black text-slate-900 tracking-tight">Daftar Unit Mobil Tersedia</h2>
-                    <p class="text-xs font-semibold text-slate-500 mt-0.5">Mobil yang terdaftar di showroom ini berdasarkan sinkronisasi CIF.</p>
+                    <p class="text-xs font-semibold text-slate-500 mt-0.5">Mobil yang terdaftar di showrooms ini berdasarkan sinkronisasi CIF.</p>
                 </div>
                 <span class="text-xs font-bold text-slate-400">
-                    Menampilkan {{ $showroom->cars->count() }} unit
+                    Menampilkan {{ $showrooms->cars->count() }} unit
                 </span>
             </div>
 
-            @if($showroom->cars->isNotEmpty())
+            @if($showrooms->cars->isNotEmpty())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach ($showroom->cars as $car)
+                    @foreach ($showrooms->cars as $car)
                         <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-center mb-3">
@@ -132,7 +132,7 @@
                     </div>
                     <h3 class="text-base font-black text-slate-800">Belum Ada Unit Mobil Terdaftar</h3>
                     <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1">
-                        Data mobil untuk nomor CIF/CNO <span class="font-mono font-bold text-slate-600">{{ $showroom->cno ?? '-' }}</span> belum tersedia pada pembaruan data mobil harian.
+                        Data mobil untuk nomor CIF/CNO <span class="font-mono font-bold text-slate-600">{{ $showrooms->cno ?? '-' }}</span> belum tersedia pada pembaruan data mobil harian.
                     </p>
                 </div>
             @endif

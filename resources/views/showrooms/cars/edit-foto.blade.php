@@ -1,82 +1,143 @@
-@extends('layouts.app') {{-- Sesuaikan dengan layout utama Anda --}}
+@extends('layouts.app')
+
+@section('title', 'Kelola Foto Unit')
 
 @section('content')
-<div class="max-w-4xl mx-auto py-8 px-4">
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Kelola Foto 4 Sisi Kendaraan</h2>
-        <p class="text-sm text-gray-600 mb-6">
-            Unit: <strong>{{ $car->name ?? 'HONDA BRIO SATYA E 1.2 CVT' }}</strong> (Nopol: {{ $car->license_plate ?? 'D 1123 AGB' }})
-        </p>
+<div class="min-h-screen bg-slate-50 px-4 pb-28 pt-24 font-['Plus_Jakarta_Sans'] sm:px-6">
+    <div class="mx-auto max-w-5xl">
+        <a href="{{ route('showrooms.dashboard') }}" class="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-[#800000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#800000]">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6M9 12h12" />
+            </svg>
+            Kembali ke dashboard
+        </a>
+
+        <header class="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+            <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-[#800000]">Kelola foto kendaraan</p>
+                    <h1 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+                        {{ trim(($car->nama_merk ?? '') . ' ' . ($car->tipe_kend ?? '')) ?: 'Unit kendaraan' }}
+                    </h1>
+                    <p class="mt-2 text-sm text-slate-600">
+                        Nopol <span class="font-bold text-slate-800">{{ $car->no_polisi ?: 'Belum tersedia' }}</span>
+                        <span class="mx-2 text-slate-300" aria-hidden="true">|</span>
+                        Tahun <span class="font-bold text-slate-800">{{ $car->tahun_buat ?: '-' }}</span>
+                    </p>
+                </div>
+                <div class="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800 ring-1 ring-inset ring-amber-200">
+                    <span class="h-2 w-2 rounded-full bg-amber-500" aria-hidden="true"></span>
+                    Perubahan tersimpan setelah menekan tombol
+                </div>
+            </div>
+        </header>
 
         @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+            <div role="status" class="mt-5 rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-800">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-            <p class="text-sm text-blue-700 font-semibold">💡 Info Sensor Plat Nomor:</p>
-            <p class="text-xs text-blue-600 mt-1">AI akan mencoba mensensor plat secara otomatis. Jika AI meleset, <strong>klik dan seret (drag)</strong> langsung pada gambar di bawah ini untuk membuat kotak sensor manual.</p>
+        @if($errors->any())
+            <div role="alert" class="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+                <p class="font-bold">Ada foto yang belum bisa diproses.</p>
+                <p class="mt-1">Periksa pesan pada bagian terkait. Gunakan JPG atau PNG dengan ukuran maksimal 5 MB.</p>
+            </div>
+        @endif
+
+        <div class="mt-6 rounded-2xl border border-[#ead6d6] bg-[#fffafa] p-4 sm:p-5">
+            <div class="flex gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-[#800000] ring-1 ring-[#ead6d6]" aria-hidden="true">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3h.008v.008H12v-.008ZM10.3 4.8 2.9 17.6A1.6 1.6 0 0 0 4.3 20h15.4a1.6 1.6 0 0 0 1.4-2.4L13.7 4.8a2 2 0 0 0-3.4 0Z" />
+                    </svg>
+                </span>
+                <div>
+                    <p class="text-sm font-extrabold text-slate-900">Sensor plat nomor aktif untuk foto eksterior</p>
+                    <p class="mt-1 text-sm leading-6 text-slate-600">Sistem akan mencoba menyamarkan plat otomatis. Jika belum tepat, tarik kotak pada area plat di pratinjau untuk menambahkan sensor manual.</p>
+                </div>
+            </div>
         </div>
 
-        {{-- Form Update Foto --}}
-<form action="{{ route('showrooms.cars.foto.update', $car->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
+        <form action="{{ route('showrooms.cars.foto.update', $car->id) }}" method="POST" enctype="multipart/form-data" class="mt-6">
+            @csrf
             @method('PUT')
 
-            {{-- 1. Foto Tampak Depan --}}
-            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <label class="block font-semibold text-gray-700 mb-2">1. Foto Tampak Depan Kendaraan</label>
-                <input type="file" name="foto_depan" id="foto_depan" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*">
-                
-                <div class="mt-3 relative">
-                    <p class="text-xs text-gray-600 mb-1">Status AI: <span id="status_depan" class="ai-status font-semibold text-blue-600">Menyiapkan...</span></p>
-                    <div class="mt-2 text-center">
-                        <!-- Menggunakan Canvas agar bisa digambar manual -->
-                        <canvas id="canvas_depan" class="cursor-crosshair w-full max-w-full rounded-md border border-gray-300 shadow-sm" style="display: none; touch-action: none;"></canvas>
+            <div class="grid gap-4 md:grid-cols-2">
+                @php
+                    $photoFields = [
+                        ['field' => 'foto_depan', 'title' => 'Tampak depan', 'hint' => 'Ambil foto dari arah depan kendaraan.', 'canvas' => 'canvas_depan', 'status' => 'status_depan'],
+                        ['field' => 'foto_belakang', 'title' => 'Tampak belakang', 'hint' => 'Pastikan bagian belakang kendaraan terlihat jelas.', 'canvas' => 'canvas_belakang', 'status' => 'status_belakang'],
+                        ['field' => 'foto_samping', 'title' => 'Tampak samping', 'hint' => 'Tampilkan sisi kendaraan secara utuh.', 'canvas' => 'canvas_samping', 'status' => 'status_samping'],
+                    ];
+                @endphp
+
+                @foreach($photoFields as $photo)
+                    <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h2 class="font-extrabold text-slate-900">{{ $photo['title'] }}</h2>
+                                <p class="mt-1 text-xs leading-5 text-slate-500">{{ $photo['hint'] }}</p>
+                            </div>
+                            @if($car->{$photo['field']})
+                                <span class="shrink-0 rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-700">Sudah ada</span>
+                            @else
+                                <span class="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800">Belum ada</span>
+                            @endif
+                        </div>
+
+                        @if($car->{$photo['field']})
+                            <img src="{{ asset($car->{$photo['field']}) }}" alt="Foto {{ strtolower($photo['title']) }} saat ini" class="mt-4 max-h-56 w-full rounded-xl border border-slate-200 bg-slate-50 object-contain">
+                        @endif
+
+                        <label for="{{ $photo['field'] }}" class="mt-4 block text-xs font-bold text-slate-700">Pilih foto baru <span class="font-medium text-slate-400">(opsional)</span></label>
+                        <input type="file" name="{{ $photo['field'] }}" id="{{ $photo['field'] }}" accept="image/jpeg,image/png,image/jpg" class="mt-2 block min-h-12 w-full cursor-pointer rounded-xl border border-slate-300 bg-white text-sm text-slate-600 file:mr-3 file:min-h-12 file:border-0 file:bg-slate-100 file:px-4 file:font-bold file:text-slate-700 hover:file:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]">
+                        <p class="mt-2 text-xs text-slate-500">JPG atau PNG, maksimal 5 MB.</p>
+                        @error($photo['field'])
+                            <p class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                        @enderror
+
+                        <div class="mt-4 rounded-xl bg-slate-50 p-3">
+                            <p class="text-xs font-bold text-slate-700">Pratinjau dan sensor plat</p>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">Pratinjau muncul setelah memilih foto.</p>
+                            <p class="mt-3 text-xs text-slate-600">Status sensor: <span id="{{ $photo['status'] }}" class="ai-status font-bold text-slate-500">Menyiapkan...</span></p>
+                            <canvas id="{{ $photo['canvas'] }}" class="mt-2 hidden w-full cursor-crosshair rounded-lg border border-slate-200 bg-white" style="touch-action: none;" aria-label="Pratinjau foto {{ strtolower($photo['title']) }}; tarik pada plat nomor untuk sensor manual"></canvas>
+                        </div>
+                    </section>
+                @endforeach
+
+                <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <h2 class="font-extrabold text-slate-900">Odometer / dashboard</h2>
+                            <p class="mt-1 text-xs leading-5 text-slate-500">Pastikan angka kilometer terlihat dan terbaca.</p>
+                        </div>
+                        @if($car->foto_odometer)
+                            <span class="shrink-0 rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold text-green-700">Sudah ada</span>
+                        @else
+                            <span class="shrink-0 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-800">Belum ada</span>
+                        @endif
                     </div>
-                </div>
+                    @if($car->foto_odometer)
+                        <img src="{{ asset($car->foto_odometer) }}" alt="Foto odometer saat ini" class="mt-4 max-h-56 w-full rounded-xl border border-slate-200 bg-slate-50 object-contain">
+                    @endif
+                    <label for="foto_odometer" class="mt-4 block text-xs font-bold text-slate-700">Pilih foto baru <span class="font-medium text-slate-400">(opsional)</span></label>
+                    <input type="file" name="foto_odometer" id="foto_odometer" accept="image/jpeg,image/png,image/jpg" class="mt-2 block min-h-12 w-full cursor-pointer rounded-xl border border-slate-300 bg-white text-sm text-slate-600 file:mr-3 file:min-h-12 file:border-0 file:bg-slate-100 file:px-4 file:font-bold file:text-slate-700 hover:file:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]">
+                    <p class="mt-2 text-xs text-slate-500">JPG atau PNG, maksimal 5 MB.</p>
+                    @error('foto_odometer')
+                        <p class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                    @enderror
+                    <img id="preview_odometer" src="{{ $car->foto_odometer ? asset($car->foto_odometer) : '#' }}" alt="Pratinjau foto odometer" class="{{ $car->foto_odometer ? 'mt-4 block max-h-56 w-full rounded-xl border border-slate-200 object-contain' : 'mt-4 hidden max-h-56 w-full rounded-xl border border-slate-200 object-contain' }}" />
+                </section>
             </div>
 
-            {{-- 2. Foto Tampak Belakang --}}
-            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <label class="block font-semibold text-gray-700 mb-2">2. Foto Tampak Belakang</label>
-                <input type="file" name="foto_belakang" id="foto_belakang" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*">
-                
-                <div class="mt-3 relative">
-                    <p class="text-xs text-gray-600 mb-1">Status AI: <span id="status_belakang" class="ai-status font-semibold text-blue-600">Menyiapkan...</span></p>
-                    <div class="mt-2 text-center">
-                        <canvas id="canvas_belakang" class="cursor-crosshair w-full max-w-full rounded-md border border-gray-300 shadow-sm" style="display: none; touch-action: none;"></canvas>
-                    </div>
+            <div class="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur sm:static sm:mt-6 sm:flex sm:justify-end sm:gap-3 sm:border-0 sm:bg-transparent sm:p-0 sm:shadow-none sm:backdrop-blur-none">
+                <div class="mx-auto flex max-w-5xl gap-3 sm:mx-0">
+                    <a href="{{ route('showrooms.dashboard') }}" class="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000] sm:flex-none">Batal</a>
+                    <button type="submit" class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#800000] px-5 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#650000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000] sm:flex-none">
+                        Simpan foto
+                    </button>
                 </div>
-            </div>
-
-            {{-- 3. Foto Tampak Samping --}}
-            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <label class="block font-semibold text-gray-700 mb-2">3. Foto Tampak Samping</label>
-                <input type="file" name="foto_samping" id="foto_samping" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*">
-                
-                <div class="mt-3 relative">
-                    <p class="text-xs text-gray-600 mb-1">Status AI: <span id="status_samping" class="ai-status font-semibold text-blue-600">Menyiapkan...</span></p>
-                    <div class="mt-2 text-center">
-                        <canvas id="canvas_samping" class="cursor-crosshair w-full max-w-full rounded-md border border-gray-300 shadow-sm" style="display: none; touch-action: none;"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            {{-- 4. Foto Odometer (Tanpa AI) --}}
-            <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <label class="block font-semibold text-gray-700 mb-2">4. Foto Odometer / Dashboard</label>
-                <input type="file" name="foto_odometer" id="foto_odometer" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" accept="image/*">
-                <div class="mt-3">
-                    <img id="preview_odometer" src="#" alt="Preview Odometer" style="max-width: 100%; max-height: 300px; display: none; border-radius: 6px; border: 1px solid #cbd5e1;" />
-                </div>
-            </div>
-
-            {{-- Tombol Aksi --}}
-            <div class="flex justify-end gap-3">
-                <a href="{{ url()->previous() }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium">Kembali</a>
-                <button type="submit" class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">Simpan Perubahan</button>
             </div>
         </form>
     </div>

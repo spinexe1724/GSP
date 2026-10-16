@@ -34,7 +34,7 @@
                         </form>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" id="nav-login-btn" class="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-100 transition">
+                    <a href="{{ request()->routeIs('portal.index') ? route('showrooms.login') : route('login') }}" id="nav-login-btn" class="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold text-sm shadow-lg hover:bg-gray-100 transition">
                         Login
                     </a>
                 @endauth
