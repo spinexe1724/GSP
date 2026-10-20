@@ -30,7 +30,7 @@
 
 
 
-    <title>{{ $car->nama_merk ?? 'Detail Unit' }} - Gratama</title>
+    <title>{{ $car->nama_merk ?? 'Detail Unit' }}</title>
 
 
 
@@ -250,12 +250,8 @@
 
 
 
-            <a href="{{ route('portal.index') }}" class="flex items-center gap-3 text-slate-900" aria-label="Gratama Finance, kembali ke beranda">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
-                <span class="flex flex-col text-base font-black uppercase leading-[0.9] tracking-[0.08em] sm:text-lg">
-                    <span>Gratama</span>
-                    <span>Finance</span>
-                </span>
+            <a href="{{ route('portal.index') }}" class="inline-flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]" aria-label="Gratama Finance, kembali ke beranda">
+                <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-9 w-36 object-contain sm:h-10 sm:w-40">
 
 
 
@@ -272,30 +268,6 @@
 
 
 
-
-
-
-
-
-
-
-                <span class="text-xl font-extrabold tracking-tight text-slate-900">
-
-
-
-
-
-
-
-                    Gratama
-
-
-
-
-
-
-
-                </span>
 
 
 
@@ -1830,8 +1802,6 @@
 
 
 
-
-                </div>
 
 <div class="mt-2">
         @if($car->harga)

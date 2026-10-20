@@ -15,12 +15,8 @@
 <body class="flex min-h-screen flex-col bg-[#f4f6f8] text-slate-800 antialiased">
     <header class="border-b border-slate-200 bg-white">
         <div class="mx-auto flex h-[72px] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-            <a href="{{ route('portal.index') }}" class="flex items-center gap-3" aria-label="Gratama Finance, kembali ke beranda">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm">
-                <span>
-                    <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900">Gratama Finance</span>
-                    <span class="mt-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Showroom Partners</span>
-                </span>
+            <a href="{{ route('portal.index') }}" class="inline-flex items-center" aria-label="Gratama Finance, kembali ke beranda">
+                <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-9 w-36 object-contain">
             </a>
             <a href="{{ route('portal.index') }}" class="text-xs font-semibold text-slate-600 transition hover:text-[#800000] sm:text-sm">
                 Kembali ke beranda

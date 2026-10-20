@@ -33,12 +33,8 @@
     ========================================================== --}}
     <header class="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
     <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
-        <a href="{{ route('portal.index') }}" class="flex items-center gap-3 text-slate-900" aria-label="Gratama Finance, kembali ke beranda">
-            <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
-            <span class="flex flex-col text-base font-black uppercase leading-[0.9] tracking-[0.08em] sm:text-lg">
-                <span>Gratama</span>
-                <span>Finance</span>
-            </span>
+        <a href="{{ route('portal.index') }}" class="inline-flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]" aria-label="Gratama Finance, kembali ke beranda">
+            <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-9 w-36 object-contain sm:h-10 sm:w-40">
         </a>
        
     </div>

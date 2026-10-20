@@ -69,17 +69,8 @@
                 {{-- =================================================
                     LOGO
                 ================================================== --}}
-                <div class="flex items-center gap-3 px-2">
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm">
-                    <div>
-                        <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900">
-                            Gratama Finance
-                        </span>
-                        <span class="mt-1 block text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-                            Admin Portal
-                        </span>
-                    </div>
-
+                <div class="px-2">
+                    <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-10 w-40 object-contain">
                 </div>
 
 

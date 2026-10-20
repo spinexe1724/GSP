@@ -19,18 +19,10 @@
     {{-- ================= NAVBAR ================= --}}
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <!-- Brand wordmark -->
-            <div class="flex min-w-0 items-center gap-3">
-                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
-                <div>
-                <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900 sm:text-base">
-                    Gratama Finance
-                </span>
-                <span class="mt-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-[#800000] sm:text-[11px]">
-                    Showroom Partner
-                </span>
-                </div>
-            </div>
+            <!-- Brand logo -->
+            <a href="{{ route('showrooms.dashboard') }}" aria-label="Gratama Finance, dashboard showroom" class="inline-flex shrink-0 items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]">
+                <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-9 w-36 object-contain sm:h-10 sm:w-40">
+            </a>
 
             <!-- User Menu & Logout -->
             <div class="flex items-center gap-4">
