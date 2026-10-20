@@ -4,7 +4,7 @@
     {{-- NAVBAR --}}
     {{-- Jika BUKAN halaman admin, tampilkan Navbar penuh --}}
     @if(!request()->is('admin*'))
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-6">
+    <nav id="navbar" data-solid="{{ request()->routeIs('showrooms.settings.edit_profile') ? 'true' : 'false' }}" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 {{ request()->routeIs('showrooms.settings.edit_profile') ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'py-6' }}">
         <div class="container mx-auto flex justify-between items-center">
             
             {{-- Logo --}}
@@ -12,7 +12,7 @@
                 <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                 </div>
-                <span class="text-white font-bold text-2xl tracking-tighter" id="nav-logo-text">Gratama</span>
+                <span class="{{ request()->routeIs('showrooms.settings.edit_profile') ? 'text-gray-900' : 'text-white' }} font-bold text-2xl tracking-tighter" id="nav-logo-text">Gratama</span>
             </div>
 
             {{-- Menu Utama --}}
@@ -49,7 +49,7 @@
 <script>
     window.onscroll = function() {
         const nav = document.getElementById('navbar');
-        if (!nav) return; // Mencegah error JS jika navbar tidak ada
+        if (!nav || nav.dataset.solid === 'true') return; // Keep the settings navbar readable at every scroll position.
 
         const logoText = document.getElementById('nav-logo-text');
         const navLinks = nav.querySelectorAll('.nav-link');
