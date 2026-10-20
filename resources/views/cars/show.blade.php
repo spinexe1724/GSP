@@ -250,15 +250,12 @@
 
 
 
-            <a href="{{ route('portal.index') }}" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-
-
-
-
-
-
-
-            <img src="{{ asset('images/logo.png') }}" alt="Logo">
+            <a href="{{ route('portal.index') }}" class="flex items-center gap-3 text-slate-900" aria-label="Gratama Finance, kembali ke beranda">
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
+                <span class="flex flex-col text-base font-black uppercase leading-[0.9] tracking-[0.08em] sm:text-lg">
+                    <span>Gratama</span>
+                    <span>Finance</span>
+                </span>
 
 
 
@@ -1727,22 +1724,6 @@
 
 
             <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-[32px] border border-slate-100 shadow-sm space-y-6">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <div>
 
 
 
@@ -3652,7 +3633,6 @@
 
 
 
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#800000]">
 
 
 
@@ -3660,15 +3640,10 @@
 
 
 
-                        <span class="text-sm font-black text-white">G</span>
 
 
 
-
-
-
-
-                    </div>
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 shrink-0 rounded-md object-contain">
 
 
 
@@ -3692,7 +3667,7 @@
 
 
 
-                        <div class="text-sm font-bold text-slate-900">GSP</div>
+                        <div class="text-sm font-black uppercase tracking-[0.08em] text-slate-900">Gratama Finance</div>
 
 
 
@@ -3932,7 +3907,7 @@
 
 
 
-                    © 2026 GSP
+                    © 2026 Gratama Finance
 
 
 

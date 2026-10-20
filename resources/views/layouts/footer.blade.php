@@ -5,13 +5,10 @@
 
             {{-- Brand --}}
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-[#800000] rounded-lg flex items-center justify-center">
-                    <span class="text-white font-black text-xs">G</span>
-                </div>
-
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 shrink-0 rounded-md object-contain">
                 <div>
-                    <div class="text-sm font-bold text-gray-900">
-                        GSP
+                    <div class="text-sm font-black uppercase tracking-[0.08em] text-gray-900">
+                        Gratama Finance
                     </div>
                     <div class="text-[10px] text-gray-400">
                         Gratama Showroom Partners

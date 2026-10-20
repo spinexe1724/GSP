@@ -18,9 +18,12 @@
 
 <header class="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 backdrop-blur-xl shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
     <div class="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
-        <a href="{{ route('portal.index') }}" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo">
-            <span class="text-xl font-extrabold tracking-tight text-slate-900">Gratama</span>
+        <a href="{{ route('portal.index') }}" class="flex items-center gap-3 text-slate-900" aria-label="Gratama Finance, kembali ke beranda">
+            <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
+            <span class="flex flex-col text-base font-black uppercase leading-[0.9] tracking-[0.08em] sm:text-lg">
+                <span>Gratama</span>
+                <span>Finance</span>
+            </span>
         </a>
        
     </div>
@@ -112,13 +115,10 @@
 
             {{-- Brand --}}
             <div class="flex items-center gap-3">
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#800000]">
-                    <span class="text-xs font-black text-white">G</span>
-                </div>
-
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 shrink-0 rounded-md object-contain">
                 <div>
-                    <div class="text-sm font-bold text-slate-900">
-                        GSP
+                    <div class="text-sm font-black uppercase tracking-[0.08em] text-slate-900">
+                        Gratama Finance
                     </div>
                     <div class="text-[10px] text-slate-400">
                         Gratama Showroom Partners

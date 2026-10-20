@@ -7,12 +7,13 @@
     <nav id="navbar" data-solid="{{ request()->routeIs('showrooms.settings.edit_profile') ? 'true' : 'false' }}" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 {{ request()->routeIs('showrooms.settings.edit_profile') ? 'bg-white/95 backdrop-blur-md shadow-sm py-4' : 'py-6' }}">
         <div class="container mx-auto flex justify-between items-center">
             
-            {{-- Logo --}}
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo">
-                </div>
-                <span class="{{ request()->routeIs('showrooms.settings.edit_profile') ? 'text-gray-900' : 'text-white' }} font-bold text-2xl tracking-tighter" id="nav-logo-text">Gratama</span>
+            {{-- Brand wordmark --}}
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
+                <span class="{{ request()->routeIs('showrooms.settings.edit_profile') ? 'text-gray-900' : 'text-white' }} flex flex-col text-base font-black uppercase leading-[0.9] tracking-[0.08em] sm:text-lg" id="nav-logo-text">
+                    <span>Gratama</span>
+                    <span>Finance</span>
+                </span>
             </div>
 
             {{-- Menu Utama --}}

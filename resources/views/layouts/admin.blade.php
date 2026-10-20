@@ -70,22 +70,12 @@
                     LOGO
                 ================================================== --}}
                 <div class="flex items-center gap-3 px-2">
-
-                    <div
-                        class="w-9 h-9 bg-[#800000]
-                               rounded-xl
-                               flex items-center justify-center
-                               text-white font-black
-                               shadow-lg shadow-black/20"
-                    >
-                        G
-                    </div>
-
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm">
                     <div>
-                        <span class="block text-xl font-black text-black tracking-wider">
-                            GSP
+                        <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900">
+                            Gratama Finance
                         </span>
-                        <span class="block text-[9px] font-semibold text-slate-400 uppercase tracking-[0.18em]">
+                        <span class="mt-1 block text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                             Admin Portal
                         </span>
                     </div>

@@ -15,13 +15,11 @@
 <body class="flex min-h-screen flex-col bg-[#f4f6f8] text-slate-800 antialiased">
     <header class="border-b border-slate-200 bg-white">
         <div class="mx-auto flex h-[72px] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-            <a href="{{ route('portal.index') }}" class="flex items-center gap-3" aria-label="Gratama Showroom Partners, kembali ke beranda">
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 object-contain">
-                </span>
+            <a href="{{ route('portal.index') }}" class="flex items-center gap-3" aria-label="Gratama Finance, kembali ke beranda">
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm">
                 <span>
-                    <span class="block text-sm font-extrabold text-slate-900">Gratama</span>
-                    <span class="block text-[10px] font-semibold text-slate-500">SHOWROOM PARTNERS</span>
+                    <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900">Gratama Finance</span>
+                    <span class="mt-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Showroom Partners</span>
                 </span>
             </a>
             <a href="{{ route('portal.index') }}" class="text-xs font-semibold text-slate-600 transition hover:text-[#800000] sm:text-sm">
@@ -101,11 +99,13 @@
 
     <footer class="border-t border-slate-200 bg-white">
         <div class="mx-auto flex min-h-[82px] w-full max-w-6xl flex-col items-center justify-between gap-3 px-5 py-4 sm:flex-row sm:px-8">
-            <div class="flex items-center gap-3">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#800000] text-xs font-black text-white">G</span>
-                <span>
-                    <span class="block text-sm font-bold text-slate-900">GSP</span>
+            <div>
+                <span class="flex items-center gap-3">
+                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-8 w-8 shrink-0 rounded-md object-contain">
+                    <span>
+                    <span class="block text-sm font-black uppercase tracking-[0.08em] text-slate-900">Gratama Finance</span>
                     <span class="block text-[10px] text-slate-500">Gratama Showroom Partners</span>
+                    </span>
                 </span>
             </div>
             <p class="text-[11px] text-slate-500">&copy; {{ date('Y') }} Gratama Showroom Partners</p>

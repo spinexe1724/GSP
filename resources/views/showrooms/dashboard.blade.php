@@ -19,14 +19,17 @@
     {{-- ================= NAVBAR ================= --}}
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <!-- Logo & Brand -->
-            <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Gratama Finance" class="h-full w-full object-cover">
-                </div>
-                <span class="min-w-0 text-sm font-extrabold leading-tight text-slate-900 sm:text-base">
-                    Gratama Finance <span class="block text-[#800000]">Showrooms Partner</span>
+            <!-- Brand wordmark -->
+            <div class="flex min-w-0 items-center gap-3">
+                <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 shrink-0 rounded-lg object-contain shadow-sm sm:h-10 sm:w-10">
+                <div>
+                <span class="block text-sm font-black uppercase leading-none tracking-[0.08em] text-slate-900 sm:text-base">
+                    Gratama Finance
                 </span>
+                <span class="mt-1 block text-[10px] font-bold uppercase tracking-[0.12em] text-[#800000] sm:text-[11px]">
+                    Showroom Partner
+                </span>
+                </div>
             </div>
 
             <!-- User Menu & Logout -->
