@@ -1850,13 +1850,19 @@
 
 
 
-
-
-
-
                 </div>
 
-
+<div class="mt-2">
+        @if($car->harga)
+            <p class="text-sm font-black text-[#800000] sm:text-base">
+                Rp {{ number_format($car->harga, 0, ',', '.') }}
+            </p>
+        @else
+            <span class="inline-block text-[10px] font-bold text-slate-400">
+                Hubungi Showroom
+            </span>
+        @endif
+    </div>
 
 
 
@@ -3379,7 +3385,15 @@
                             {{ $item->tipe_kend ?? $item->merk ?? 'Unit Mobil' }}
 
                         </h3>
-
+<div class="mt-1">
+        @if($item->harga)
+            <p class="text-xs font-black text-[#800000]">
+                Rp {{ number_format($item->harga, 0, ',', '.') }}
+            </p>
+        @else
+            <p class="text-[10px] font-semibold text-slate-400">Harga Nego</p>
+        @endif
+    </div>
 
 
                         <div class="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3 text-[10px] font-medium text-slate-500">
@@ -3535,7 +3549,15 @@
                                 {{ $item->tipe_kend ?? $item->merk ?? 'Unit Mobil' }}
 
                             </h3>
-
+<div class="mt-1">
+        @if($item->harga)
+            <p class="text-xs font-black text-[#800000]">
+                Rp {{ number_format($item->harga, 0, ',', '.') }}
+            </p>
+        @else
+            <p class="text-[10px] font-semibold text-slate-400">Harga Nego</p>
+        @endif
+    </div>
 
 
                             <div class="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-[10px] font-medium text-slate-500">

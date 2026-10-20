@@ -136,13 +136,13 @@
                     ['name' => 'Suzuki', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/suzuki.svg'],
                     ['name' => 'Nissan', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/nissan.svg'],
                     ['name' => 'Mitsubishi', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mitsubishi.svg'],
-                    ['name' => 'Daihatsu', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/daihatsu.svg'],
+                    ['name' => 'KIA', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/kia.svg'],
                     ['name' => 'Chevrolet', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/chevrolet.svg'],
                     ['name' => 'Hyundai', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/hyundai.svg'],
-                    ['name' => 'Isuzu', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/isuzu.svg'],
+                    ['name' => 'Mini Cooper', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mini.svg'],
                     ['name' => 'Mazda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mazda.svg'],
                     ['name' => 'Subaru', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/subaru.svg'],
-                    ['name' => 'Wuling', 'logo' => 'https://raw.githubusercontent.com/benjamim-san/logos/main/wuling.svg'],
+                    ['name' => 'Mercedes', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mercedes.svg'],
                 ];
             @endphp
 
@@ -669,7 +669,17 @@
                                             <h3 class="mt-0.5 line-clamp-2 text-xs font-extrabold text-slate-900 transition-colors group-hover:text-[#800000] sm:text-sm">
                                                 {{ $car->tipe_kend ?? '-' }}
                                             </h3>
-
+<div class="mt-2">
+        @if($car->harga)
+            <p class="text-sm font-black text-[#800000] sm:text-base">
+                Rp {{ number_format($car->harga, 0, ',', '.') }}
+            </p>
+        @else
+            <span class="inline-block text-[10px] font-bold text-slate-400">
+                Hubungi Showroom
+            </span>
+        @endif
+    </div>
                                             {{-- Specifications --}}
                                             <div class="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
 

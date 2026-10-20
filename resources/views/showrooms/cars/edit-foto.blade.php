@@ -40,8 +40,8 @@
 
         @if($errors->any())
             <div role="alert" class="mt-5 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-                <p class="font-bold">Ada foto yang belum bisa diproses.</p>
-                <p class="mt-1">Periksa pesan pada bagian terkait. Gunakan JPG atau PNG dengan ukuran maksimal 5 MB.</p>
+                <p class="font-bold">Ada foto/data yang belum bisa diproses.</p>
+                <p class="mt-1">Periksa pesan pada bagian terkait. Gunakan format file dan nilai angka yang valid.</p>
             </div>
         @endif
 
@@ -53,15 +53,46 @@
                     </svg>
                 </span>
                 <div>
-                    <p class="text-sm font-extrabold text-slate-900">Sensor plat nomor aktif untuk foto eksterior</p>
-                    <p class="mt-1 text-sm leading-6 text-slate-600">Sistem akan mencoba menyamarkan plat otomatis. Jika belum tepat, tarik kotak pada area plat di pratinjau untuk menambahkan sensor manual.</p>
+                    <p class="text-sm font-extrabold text-slate-900">Sensor plat nomor manual</p>
+                    <p class="mt-1 text-sm leading-6 text-slate-600">Tarik kotak (klik dan geser) pada area plat di pratinjau gambar untuk menyamarkan plat nomor kendaraan secara manual.</p>
                 </div>
             </div>
         </div>
 
-        <form action="{{ route('showrooms.cars.foto.update', $car->id) }}" method="POST" enctype="multipart/form-data" class="mt-6">
+        <form action="{{ route('showrooms.cars.foto.update', $car->id) }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
             @csrf
             @method('PUT')
+
+            <!-- SECTION BARU: INPUT HARGA UNIT -->
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                <div class="flex flex-col gap-1">
+                    <h2 class="font-extrabold text-slate-900">Harga Jual / Buka Harga Unit</h2>
+                    <p class="text-xs text-slate-500">Atur nominal harga penawaran unit kendaraan ini untuk calon pembeli.</p>
+                </div>
+
+                <div class="mt-4 max-w-md">
+                    <label for="harga" class="block text-xs font-bold text-slate-700">
+                        Harga Jual (Rp) <span class="font-medium text-slate-400">(opsional)</span>
+                    </label>
+                    <div class="relative mt-2">
+                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-sm font-bold text-slate-400">
+                            Rp
+                        </span>
+                        <input 
+                            type="number" 
+                            name="harga" 
+                            id="harga" 
+                            value="{{ old('harga', $car->harga) }}" 
+                            placeholder="Contoh: 150000000" 
+                            class="block min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-11 pr-4 text-sm font-semibold text-slate-800 placeholder:font-normal placeholder:text-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000]"
+                        >
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500">Kosongkan jika harga belum pasti atau masih dalam negosiasi.</p>
+                    @error('harga')
+                        <p class="mt-2 text-sm font-semibold text-red-700">{{ $message }}</p>
+                    @enderror
+                </div>
+            </section>
 
             <div class="grid gap-4 md:grid-cols-2">
                 @php
@@ -98,10 +129,10 @@
                         @enderror
 
                         <div class="mt-4 rounded-xl bg-slate-50 p-3">
-                            <p class="text-xs font-bold text-slate-700">Pratinjau dan sensor plat</p>
+                            <p class="text-xs font-bold text-slate-700">Pratinjau dan sensor manual</p>
                             <p class="mt-1 text-xs leading-5 text-slate-500">Pratinjau muncul setelah memilih foto.</p>
-                            <p class="mt-3 text-xs text-slate-600">Status sensor: <span id="{{ $photo['status'] }}" class="ai-status font-bold text-slate-500">Menyiapkan...</span></p>
-                            <canvas id="{{ $photo['canvas'] }}" class="mt-2 hidden w-full cursor-crosshair rounded-lg border border-slate-200 bg-white" style="touch-action: none;" aria-label="Pratinjau foto {{ strtolower($photo['title']) }}; tarik pada plat nomor untuk sensor manual"></canvas>
+                            <p class="mt-3 text-xs text-slate-600">Status sensor: <span id="{{ $photo['status'] }}" class="status-indicator font-bold text-slate-500">Menunggu foto...</span></p>
+                            <canvas id="{{ $photo['canvas'] }}" class="mt-2 hidden w-full cursor-crosshair rounded-lg border border-slate-200 bg-white" style="touch-action: none;" aria-label="Pratinjau foto {{ strtolower($photo['title']) }}; tarik pada area untuk sensor manual"></canvas>
                         </div>
                     </section>
                 @endforeach
@@ -135,7 +166,7 @@
                 <div class="mx-auto flex max-w-5xl gap-3 sm:mx-0">
                     <a href="{{ route('showrooms.dashboard') }}" class="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000] sm:flex-none">Batal</a>
                     <button type="submit" class="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#800000] px-5 text-sm font-extrabold text-white shadow-sm transition hover:bg-[#650000] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#800000] sm:flex-none">
-                        Simpan foto
+                        Simpan perubahan
                     </button>
                 </div>
             </div>
@@ -143,63 +174,9 @@
     </div>
 </div>
 
-<!-- Library ONNX Runtime Web -->
-<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 <script>
-    // --- 1. INISIALISASI MODEL AI ---
-    let session = null;
-    async function initAI() {
-        try {
-            const modelUrl = "https://huggingface.co/spaces/GratamaFerdi/yolo-plate-blur/resolve/main/model.onnx";
-            session = await ort.InferenceSession.create(modelUrl, { executionProviders: ['wasm'] });
-            document.querySelectorAll('.ai-status').forEach(el => {
-                el.innerText = "AI Siap!"; el.className = "ai-status font-semibold text-green-600";
-            });
-        } catch (e) {
-            console.error("Gagal memuat AI:", e);
-            document.querySelectorAll('.ai-status').forEach(el => {
-                el.innerText = "AI Gagal. Gunakan sensor manual (klik & drag pada foto).";
-                el.className = "ai-status font-semibold text-red-600";
-            });
-        }
-    }
-    initAI();
-
-    // --- 2. FUNGSI PREPROCESSING & PARSING AI ---
-    function preprocessToYolo(img) {
-        const c = document.createElement('canvas');
-        c.width = 640; c.height = 640;
-        const cx = c.getContext('2d');
-        cx.drawImage(img, 0, 0, 640, 640);
-        const imgData = cx.getImageData(0, 0, 640, 640).data;
-        const red = new Float32Array(640 * 640); const green = new Float32Array(640 * 640); const blue = new Float32Array(640 * 640);
-        for (let i = 0, p = 0; i < imgData.length; i += 4, p++) {
-            red[p] = imgData[i] / 255.0; green[p] = imgData[i + 1] / 255.0; blue[p] = imgData[i + 2] / 255.0;
-        }
-        const input = new Float32Array(3 * 640 * 640);
-        input.set(red, 0); input.set(green, 640 * 640); input.set(blue, 2 * 640 * 640);
-        return new ort.Tensor('float32', input, [1, 3, 640, 640]);
-    }
-
-    function parseYoloOutput(output, origW, origH) {
-        const numCols = 8400; let bestBox = null; let maxConf = 0;
-        for (let i = 0; i < numCols; i++) {
-            const conf = output[4 * numCols + i];
-            if (conf > maxConf && conf > 0.4) {
-                maxConf = conf;
-                const w = output[2 * numCols + i]; const h = output[3 * numCols + i];
-                bestBox = {
-                    x: (output[0 * numCols + i] - w / 2) * (origW / 640),
-                    y: (output[1 * numCols + i] - h / 2) * (origH / 640),
-                    w: w * (origW / 640), h: h * (origH / 640)
-                };
-            }
-        }
-        return bestBox;
-    }
-
-    // --- 3. FUNGSI UTAMA AI + GAMBAR MANUAL ---
-    function setupAIFilter(inputId, canvasId, statusId) {
+    // --- FUNGSI UTAMA SENSOR MANUAL ---
+    function setupManualBlur(inputId, canvasId, statusId) {
         const inputEl = document.getElementById(inputId);
         const canvas = document.getElementById(canvasId);
         const ctx = canvas.getContext('2d');
@@ -212,7 +189,7 @@
         let tempBox = null;
 
         // Fungsi menggambar ulang canvas
-      function redrawCanvas() {
+        function redrawCanvas() {
             if (!originalImg) return;
             
             // 1. Bersihkan seluruh kanvas
@@ -234,13 +211,13 @@
                     ctx.rect(box.x, box.y, box.w, box.h);
                 });
                 
-                // KUNCI area tersebut! (Semua gambar setelah ini hanya akan muncul di dalam kotak)
+                // KUNCI area tersebut!
                 ctx.clip();
                 
-                // Beri efek blur tebal (misal 30px)
+                // Beri efek blur tebal
                 ctx.filter = 'blur(30px)';
                 
-                // Gambar ulang SELURUH foto, tapi karena sudah di-clip, blurnya HANYA tembus di area plat!
+                // Gambar ulang SELURUH foto, tapi karena sudah di-clip, blurnya HANYA tembus di area ditarik
                 ctx.drawImage(originalImg, 0, 0);
                 
                 ctx.restore();
@@ -271,7 +248,6 @@
         // Mendapatkan koordinat mouse/sentuhan yang akurat dari canvas
         function getMousePos(evt) {
             const rect = canvas.getBoundingClientRect();
-            // Skala antara ukuran tampil di layar vs resolusi piksel aslinya
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             const clientX = evt.clientX || (evt.touches && evt.touches[0].clientX);
@@ -307,14 +283,14 @@
             redrawCanvas();
         };
 
-      const stopDrawing = (e) => {
+        const stopDrawing = (e) => {
             if (!isDrawing) return;
             e.preventDefault();
             isDrawing = false;
             
             if (tempBox && tempBox.w > 10 && tempBox.h > 10) {
                 drawnBoxes.push(tempBox); 
-                statusEl.innerText = "Sensor manual ditambahkan!";
+                statusEl.innerText = "Sensor ditambahkan! Tarik lagi untuk menambah area.";
             }
             
             tempBox = null;    // 1. Hapus efek kotak transparan
@@ -333,35 +309,22 @@
         canvas.addEventListener('touchend', stopDrawing);
 
         // --- Event Listener Upload Foto ---
-        inputEl.addEventListener('change', async function(e) {
+        inputEl.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
             drawnBoxes = []; // Reset box tiap foto baru
             canvas.style.display = 'block';
-            statusEl.innerText = "Menganalisa gambar...";
+            statusEl.innerText = "Silakan tarik kotak (klik & drag) pada area yang ingin disensor.";
+            statusEl.className = "status-indicator font-semibold text-blue-600";
 
             const reader = new FileReader();
-            reader.onload = async function(event) {
+            reader.onload = function(event) {
                 originalImg = new Image();
                 originalImg.src = event.target.result;
-                originalImg.onload = async function() {
+                originalImg.onload = function() {
                     canvas.width = originalImg.width; 
                     canvas.height = originalImg.height;
-                    
-                    if (session) {
-                        // Proses deteksi AI
-                        const inputTensor = preprocessToYolo(originalImg);
-                        const results = await session.run({ images: inputTensor });
-                        const aiBox = parseYoloOutput(results[Object.keys(results)[0]].data, originalImg.width, originalImg.height);
-                        
-                        if (aiBox) {
-                            drawnBoxes.push(aiBox); // Masukkan hasil AI ke array box
-                            statusEl.innerText = "Plat tersensor otomatis! (Bisa tambah manual jika ada plat lain)";
-                        } else {
-                            statusEl.innerText = "AI tidak menemukan plat. Silakan klik & drag (tarik kotak) pada foto untuk sensor manual.";
-                        }
-                    }
                     
                     redrawCanvas();
                     updateFileInput();
@@ -371,12 +334,12 @@
         });
     }
 
-    // --- 4. TERAPKAN KE MASING-MASING INPUT ---
-    setupAIFilter('foto_depan', 'canvas_depan', 'status_depan');
-    setupAIFilter('foto_belakang', 'canvas_belakang', 'status_belakang');
-    setupAIFilter('foto_samping', 'canvas_samping', 'status_samping');
+    // --- TERAPKAN KE MASING-MASING INPUT ---
+    setupManualBlur('foto_depan', 'canvas_depan', 'status_depan');
+    setupManualBlur('foto_belakang', 'canvas_belakang', 'status_belakang');
+    setupManualBlur('foto_samping', 'canvas_samping', 'status_samping');
 
-    // Khusus Odometer (Preview saja, tidak butuh Canvas/AI)
+    // Khusus Odometer (Preview saja, tidak butuh Canvas/Blur)
     document.getElementById('foto_odometer').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {

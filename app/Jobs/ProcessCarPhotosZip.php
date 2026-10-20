@@ -18,11 +18,10 @@ class ProcessCarPhotosZip implements ShouldQueue
     protected $fullZipPath;
     protected $extractPath;
     protected $chunkFolder;
-    // Atur timeout job hingga 30 menit khusus file besar
     public $timeout = 3000;
     public $tries = 1;
 
-    public function __construct($fullZipPath,$extractPath = null, $chunkFolder = null)
+    public function __construct($fullZipPath, $extractPath = null, $chunkFolder = null)
     {
         $this->fullZipPath = $fullZipPath;
         $this->extractPath = $extractPath;
@@ -31,24 +30,18 @@ class ProcessCarPhotosZip implements ShouldQueue
 
     public function handle()
     {
-        // Set limit server khusus background process
         ini_set('memory_limit', '2048M');
 
         try {
             $zip = new \ZipArchive;
+            
             if ($zip->open($this->fullZipPath) === TRUE) {
-                $extractPath = storage_path('app/temp_extracted_' . time());
-                $zip->extractTo($extractPath);
+                $this->extractPath = storage_path('app/temp_extracted_' . time()); 
+                $zip->extractTo($this->extractPath);
                 $zip->close();
                 
-                $destinationDir = public_path('uploads/cars');
-                if (!file_exists($destinationDir)) {
-                    mkdir($destinationDir, 0777, true);
-                }
-
-                // --- LOGIKA UTAMA SAMA PERSIS SEPERTI SEBELUMNYA ---
                 $iterator = new \RecursiveIteratorIterator(
-                    new \RecursiveDirectoryIterator($extractPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                    new \RecursiveDirectoryIterator($this->extractPath, \RecursiveDirectoryIterator::SKIP_DOTS),
                     \RecursiveIteratorIterator::SELF_FIRST
                 );
 
@@ -58,23 +51,39 @@ class ProcessCarPhotosZip implements ShouldQueue
                     if ($fileInfo->isFile()) {
                         $fileName = $fileInfo->getFilename();
                         $fileNameLower = strtolower($fileName);
+                        $folderPath = $fileInfo->getPath();
 
+                        // Blokir folder bayangan dari Mac
+                        if (str_contains(strtoupper($folderPath), '__MACOSX')) {
+                            continue;
+                        }
+
+                        // Blokir file sistem tersembunyi
                         if (in_array($fileNameLower, ['.ds_store', 'thumbs.db', 'desktop.ini']) || str_starts_with($fileName, '.')) {
                             continue;
                         }
 
-                        $folderPath = $fileInfo->getPath();
+                        // ==========================================================
+                        // TAMBAHAN BARU: Tolak semua file yang bukan gambar
+                        // ==========================================================
+                        $extension = pathinfo($fileNameLower, PATHINFO_EXTENSION);
+                        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+                        
+                        if (!in_array($extension, $allowedExtensions)) {
+                            continue; // Abaikan file jika bukan gambar
+                        }
+
                         $folderName = basename($folderPath);
 
-                        if ($folderPath === $extractPath) {
+                        if ($folderPath === $this->extractPath) {
                             continue;
                         }
 
                         $groupedByFolder[$folderName]['path'] = $folderPath;
                         $groupedByFolder[$folderName]['files'][] = [
-                            'name'      => $fileName,
-                            'name_lower'=> $fileNameLower,
-                            'pathname'  => $fileInfo->getPathname()
+                            'name'       => $fileName,
+                            'name_lower' => $fileNameLower,
+                            'pathname'   => $fileInfo->getPathname()
                         ];
                     }
                 }
@@ -130,8 +139,6 @@ class ProcessCarPhotosZip implements ShouldQueue
                                 $car->foto_odometer = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
-                            } else {
-                                // File sisa di dalam folder valid otomatis dibuang (Sangat Bagus!)
                             }
                         }
 
@@ -140,12 +147,7 @@ class ProcessCarPhotosZip implements ShouldQueue
                         }
                         
                     } else {
-                        
-                        // =========================================================================
-                        // PERUBAHAN ADA DI SINI: File ditolak masuk ke folder khusus 'unmatched'
-                        // =========================================================================
-                        
-                        // Buat folder uploads/unmatched jika belum ada
+                        // FOTO UNMATCHED (Cek Duplikat dengan LIKE)
                         $unmatchedDir = public_path('uploads/unmatched');
                         if (!file_exists($unmatchedDir)) {
                             mkdir($unmatchedDir, 0777, true);
@@ -153,54 +155,52 @@ class ProcessCarPhotosZip implements ShouldQueue
 
                         foreach ($group['files'] as $f) {
                             $originalName = $f['name'];
-                            $uniqueFileName = time() . '_' . uniqid() . '_' . $originalName;
                             
-                            // TARGET PATH DIUBAH KE FOLDER UNMATCHED
-                            $targetRelativePath = 'uploads/unmatched/' . $uniqueFileName;
-                            $targetPhysicalPath = public_path($targetRelativePath);
+                            // Cek duplikasi berdasar akhiran nama asli
+                            $isDuplicate = UnmatchedPhoto::where('nopol_detected', $rawFolderName)
+                                ->where('file_name', 'LIKE', '%_' . $originalName)
+                                ->exists();
 
-                            copy($f['pathname'], $targetPhysicalPath);
+                            if (!$isDuplicate) {
+                                $uniqueFileName = time() . '_' . uniqid() . '_' . $originalName;
+                                $targetRelativePath = 'uploads/unmatched/' . $uniqueFileName;
+                                $targetPhysicalPath = public_path($targetRelativePath);
 
-                            UnmatchedPhoto::create([
-                                'file_name'      => $originalName,
-                                'nopol_detected' => $rawFolderName,
-                                'slot_detected'  => '-',
-                                'file_path'      => $targetRelativePath, // Path ke database tersimpan sbg uploads/unmatched/...
-                                'reason'         => 'Folder tidak berurutan (tidak ada penanda _1) atau unit mobil tidak terdaftar.'
-                            ]);
-                            $reviewCount++;
+                                copy($f['pathname'], $targetPhysicalPath);
+
+                                UnmatchedPhoto::create([
+                                    'file_name'      => $uniqueFileName, 
+                                    'nopol_detected' => $rawFolderName,
+                                    'slot_detected'  => '-',
+                                    'file_path'      => $targetRelativePath, 
+                                    'reason'         => 'Folder tidak berurutan (tidak ada penanda _1) atau unit mobil tidak terdaftar.'
+                                ]);
+                                $reviewCount++;
+                            }
                         }
                     }
                 }
-
-                // Bersihkan folder ekstraksi sementara
-                File::deleteDirectory($extractPath);
+                
+                File::deleteDirectory($this->extractPath);
             }
 
-            // Hapus file ZIP sumber setelah selesai diproses
             if (file_exists($this->fullZipPath)) {
                 @unlink($this->fullZipPath);
             }
             \Illuminate\Support\Facades\Cache::put('zip_process_status', 'completed', now()->addMinutes(10));
 
         } catch (\Exception $e) {
-            // LEMPAR EXCEPTION AGAR TERCETAK DI TERMINAL WORKER
             \Illuminate\Support\Facades\Cache::put('zip_process_status', 'error', now()->addMinutes(10));
             throw $e; 
-        }finally {
-            // 2. BERSIHKAN FILE & FOLDER TEMPORARY SECARA OTOMATIS
-            
-            // Hapus file ZIP utama jika ada
-            if ($this->zipPath && File::exists($this->zipPath)) {
-                File::delete($this->zipPath);
+        } finally {
+            if ($this->fullZipPath && File::exists($this->fullZipPath)) {
+                File::delete($this->fullZipPath);
             }
 
-            // Hapus folder hasil ekstraksi sementara (misal: temp_extracted_xxxxx)
             if ($this->extractPath && File::exists($this->extractPath)) {
                 File::deleteDirectory($this->extractPath);
             }
 
-            // Hapus folder chunks jika Anda menggunakan chunk upload (Resumable.js)
             if ($this->chunkFolder && File::exists($this->chunkFolder)) {
                 File::deleteDirectory($this->chunkFolder);
             }
