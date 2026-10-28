@@ -10,15 +10,13 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@gratama.com'],
-            [
-                'name'      => 'Administrator',
-                'password'  => Hash::make('password123'),
-                'is_admin'  => true,
-                'clprnoktp' => '0', // Tambahkan baris ini
-                'no_telepon' => '0', // Tambahkan baris ini
-            ]
-        );
+        \App\Models\User::create([
+    'name'     => 'Administrator',
+    'email'    => 'admin@gratama.com',
+    'password' => bcrypt('password123'),
+    'role'     => 'admin',     // <-- Pastikan role-nya 'admin', bukan 'showroom'
+    'is_admin' => 1,           // <-- Menandakan ini admin pusat
+    'showroom_id' => null,     // <-- Admin pusat tidak punya showroom
+]);
     }
 }

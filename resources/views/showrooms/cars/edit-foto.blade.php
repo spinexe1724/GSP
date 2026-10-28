@@ -100,7 +100,10 @@
                         ['field' => 'foto_depan', 'title' => 'Tampak depan', 'hint' => 'Ambil foto dari arah depan kendaraan.', 'canvas' => 'canvas_depan', 'status' => 'status_depan'],
                         ['field' => 'foto_belakang', 'title' => 'Tampak belakang', 'hint' => 'Pastikan bagian belakang kendaraan terlihat jelas.', 'canvas' => 'canvas_belakang', 'status' => 'status_belakang'],
                         ['field' => 'foto_samping', 'title' => 'Tampak samping', 'hint' => 'Tampilkan sisi kendaraan secara utuh.', 'canvas' => 'canvas_samping', 'status' => 'status_samping'],
-                    ];
+                        ['field' => 'foto_lainnya_1', 'title' => 'Foto Lainnya 1', 'hint' => 'Tambahan foto detail unit kendaraan.', 'canvas' => 'canvas_lainnya_1', 'status' => 'status_lainnya_1'],
+                        ['field' => 'foto_lainnya_2', 'title' => 'Foto Lainnya 2', 'hint' => 'Tambahan foto detail unit kendaraan.', 'canvas' => 'canvas_lainnya_2', 'status' => 'status_lainnya_2'],
+                        ['field' => 'foto_lainnya_3', 'title' => 'Foto Lainnya 3', 'hint' => 'Tambahan foto detail unit kendaraan.', 'canvas' => 'canvas_lainnya_3', 'status' => 'status_lainnya_3'],
+                        ];
                 @endphp
 
                 @foreach($photoFields as $photo)
@@ -117,8 +120,18 @@
                             @endif
                         </div>
 
+                        <!-- MODIFIKASI: Wrapper untuk foto yang sudah ada -->
                         @if($car->{$photo['field']})
-                            <img src="{{ asset($car->{$photo['field']}) }}" alt="Foto {{ strtolower($photo['title']) }} saat ini" class="mt-4 max-h-56 w-full rounded-xl border border-slate-200 bg-slate-50 object-contain">
+                            <div id="wrapper_img_{{ $photo['field'] }}" class="mt-4">
+                                <img src="{{ asset($car->{$photo['field']}) }}" alt="Foto {{ strtolower($photo['title']) }} saat ini" class="max-h-56 w-full rounded-xl border border-slate-200 bg-slate-50 object-contain">
+                                
+                                <button type="button" onclick="loadExisting_{{ $photo['field'] }}('{{ asset($car->{$photo['field']}) }}')" class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#800000] sm:w-auto">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                    Edit & Sensor Gambar Ini
+                                </button>
+                            </div>
                         @endif
 
                         <label for="{{ $photo['field'] }}" class="mt-4 block text-xs font-bold text-slate-700">Pilih foto baru <span class="font-medium text-slate-400">(opsional)</span></label>
@@ -192,38 +205,25 @@
         function redrawCanvas() {
             if (!originalImg) return;
             
-            // 1. Bersihkan seluruh kanvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // 2. Gambar foto asli (tajam) sebagai dasar/background
             ctx.save();
             ctx.filter = 'none';
             ctx.drawImage(originalImg, 0, 0);
             ctx.restore();
             
-            // 3. Terapkan efek BLUR murni HANYA pada kotak sensor
             if (drawnBoxes.length > 0) {
                 ctx.save();
-                
-                // Mulai membuat jalur (path) area mana saja yang akan di-blur
                 ctx.beginPath();
                 drawnBoxes.forEach(box => {
                     ctx.rect(box.x, box.y, box.w, box.h);
                 });
-                
-                // KUNCI area tersebut!
                 ctx.clip();
-                
-                // Beri efek blur tebal
                 ctx.filter = 'blur(30px)';
-                
-                // Gambar ulang SELURUH foto, tapi karena sudah di-clip, blurnya HANYA tembus di area ditarik
                 ctx.drawImage(originalImg, 0, 0);
-                
                 ctx.restore();
             }
 
-            // 4. Gambar kotak transparan saat user menarik kursor manual
             if (tempBox) {
                 ctx.save();
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
@@ -235,17 +235,21 @@
             }
         }
 
-        // Fungsi mengupdate file input sebelum form disubmit
+        // MODIFIKASI: Fungsi mengupdate file input sebelum form disubmit
         function updateFileInput() {
             canvas.toBlob(function(blob) {
-                const blurredFile = new File([blob], inputEl.files[0].name, { type: 'image/jpeg' });
+                // Kunci: Jika user upload file, pakai nama aslinya. Jika edit gambar existing, buat nama dummy.
+                const fileName = (inputEl.files && inputEl.files.length > 0) 
+                    ? inputEl.files[0].name 
+                    : inputId + '_sensor_update.jpg';
+                    
+                const blurredFile = new File([blob], fileName, { type: 'image/jpeg' });
                 const dt = new DataTransfer();
                 dt.items.add(blurredFile);
                 inputEl.files = dt.files;
             }, 'image/jpeg', 0.9);
         }
 
-        // Mendapatkan koordinat mouse/sentuhan yang akurat dari canvas
         function getMousePos(evt) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -259,7 +263,6 @@
             };
         }
 
-        // --- Event Listener Canvas (Drag & Draw) ---
         const startDrawing = (e) => {
             if(!originalImg) return;
             e.preventDefault();
@@ -272,8 +275,6 @@
             if (!isDrawing) return;
             e.preventDefault();
             const pos = getMousePos(e);
-            
-            // Kalkulasi agar bisa ditarik ke berbagai arah
             tempBox = {
                 x: Math.min(startX, pos.x),
                 y: Math.min(startY, pos.y),
@@ -293,27 +294,29 @@
                 statusEl.innerText = "Sensor ditambahkan! Tarik lagi untuk menambah area.";
             }
             
-            tempBox = null;    // 1. Hapus efek kotak transparan
-            redrawCanvas();    // 2. Gambar ulang kanvas dengan kotak solid pekat
-            updateFileInput(); // 3. BARU SIMPAN gambar ke form input setelah warnanya pekat
+            tempBox = null;    
+            redrawCanvas();    
+            updateFileInput(); 
         };
 
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mouseleave', stopDrawing);
-        
-        // Support touch event untuk HP
         canvas.addEventListener('touchstart', startDrawing, {passive: false});
         canvas.addEventListener('touchmove', draw, {passive: false});
         canvas.addEventListener('touchend', stopDrawing);
 
-        // --- Event Listener Upload Foto ---
+        // Event Listener Upload Foto (Tetap sama)
         inputEl.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            drawnBoxes = []; // Reset box tiap foto baru
+            // Jika user memilih file baru, sembunyikan gambar lama
+            const wrapper = document.getElementById('wrapper_img_' + inputId);
+            if (wrapper) wrapper.style.display = 'none';
+
+            drawnBoxes = []; 
             canvas.style.display = 'block';
             statusEl.innerText = "Silakan tarik kotak (klik & drag) pada area yang ingin disensor.";
             statusEl.className = "status-indicator font-semibold text-blue-600";
@@ -325,20 +328,43 @@
                 originalImg.onload = function() {
                     canvas.width = originalImg.width; 
                     canvas.height = originalImg.height;
-                    
                     redrawCanvas();
                     updateFileInput();
                 }
             };
             reader.readAsDataURL(file);
         });
+
+        // MODIFIKASI: Mendaftarkan fungsi secara global agar bisa dipanggil dari tombol HTML "Edit Gambar Ini"
+        window['loadExisting_' + inputId] = function(imageUrl) {
+            const wrapper = document.getElementById('wrapper_img_' + inputId);
+            if (wrapper) wrapper.style.display = 'none'; // Sembunyikan gambar asli
+
+            canvas.style.display = 'block'; // Tampilkan kanvas
+            statusEl.innerText = "Silakan tarik kotak (klik & drag) pada area yang ingin disensor.";
+            statusEl.className = "status-indicator font-semibold text-blue-600";
+
+            drawnBoxes = []; // Reset box sensor
+            originalImg = new Image();
+            originalImg.src = imageUrl;
+            originalImg.onload = function() {
+                canvas.width = originalImg.width; 
+                canvas.height = originalImg.height;
+                redrawCanvas();
+                
+                // Langsung konversi ke file dan masukkan ke input tersembunyi
+                updateFileInput(); 
+            };
+        };
     }
 
     // --- TERAPKAN KE MASING-MASING INPUT ---
     setupManualBlur('foto_depan', 'canvas_depan', 'status_depan');
     setupManualBlur('foto_belakang', 'canvas_belakang', 'status_belakang');
     setupManualBlur('foto_samping', 'canvas_samping', 'status_samping');
-
+setupManualBlur('foto_lainnya_1', 'canvas_lainnya_1', 'status_lainnya_1');
+    setupManualBlur('foto_lainnya_2', 'canvas_lainnya_2', 'status_lainnya_2');
+    setupManualBlur('foto_lainnya_3', 'canvas_lainnya_3', 'status_lainnya_3');
     // Khusus Odometer (Preview saja, tidak butuh Canvas/Blur)
     document.getElementById('foto_odometer').addEventListener('change', function(e) {
         const file = e.target.files[0];

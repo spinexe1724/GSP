@@ -28,10 +28,10 @@
             <div class="flex items-center gap-4">
                 <div class="hidden text-right sm:block">
                     <div class="text-sm font-bold text-slate-900">
-                        {{ Auth::guard('showroom')->user()->nmdealer ?? 'Nama Showroom' }}
+                        {{ $showroom->nmdealer ?? Auth::user()->name }}
                     </div>
                     <div class="text-[11px] text-slate-500 font-semibold">
-                        CNO: {{ Auth::guard('showroom')->user()->cno }}
+                        CNO: {{ $showroom->cno ?? '-' }}
                     </div>
                 </div>
                 
@@ -60,7 +60,7 @@
         <!-- Welcome Banner -->
         <div class="rounded-2xl bg-white p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-2xl font-black text-slate-900">Selamat datang, {{ Auth::guard('showroom')->user()->nmdealer ?? 'Mitra Gratama' }}!</h1>
+                <h1 class="text-2xl font-black text-slate-900">Selamat datang, {{ $showroom->nmdealer ?? Auth::user()->name }}!</h1>
                 <p class="text-sm text-slate-500 mt-1">Kelola inventori unit mobil Anda dan lengkapi foto kendaraan untuk menarik lebih banyak pembeli.</p>
             </div>
             <!-- Tombol ke halaman ubah password (opsional untuk nanti) -->

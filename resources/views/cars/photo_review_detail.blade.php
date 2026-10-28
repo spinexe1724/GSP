@@ -73,6 +73,9 @@
                             <option value="foto_belakang">Foto Belakang</option>
                             <option value="foto_samping">Foto Samping</option>
                             <option value="foto_odometer">Foto Odometer</option>
+                            <option value="foto_lainnya_1">Foto Lainnya 1</option>
+                            <option value="foto_lainnya_2">Foto Lainnya 2</option>
+                            <option value="foto_lainnya_3">Foto Lainnya 3</option>
                         </select>
                     </div>
                 @endforeach

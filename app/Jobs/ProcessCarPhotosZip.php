@@ -67,7 +67,7 @@ class ProcessCarPhotosZip implements ShouldQueue
                         // TAMBAHAN BARU: Tolak semua file yang bukan gambar
                         // ==========================================================
                         $extension = pathinfo($fileNameLower, PATHINFO_EXTENSION);
-                        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+                        $allowedExtensions = ['jpg', 'jpeg', 'png','jfif','webp'];
                         
                         if (!in_array($extension, $allowedExtensions)) {
                             continue; // Abaikan file jika bukan gambar
@@ -119,17 +119,17 @@ class ProcessCarPhotosZip implements ShouldQueue
                             $targetRelativePath = 'uploads/cars/' . $uniqueFileName;
                             $targetPhysicalPath = public_path($targetRelativePath);
 
-                            if (preg_match('/_2\.(jpg|jpeg|png)/i', $fNameLower)) {
+                        if (preg_match('/_2\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
                                 copy($f['pathname'], $targetPhysicalPath);
                                 $car->foto_depan = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
-                            } elseif (preg_match('/_3\.(jpg|jpeg|png)/i', $fNameLower)) {
+                            } elseif (preg_match('/_3\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
                                 copy($f['pathname'], $targetPhysicalPath);
                                 $car->foto_belakang = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
-                            } elseif (preg_match('/_4\.(jpg|jpeg|png)/i', $fNameLower)) {
+                            } elseif (preg_match('/_4\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
                                 copy($f['pathname'], $targetPhysicalPath);
                                 $car->foto_samping = $targetRelativePath;
                                 $matchedCount++;
@@ -137,6 +137,23 @@ class ProcessCarPhotosZip implements ShouldQueue
                             } elseif (preg_match('/_1\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
                                 copy($f['pathname'], $targetPhysicalPath);
                                 $car->foto_odometer = $targetRelativePath;
+                                $matchedCount++;
+                                $hasAssignedPhoto = true;
+                            }
+                            // TAMBAHAN FOTO LAINNYA
+                            elseif (preg_match('/_5\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
+                                copy($f['pathname'], $targetPhysicalPath);
+                                $car->foto_lainnya_1 = $targetRelativePath;
+                                $matchedCount++;
+                                $hasAssignedPhoto = true;
+                            } elseif (preg_match('/_7\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
+                                copy($f['pathname'], $targetPhysicalPath);
+                                $car->foto_lainnya_2 = $targetRelativePath;
+                                $matchedCount++;
+                                $hasAssignedPhoto = true;
+                            } elseif (preg_match('/_8\.(jpg|jpeg|png|webp)/i', $fNameLower)) {
+                                copy($f['pathname'], $targetPhysicalPath);
+                                $car->foto_lainnya_3 = $targetRelativePath;
                                 $matchedCount++;
                                 $hasAssignedPhoto = true;
                             }

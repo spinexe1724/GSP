@@ -63,7 +63,7 @@
                         type="tel"
                         name="nopic"
                         id="nopic"
-                        value="{{ old('nopic', $user->nopic) }}"
+                        value="{{ old('nopic', $showroom->nopic ?? '') }}"
                         maxlength="20"
                         autocomplete="tel"
                         inputmode="tel"

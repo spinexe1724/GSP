@@ -15,10 +15,10 @@
 <body class="flex min-h-screen flex-col bg-[#f4f6f8] text-slate-800 antialiased">
     <header class="border-b border-slate-200 bg-white">
         <div class="mx-auto flex h-[72px] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
-            <a href="{{ route('portal.index') }}" class="inline-flex items-center" aria-label="Gratama Finance, kembali ke beranda">
+            <a href="{{ route('portal.index') ?? '/' }}" class="inline-flex items-center" aria-label="Gratama Finance, kembali ke beranda">
                 <img src="{{ asset('images/LogoG.png') }}" alt="Gratama Finance" class="h-9 w-36 object-contain">
             </a>
-            <a href="{{ route('portal.index') }}" class="text-xs font-semibold text-slate-600 transition hover:text-[#800000] sm:text-sm">
+            <a href="{{ route('portal.index') ?? '/' }}" class="text-xs font-semibold text-slate-600 transition hover:text-[#800000] sm:text-sm">
                 Kembali ke beranda
             </a>
         </div>
@@ -66,14 +66,20 @@
                         {{ session('error') ?? $errors->first() }}
                     </div>
                 @endif
+                
+                @if(session('success'))
+                    <div role="alert" class="mb-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                        {{ session('success') }}
+                    </div>
+                @endif
 
-                <form action="{{ route('showrooms.login.post') }}" method="POST" class="space-y-5">
-                    @csrf
+<form action="{{ route('showrooms.login.submit') }}" method="POST" class="space-y-5">
+                        @csrf
 
                     <div>
-                        <label for="clprnoktp" class="mb-2 block text-sm font-semibold text-slate-700">Nomor KTP pemilik</label>
-                        <input id="clprnoktp" type="text" name="clprnoktp" value="{{ old('clprnoktp') }}" inputmode="numeric" autocomplete="username" required
-                               placeholder="Masukkan nomor KTP"
+                        <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">Email Showroom</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" autocomplete="email" required
+                               placeholder="Masukkan alamat email terdaftar"
                                class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#800000] focus:bg-white focus:ring-4 focus:ring-[#800000]/10">
                     </div>
 
@@ -82,12 +88,15 @@
                         <input id="password" type="password" name="password" autocomplete="current-password" required
                                placeholder="Masukkan password"
                                class="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#800000] focus:bg-white focus:ring-4 focus:ring-[#800000]/10">
-                        <p class="mt-2 text-xs leading-5 text-slate-500">Login pertama kali? Gunakan nomor KTP sebagai password.</p>
                     </div>
 
                     <button type="submit" class="w-full rounded-lg bg-[#800000] px-4 py-3.5 text-sm font-bold text-white transition hover:bg-[#650000] focus:outline-none focus:ring-4 focus:ring-[#800000]/20">
                         Masuk ke dashboard
                     </button>
+                    
+                    <div class="mt-4 text-center text-sm text-slate-600">
+                        Belum memiliki akun? <a href="{{ route('showrooms.register') }}" class="font-bold text-[#800000] hover:underline">Registrasi Akun</a>
+                    </div>
                 </form>
             </section>
         </div>

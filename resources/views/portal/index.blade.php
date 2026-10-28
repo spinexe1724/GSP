@@ -103,7 +103,7 @@
 
 
     {{-- =========================================================
-         2. POPULAR BRANDS
+         2. POPULAR BRANDS (Mengarahkan ke Halaman Utama / Index)
     ========================================================== --}}
     <section class="border-b border-slate-200/80 bg-white py-7 sm:py-9">
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -119,7 +119,7 @@
                 </div>
 
                 <a
-                    href="{{ route('cars.index') }}"
+                    href="{{ url('/') }}"
                     class="inline-flex shrink-0 items-center gap-1 text-[10px] font-bold text-[#800000] transition-colors hover:underline sm:text-xs"
                 >
                     Lihat Semua
@@ -131,33 +131,38 @@
 
             @php
                 $popularBrands = [
-                    ['name' => 'Honda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/honda.svg'],
-                    ['name' => 'Toyota', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/toyota.svg'],
-                    ['name' => 'Suzuki', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/suzuki.svg'],
-                    ['name' => 'Nissan', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/nissan.svg'],
-                    ['name' => 'Mitsubishi', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mitsubishi.svg'],
-                    ['name' => 'KIA', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/kia.svg'],
-                    ['name' => 'Chevrolet', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/chevrolet.svg'],
-                    ['name' => 'Hyundai', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/hyundai.svg'],
-                    ['name' => 'Mini Cooper', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mini.svg'],
-                    ['name' => 'Mazda', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mazda.svg'],
-                    ['name' => 'Subaru', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/subaru.svg'],
-                    ['name' => 'Mercedes', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mercedes.svg'],
+                    ['name' => 'HONDA',      'logo' => 'https://unpkg.com/simple-icons@v11/icons/honda.svg'],
+                    ['name' => 'MITSUBISHI', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/mitsubishi.svg'],
+                    ['name' => 'TOYOTA',     'logo' => 'https://unpkg.com/simple-icons@v11/icons/toyota.svg'],
+                    ['name' => 'SUZUKI',     'logo' => 'https://unpkg.com/simple-icons@v11/icons/suzuki.svg'],
+                    ['name' => 'MINI',       'logo' => 'https://unpkg.com/simple-icons@v11/icons/mini.svg'],
+                    ['name' => 'LANDROVER', 'logo' => 'https://unpkg.com/simple-icons@v11/icons/landrover.svg'],
+                    ['name' => 'JEEP',       'logo' => 'https://unpkg.com/simple-icons@v11/icons/jeep.svg'],
+                    ['name' => 'NISSAN',     'logo' => 'https://unpkg.com/simple-icons@v11/icons/nissan.svg'],
+                    ['name' => 'HYUNDAI',    'logo' => 'https://unpkg.com/simple-icons@v11/icons/hyundai.svg'],
+                    ['name' => 'KIA',        'logo' => 'https://unpkg.com/simple-icons@v11/icons/kia.svg'],
+                    ['name' => 'MAZDA',      'logo' => 'https://unpkg.com/simple-icons@v11/icons/mazda.svg'],
+                    ['name' => 'MERCEDES',   'logo' => 'https://unpkg.com/simple-icons@v11/icons/mercedes.svg'],
                 ];
             @endphp
 
-            {{-- Horizontal scroll only when the screen is too narrow --}}
             <div class="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide sm:grid sm:grid-cols-4 sm:overflow-visible md:grid-cols-6 lg:grid-cols-12">
                 @foreach($popularBrands as $brand)
+                    @php
+                        $isActive = request('brand') == $brand['name'];
+                    @endphp
+
+                    {{-- Format URL langsung ke query string ?brand= --}}
                     <a
-                        href="{{ route('cars.index', ['brand' => $brand['name']]) }}"
-                        class="flex min-w-[82px] shrink-0 flex-col items-center justify-center rounded-xl border border-slate-200/80 bg-slate-50 p-2.5 transition-all hover:border-[#800000] hover:bg-white hover:shadow-md sm:min-w-0 sm:rounded-2xl sm:p-3"
+                        href="{{ url('/?brand=' . urlencode($brand['name'])) }}"
+                        class="group flex min-w-[82px] shrink-0 flex-col items-center justify-center rounded-xl border {{ $isActive ? 'border-[#800000] bg-red-50/60 ring-2 ring-[#800000]/20' : 'border-slate-200/80 bg-slate-50' }} p-2.5 transition-all hover:border-[#800000] hover:bg-white hover:shadow-md sm:min-w-0 sm:rounded-2xl sm:p-3"
                     >
                         <div class="mb-1 flex h-7 w-7 items-center justify-center opacity-70 transition-opacity group-hover:opacity-100 sm:h-8 sm:w-8">
                             <img
                                 src="{{ $brand['logo'] }}"
                                 alt="{{ $brand['name'] }}"
-                                class="max-h-full max-w-full object-contain grayscale transition-all hover:grayscale-0"
+                                class="max-h-full max-w-full object-contain grayscale transition-all group-hover:grayscale-0"
+                                onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-[10px] font-black text-slate-400\'>{{ strtoupper(substr($brand['name'], 0, 2)) }}</span>';"
                             >
                         </div>
 
@@ -557,11 +562,27 @@
                         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
 
                             @foreach ($cars as $car)
+                                @php
+                                    // Cek apakah showroom memiliki 10 unit atau lebih
+                                    $isExclusive = isset($car->showroom) && (($car->showroom->cars_count ?? $car->showroom->cars->count()) >= 10);
+                                @endphp
 
-                                <div class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
+                                <div class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border {{ $isExclusive ? 'border-amber-400 ring-2 ring-amber-400/40 shadow-amber-500/10' : 'border-slate-200/80' }} bg-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
 
                                     {{-- Image --}}
                                     <div class="relative aspect-[16/10] overflow-hidden bg-slate-100">
+
+                                        {{-- BADGE EKSKLUSIF (Pojok kiri atas foto) --}}
+                                        @if($isExclusive)
+                                            <div class="absolute left-2.5 top-2.5 z-10">
+                                                <span class="inline-flex items-center gap-1 rounded-md bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 px-2 py-1 text-[8px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                                                    <svg class="h-2.5 w-2.5 fill-slate-950" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                    </svg>
+                                                    Eksklusif
+                                                </span>
+                                            </div>
+                                        @endif
 
                                         @if($car->foto_depan)
 
@@ -639,7 +660,7 @@
 
 
                                         {{-- Year --}}
-                                        <div class="absolute right-2.5 top-2.5">
+                                        <div class="absolute right-2.5 top-2.5 z-10">
                                             <span class="rounded-md bg-white/95 px-2 py-1 text-[9px] font-bold text-slate-800 shadow-sm backdrop-blur-md sm:text-[10px]">
                                                 {{ $car->tahun_buat ?? '-' }}
                                             </span>
@@ -669,17 +690,19 @@
                                             <h3 class="mt-0.5 line-clamp-2 text-xs font-extrabold text-slate-900 transition-colors group-hover:text-[#800000] sm:text-sm">
                                                 {{ $car->tipe_kend ?? '-' }}
                                             </h3>
-<div class="mt-2">
-        @if($car->harga)
-            <p class="text-sm font-black text-[#800000] sm:text-base">
-                Rp {{ number_format($car->harga, 0, ',', '.') }}
-            </p>
-        @else
-            <span class="inline-block text-[10px] font-bold text-slate-400">
-                Hubungi Showroom
-            </span>
-        @endif
-    </div>
+
+                                            <div class="mt-2">
+                                                @if($car->harga)
+                                                    <p class="text-sm font-black text-[#800000] sm:text-base">
+                                                        Rp {{ number_format($car->harga, 0, ',', '.') }}
+                                                    </p>
+                                                @else
+                                                    <span class="inline-block text-[10px] font-bold text-slate-400">
+                                                        Hubungi Showroom
+                                                    </span>
+                                                @endif
+                                            </div>
+
                                             {{-- Specifications --}}
                                             <div class="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
 
@@ -712,12 +735,24 @@
 
                                             <div class="min-w-0 max-w-[55%]">
                                                 <p class="text-[8px] font-bold uppercase text-slate-400">
-                                                    Showroom Partner
+                                                    Domisili
                                                 </p>
 
-                                                <p class="truncate text-[10px] font-bold text-slate-700 sm:text-[11px]">
-                                                    {{ $car->showroom->nmdealer ?? 'Showroom Rekanan' }}
-                                                </p>
+                                                <div class="flex items-center gap-1 min-w-0">
+                                                    <p class="truncate text-[10px] font-bold text-slate-700 sm:text-[11px]">
+                                                        {{ $car->showroom->kota ?? '' }}
+
+                                                    </p>
+
+                                                    {{-- Centang Verifikasi Emas --}}
+                                                    @if($isExclusive)
+                                                        <span class="shrink-0 text-amber-500" title="Showroom Eksklusif (10+ Unit)">
+                                                            <svg class="h-3.5 w-3.5 fill-amber-500" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                            </svg>
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
 
                                             <a

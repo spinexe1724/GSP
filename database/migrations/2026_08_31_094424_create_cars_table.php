@@ -29,6 +29,9 @@ return new class extends Migration
             $table->string('foto_samping')->nullable();
             $table->string('foto_belakang')->nullable();
             $table->string('foto_odometer')->nullable();
+            $table->string('foto_lainnya_1')->nullable();
+            $table->string('foto_lainnya_2')->nullable();
+            $table->string('foto_lainnya_3')->nullable();
             
             $table->timestamps();
         });

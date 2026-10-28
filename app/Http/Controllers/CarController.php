@@ -24,21 +24,18 @@ class CarController extends Controller
     {
     $query = Car::with('showroom');
 
-        // Pencarian berdasarkan merk, tipe, nopol, warna, atau nama showroom
-        if ($request->filled('search')) {
-            $search = trim($request->search);
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_merk', 'like', "%{$search}%")
-                  ->orWhere('tipe_kend', 'like', "%{$search}%")
-                  ->orWhere('no_polisi', 'like', "%{$search}%")
-                  ->orWhere('warna_kend', 'like', "%{$search}%")
-                  ->orWhere('jenis_kend', 'like', "%{$search}%")
-                  ->orWhereHas('showroom', function ($showroomQuery) use ($search) {
-                      $showroomQuery->where('nmdealer', 'like', "%{$search}%")
-                                    ->orWhere('kota', 'like', "%{$search}%");
-                  });
-            });
-        }
+       if ($request->filled('search')) {
+        $search = trim($request->search);
+        $query->where(function ($q) use ($search) {
+            $q->where('nama_merk', 'like', "%{$search}%")
+              ->orWhere('tipe_kend', 'like', "%{$search}%")
+              ->orWhere('warna_kend', 'like', "%{$search}%")
+              ->orWhere('jenis_kend', 'like', "%{$search}%")
+              ->orWhereHas('showroom', function ($showroomQuery) use ($search) {
+                  $showroomQuery->where('kota', 'like', "%{$search}%");
+              });
+        });
+    }
 if ($request->filled('showroom_id')) {
     $query->whereHas('showroom', function ($showroomQuery) use ($request) {
         // 'id' di sini adalah primary key dari tabel showroom (dealer)
@@ -66,20 +63,30 @@ if ($request->filled('showroom_id')) {
     }
     public function show($id)
     {
+        // 1. Ambil data mobil beserta relasi showroom-nya
         $car = Car::with('showroom')->findOrFail($id);
 
-        // Rekomendasi mobil lain dari showroom yang sama
-        $relatedCars = Car::where('no_cif', $car->no_cif)
+        // 2. Ambil nama kota dari showroom mobil saat ini
+        $kotaSaatIni = $car->showroom->kota ?? null;
+
+        // 3. Cari semua nomor CIF (cno) showroom yang berada di kota yang sama
+        $cnoDiKotaSama = \App\Models\Showroom::where('kota', $kotaSaatIni)->pluck('cno');
+
+        // 4. Rekomendasi mobil lain dari wilayah/kota yang sama (berdasarkan daftar CIF)
+        $relatedCars = Car::whereIn('no_cif', $cnoDiKotaSama)
             ->where('id', '!=', $car->id)
             ->limit(10)
             ->get();
 
-            $similarTypeCars = Car::where('tipe_kend', $car->tipe_kend)
-        ->where('id', '!=', $car->id)
-        ->latest()
-        ->limit(10) // Dinaikkan menjadi 10 agar bisa digeser
-        ->get();
-        return view('cars.show', compact('car', 'relatedCars','similarTypeCars'));
+        // 5. Rekomendasi mobil dengan tipe yang serupa (Tidak diubah)
+        $similarTypeCars = Car::where('tipe_kend', $car->tipe_kend)
+            ->where('id', '!=', $car->id)
+            ->latest()
+            ->limit(10) // Dinaikkan menjadi 10 agar bisa digeser
+            ->get();
+
+        // 6. Lempar juga variabel $kotaSaatIni ke view
+        return view('cars.show', compact('car', 'relatedCars', 'similarTypeCars', 'kotaSaatIni'));
     }
 
     /**

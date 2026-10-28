@@ -760,6 +760,9 @@
 
 
                 ['label' => 'Tampak Odometer', 'path' => $car->foto_odometer ?: $defaultCarImage],
+                ['label' => 'Foto Lainnya 1', 'path' => $car->foto_lainnya_1 ?: $defaultCarImage],
+                ['label' => 'Foto Lainnya 2', 'path' => $car->foto_lainnya_2 ?: $defaultCarImage],
+                ['label' => 'Foto Lainnya 3', 'path' => $car->foto_lainnya_3 ?: $defaultCarImage],
 
 
 
@@ -3225,13 +3228,11 @@
 
                 <span class="h-1.5 w-1.5 rounded-full bg-[#800000]"></span>
 
-                <span class="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#800000]">Showroom Inventory</span>
-
+<span class="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#800000]">Rekomendasi Area</span> 
             </div>
 
-            <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Unit lain yang ada di Showroom ini</h2>
-
-            <p class="mt-1 text-xs text-slate-500">Unit lain yang tersedia dari showroom yang sama.</p>
+            <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Unit di Wilayah yang Sama</h2>
+            <p class="mt-1 text-xs text-slate-500">Unit lain yang tersedia di area <span class="font-bold text-[#800000] capitalize">{{ strtolower($kotaSaatIni ?? $car->showroom->kota ?? 'Sekitarnya') }}</span>.</p>
 
         </div>
 

@@ -21,8 +21,9 @@ class User extends Authenticatable
     'name', // Tetap ada di sini
     'email',
     'password',
-    'clprnoktp',
-    'no_telepon',
+    'showroom_id', // Wajib ditambahkan
+    'role',        // Wajib ditambahkan
+    'clprnoktp',   // Wajib ditambahkan untuk mengatasi error
 ];
 
     /**
@@ -46,5 +47,9 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function showroom()
+    {
+        return $this->belongsTo(Showroom::class, 'showroom_id', 'id');
     }
 }

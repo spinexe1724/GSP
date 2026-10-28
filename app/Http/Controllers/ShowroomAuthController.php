@@ -3,61 +3,90 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use App\Models\Showroom;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class ShowroomAuthController extends Controller
 {
-    public function showLoginForm()
+    // ==========================================
+    // BAGIAN REGISTRASI
+    // ==========================================
+    public function showRegisterForm()
     {
-        return view('showrooms.auth.login'); // Buat view login Anda di sini
+        return view('showrooms.auth.register'); 
     }
 
-    public function login(Request $request)
+    public function register(Request $request)
     {
-        $request->validate([
-            'clprnoktp' => 'required',
-            'password' => 'required'
+      $request->validate([
+        'email'     => 'required|email|unique:users,email',
+        'password'  => 'required|min:6',
+        'clprnoktp' => 'required|numeric|digits:16|exists:showrooms,clprnoktp', // <-- Ubah di sini
+    ], [
+        'clprnoktp.exists' => 'Nomor KTP tidak terdaftar sebagai Partner Showroom Gratama.',
+        'clprnoktp.digits' => 'Nomor KTP harus tepat 16 digit angka.',
+        'email.unique'     => 'Email ini sudah dipakai oleh showroom lain.'
+    ]);
+
+    // Pastikan pencarian juga diubah
+    $showroom = Showroom::where('clprnoktp', $request->clprnoktp)->first(); // <-- Ubah di sini
+
+        if (User::where('showroom_id', $showroom->id)->exists()) {
+            return back()->withErrors(['no_ktp' => 'Akun untuk KTP ini sudah pernah dibuat. Silakan Login.'])->withInput();
+        }
+
+  $user = User::create([
+            'name'        => $showroom->nmdealer,
+            'email'       => $request->email,
+            'password'    => Hash::make($request->password),
+            'showroom_id' => $showroom->id,
+            'role'        => 'showroom',
+            
+            // JALAN KELUAR: Tangkap 'clprnoktp' atau 'no_ktp' (mana saja yang dikirim oleh form)
+            'clprnoktp'   => $request->clprnoktp ?? $request->no_ktp, 
         ]);
 
-        $ktp = trim($request->clprnoktp);
-        $password = $request->password;
-
-        // 1. Cari showroom berdasarkan no KTP
-        $showroom = Showroom::where('clprnoktp', $ktp)->first();
-
-        // 2. Jika tidak ketemu, KTP kosong, atau format salah (misal panjang KTP < 16 digit)
-        if (!$showroom || empty($showroom->clprnoktp) || strlen($showroom->clprnoktp) < 10) {
-            return back()->with('error', 'Showroom belum terdaftar atau format clprnoktp salah.');
-        }
-
-        // 3. Lazy Password Hashing (Untuk login pertama kali)
-        // Jika kolom password di DB masih kosong, dan input password sama dengan clprnoktp
-        if (empty($showroom->password) && $password === $showroom->clprnoktp) {
-            $showroom->password = Hash::make($password);
-            $showroom->save();
-        }
-
-        // 4. Lakukan pengecekan otentikasi
-       if (Auth::guard('showroom')->attempt(['clprnoktp' => $ktp, 'password' => $password])) {
-        $request->session()->regenerate();
-            
-            // Arahkan ke dashboard showroom
-return redirect()->route('showrooms.dashboard');
-        }
-
-        return back()->with('error', 'Password yang Anda masukkan salah.');
+      return redirect()->route('showrooms.login')
+                         ->with('success', 'Registrasi akun ' . $showroom->nmdealer . ' berhasil! Silakan login untuk melanjutkan.');
     }
 
+    // ==========================================
+    // BAGIAN LOGIN & LOGOUT (BARU)
+    // ==========================================
+    
+    // Menampilkan halaman form login
+    public function showLoginForm()
+    {
+        // Sesuaikan nama view ini jika lokasi file login.blade.php Anda berbeda
+        return view('showrooms.auth.login'); 
+    }
+
+    // Memproses data login
+   public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email'    => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // Redirect ke halaman dashboard setelah sukses login
+return redirect()->route('showrooms.dashboard');        }
+
+        return back()->with('error', 'Email atau password yang Anda masukkan tidak sesuai.')->onlyInput('email');
+    }
+    // Memproses logout
     public function logout(Request $request)
     {
-     Auth::guard('showroom')->logout();
-
-    // 2. Hanya hapus kunci session login showroom
-    $request->session()->forget('login_showroom_' . sha1(get_class(Auth::guard('showroom')->getProvider())));
-    $request->session()->regenerateToken();
-
-   return redirect()->route('showrooms.login'); // BENAR
+     Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        // Arahkan kembali ke /showrooms/login
+        return redirect()->route('showrooms.login')->with('success', 'Anda telah berhasil keluar.');
     }
 }

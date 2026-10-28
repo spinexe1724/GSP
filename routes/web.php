@@ -16,30 +16,35 @@ use Illuminate\Support\Facades\Route;
 
 // --- Rute GUEST (Belum Login) ---
 Route::middleware('guest')->group(function () {
-    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('register', [RegisteredUserController::class, 'store']);
-
+   
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 });
-
+// ==========================================
 Route::prefix('showrooms')->name('showrooms.')->group(function () {
     
-    // Rute Login (bisa diakses publik)
-    Route::get('/login', [ShowroomAuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [ShowroomAuthController::class, 'login'])->name('login.post');
-    
-    // Rute Dasbor (wajib login)
-    Route::middleware('auth:showroom')->group(function () {
-        Route::get('/dashboard', [ShowroomDashboardController::class, 'index'])->name('dashboard');
+    // BAGIAN GUEST (Belum Login)
+    Route::middleware('guest')->group(function () {
+      Route::get('/register', [ShowroomAuthController::class, 'showRegisterForm'])->name('register');
+        Route::post('/register', [ShowroomAuthController::class, 'register'])->name('register.submit');
+
+       Route::get('/login', [ShowroomAuthController::class, 'showLoginForm'])->name('login');
+        Route::post('/login', [ShowroomAuthController::class, 'login'])->name('login.submit');
+    });
+
+    // BAGIAN AUTH (Sudah Login)
+    Route::middleware(['auth'])->group(function () {
+   Route::get('/dashboard', [ShowroomDashboardController::class, 'index'])->name('dashboard');
+
         Route::get('/cars/{id}/foto', [ShowroomDashboardController::class, 'editFoto'])->name('cars.foto.edit');
         Route::put('/cars/{id}/foto', [ShowroomDashboardController::class, 'updateFoto'])->name('cars.foto.update');
+        
         Route::get('/settings', [ShowroomDashboardController::class, 'edit_profile'])->name('settings.edit_profile');
-    Route::put('/settings', [ShowroomDashboardController::class, 'update_profile'])->name('settings.update_profile');
-        Route::post('/logout', [ShowroomAuthController::class, 'logout'])->name('logout');
+        Route::put('/settings', [ShowroomDashboardController::class, 'update_profile'])->name('settings.update_profile');
+        
+        Route::post('/logout', [ShowroomAuthController::class, 'logout'])->name('logout'); // Dipanggil dengan route('showrooms.logout')
     });
 });
-
 // --- Rute PUBLIC (Bisa diakses siapa saja) ---
 //Route::get('/', function ()     return view('portal.index'); // Sesuaikan dengan nama file blade kamu}); //
 

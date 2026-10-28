@@ -301,7 +301,17 @@
                                 >
                                     {{ $car->tipe_kend ?? '-' }}
                                 </h3>
-
+ <div class="mt-2">
+                                                @if($car->harga)
+                                                    <p class="text-sm font-black text-[#800000] sm:text-base">
+                                                        Rp {{ number_format($car->harga, 0, ',', '.') }}
+                                                    </p>
+                                                @else
+                                                    <span class="inline-block text-[10px] font-bold text-slate-400">
+                                                        Hubungi Showroom
+                                                    </span>
+                                                @endif
+                                            </div>
 
                                 {{-- Spesifikasi Singkat --}}
                                 <div class="flex flex-wrap gap-1.5 mt-3">
