@@ -13,6 +13,7 @@ class AdminUserSeeder extends Seeder
         \App\Models\User::create([
     'name'     => 'Administrator',
     'email'    => 'admin@gratama.com',
+    'clprnoktp'    => '1',
     'password' => bcrypt('password123'),
     'role'     => 'admin',     // <-- Pastikan role-nya 'admin', bukan 'showroom'
     'is_admin' => 1,           // <-- Menandakan ini admin pusat

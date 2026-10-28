@@ -41,89 +41,121 @@ public function show($id)
 }
 public function upload(Request $request)
     {
- try {
+try {
+        set_time_limit(0); // Menghapus batas waktu eksekusi script
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv|max:10240',
+        ], [
+            'file.required' => 'Pilih file Excel showroom terlebih dahulu.',
+            'file.mimes'    => 'Format file ditolak! Gunakan file .xlsx atau .csv.',
+            'file.max'      => 'Ukuran file maksimal 10MB.'
+        ]);
 
-    set_time_limit(0); // Menghapus batas waktu eksekusi script
- $request->validate([
-        'file' => 'required|mimes:xlsx,csv|max:10240',
-    ], [
-        'file.required' => 'Pilih file Excel showroom terlebih dahulu.',
-        'file.mimes'    => 'Format file ditolak! Gunakan file .xlsx atau .csv.',
-        'file.max'      => 'Ukuran file maksimal 10MB.'
-    ]);
-
-    $file = $request->file('file');
-    $filename = time() . '_showroom.' . $file->getClientOriginalExtension();
-    $destinationPath = storage_path('app/temp');
-    
-    if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0777, true);
-    }
-
-    $file->move($destinationPath, $filename);
-    $fullPath = $destinationPath . DIRECTORY_SEPARATOR . $filename;
-
-    $batchData = [];
-    $batchSize = 1000;
-    $now = Carbon::now();
-
-    (new FastExcel)->import($fullPath, function ($row) use (&$batchData, $batchSize, $now) {
-        $rowLower = array_change_key_case($row, CASE_LOWER);
-
-        $safeString = function ($value) {
-            if ($value instanceof \DateTimeInterface) {
-                return $value->format('Y-m-d');
-            }
-            return trim((string) $value);
-        };
-
-        // Ambil dan bersihkan data KTP
-        $rawKtp = $safeString($rowLower['clprnoktp'] ?? $rowLower['ktp'] ?? $rowLower['no_ktp'] ?? '');
-        $ktpClean = ($rawKtp === '') ? null : $rawKtp;
-
-        // Ambil cno, jika kosong jadikan null atau string kosong
-        $cno = $safeString($rowLower['cno'] ?? $rowLower['kode_dealer'] ?? '');
-        $finalCno = ($cno === '') ? null : $cno;
-
-        // Ambil variabel inisial
-        $inisialValue = $safeString($rowLower['inisial'] ?? '');
-
-        // TANPA FILTER empty($cno): Semua baris di Excel sekarang pasti masuk!
-        $batchData[] = [
-            'clprnoktp'  => $ktpClean,
-            'cno'        => $finalCno,
-            'kdcab'      => $safeString($rowLower['kdcab'] ?? ''),
-            'inisial'    => $inisialValue,
-            'nmdealer'   => $safeString($rowLower['nmdealer'] ?? $rowLower['nama_dealer'] ?? ''),
-            'cnm'        => $safeString($rowLower['cnm'] ?? ''),
-            'ad1'        => $safeString($rowLower['ad1'] ?? ''),
-            'ad2'        => $safeString($rowLower['ad2'] ?? ''),
-            'kota'       => $safeString($rowLower['kota'] ?? ''),
-            'alamat'     => $safeString($rowLower['alamat'] ?? ''),
-            'nopic'     => $safeString($rowLower['pichp'] ?? ''),
-            'dlmou'      => $safeString($rowLower['dlmou'] ?? ''),
-            'dlmoutglfr' => $safeString($rowLower['dlmoutglfr'] ?? ''), 
-            'dlmoutglto' => $safeString($rowLower['dlmoutglto'] ?? ''), 
-            'created_at' => $now,
-            'updated_at' => $now,
-        ];
-
-        if (count($batchData) >= $batchSize) {
-            // Menggunakan insert biasa atau upsert dengan aman
-            // Catatan: Jika ada cno yang bernilai null secara massal, gunakan insert untuk menghindari bentrok unik key database.
-            Showroom::insert($batchData);
-            $batchData = [];
+        $file = $request->file('file');
+        $filename = time() . '_showroom.' . $file->getClientOriginalExtension();
+        $destinationPath = storage_path('app/temp');
+        
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0777, true);
         }
-    });
 
-    if (count($batchData) > 0) {
-        Showroom::insert($batchData);
-    }
+        $file->move($destinationPath, $filename);
+        $fullPath = $destinationPath . DIRECTORY_SEPARATOR . $filename;
 
-    if (file_exists($fullPath)) {
-        unlink($fullPath);
-    }
-return redirect()->route('admin.upload-data', ['imported' => 'showroom_success']);
+        $batchData = [];
+        $batchSize = 1000;
+        $now = Carbon::now();
+        
+        // 1. Siapkan keranjang penampung CNO dari file Excel
+        $uploadedCnoList = []; 
+
+        // 2. Tambahkan &$uploadedCnoList agar bisa diisi dari dalam fungsi FastExcel
+        (new FastExcel)->import($fullPath, function ($row) use (&$batchData, &$uploadedCnoList, $batchSize, $now) {
+            $rowLower = array_change_key_case($row, CASE_LOWER);
+
+            $safeString = function ($value) {
+                if ($value instanceof \DateTimeInterface) {
+                    return $value->format('Y-m-d');
+                }
+                return trim((string) $value);
+            };
+
+            $rawKtp = $safeString($rowLower['clprnoktp'] ?? $rowLower['ktp'] ?? $rowLower['no_ktp'] ?? '');
+            $ktpClean = ($rawKtp === '') ? null : $rawKtp;
+
+            $cno = $safeString($rowLower['cno'] ?? $rowLower['kode_dealer'] ?? '');
+            $finalCno = ($cno === '') ? null : $cno;
+
+            // 3. Masukkan CNO ke keranjang jika tidak kosong
+            if ($finalCno !== null) {
+                $uploadedCnoList[] = $finalCno;
+            }
+
+            $inisialValue = $safeString($rowLower['inisial'] ?? '');
+
+            $batchData[] = [
+                'clprnoktp'  => $ktpClean,
+                'cno'        => $finalCno,
+                'kdcab'      => $safeString($rowLower['kdcab'] ?? ''),
+                'inisial'    => $inisialValue,
+                'nmdealer'   => $safeString($rowLower['nmdealer'] ?? $rowLower['nama_dealer'] ?? ''),
+                'cnm'        => $safeString($rowLower['cnm'] ?? ''),
+                'ad1'        => $safeString($rowLower['ad1'] ?? ''),
+                'ad2'        => $safeString($rowLower['ad2'] ?? ''),
+                'kota'       => $safeString($rowLower['kota'] ?? ''),
+                'alamat'     => $safeString($rowLower['alamat'] ?? ''),
+                'nopic'      => $safeString($rowLower['pichp'] ?? ''),
+                'dlmou'      => $safeString($rowLower['dlmou'] ?? ''),
+                'dlmoutglfr' => $safeString($rowLower['dlmoutglfr'] ?? ''), 
+                'dlmoutglto' => $safeString($rowLower['dlmoutglto'] ?? ''), 
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+
+            if (count($batchData) >= $batchSize) {
+                // 4. Ubah menjadi UPSERT agar data tidak duplikat saat diupload berulang kali
+                \App\Models\Showroom::upsert($batchData, ['cno'], [
+                    'clprnoktp', 'kdcab', 'inisial', 'nmdealer', 'cnm', 'ad1', 'ad2', 
+                    'kota', 'alamat', 'nopic', 'dlmou', 'dlmoutglfr', 'dlmoutglto', 'updated_at'
+                ]);
+                $batchData = [];
+            }
+        });
+
+        // Sisa batch yang belum tersimpan
+        if (count($batchData) > 0) {
+            \App\Models\Showroom::upsert($batchData, ['cno'], [
+                'clprnoktp', 'kdcab', 'inisial', 'nmdealer', 'cnm', 'ad1', 'ad2', 
+                'kota', 'alamat', 'nopic', 'dlmou', 'dlmoutglfr', 'dlmoutglto', 'updated_at'
+            ]);
+        }
+
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
+
+        // =================================================================
+        // 5. LOGIKA PEMBERSIHAN SHOWROOM (SYNC WITH RETENTION)
+        // =================================================================
+        if (!empty($uploadedCnoList)) {
+            // Ambil semua showroom yang CNO-nya TIDAK ADA di file Excel
+            $showroomsTertinggal = \App\Models\Showroom::whereNotNull('cno')
+                                    ->whereNotIn('cno', $uploadedCnoList)
+                                    ->get();
+
+            foreach ($showroomsTertinggal as $sr) {
+                // Cek apakah showroom ini masih punya unit di tabel cars
+                $masihAdaUnit = \App\Models\Car::where('no_cif', $sr->cno)->exists();
+
+                // Jika sudah tidak punya unit, hapus showroom
+                if (!$masihAdaUnit) {
+                    $sr->delete();
+                }
+            }
+        }
+
+        return redirect()->route('admin.upload-data', ['imported' => 'showroom_success']);
+        
     } catch (\Exception $e) {
         return redirect()->route('admin.upload-data', ['imported' => 'error', 'msg' => $e->getMessage()]);
     }
